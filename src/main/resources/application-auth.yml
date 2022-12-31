@@ -1,0 +1,7 @@
+jwt:
+  secret: 'aDj9oGoq3wDevudOXmxj4e124sdghsaor1q3asdfllk11kmnmr'
+
+app:
+  auth:
+    accessTokenExpiry: 1800000
+    refreshTokenExpiry: 1209600000
