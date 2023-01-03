@@ -4,9 +4,7 @@ import link.sendwish.backend.auth.JwtTokenProvider;
 import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.dtos.CollectionResponseDto;
 import link.sendwish.backend.dtos.MemberRequestDto;
-import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Member;
-import link.sendwish.backend.entity.MemberCollection;
 import link.sendwish.backend.repository.MemberCollectionRepository;
 import link.sendwish.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,6 +37,7 @@ public class MemberService {
                 .memberId(dto.getMemberId())
                 .password(encode)
                 .roles(List.of("USER"))
+                .memberCollections(new ArrayList<>())
                 .build();
         Member savedMember = memberRepository.save(member);
         log.info("새로운 회원가입 [ID] : {}, [PW] : {}", savedMember.getMemberId(), savedMember.getPassword());

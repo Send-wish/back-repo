@@ -36,6 +36,10 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<MemberCollection> memberCollections = new ArrayList<>();
 
+    public void addMemberCollection(MemberCollection memberCollection) {
+        this.memberCollections.add(memberCollection);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
