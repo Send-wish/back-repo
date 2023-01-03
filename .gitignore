@@ -5,6 +5,11 @@
 # jetBranis
 .idea
 
+# https
+*.p12
+
+application-dev.yml
+
 ### Java ###
 # Compiled class file
 *.class

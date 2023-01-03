@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/signin").permitAll()
                 .antMatchers("/signup").permitAll()
+                .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
