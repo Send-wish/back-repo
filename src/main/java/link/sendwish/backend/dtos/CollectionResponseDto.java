@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CollectionResponseDto {
+    private Long collectionId;
     private String title;
     private String memberId;
     //추후 item 관련 field 추가
