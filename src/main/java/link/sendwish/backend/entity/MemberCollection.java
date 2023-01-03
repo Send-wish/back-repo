@@ -1,8 +1,11 @@
 package link.sendwish.backend.entity;
 
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
+@Getter
 @Entity
 public class MemberCollection {
     @Id
