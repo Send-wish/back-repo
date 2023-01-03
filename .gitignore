@@ -6,7 +6,7 @@
 .idea
 
 # https
-.p12
+*.p12
 
 application-dev.yml
 
