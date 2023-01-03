@@ -1,11 +1,7 @@
 package link.sendwish.backend.service;
 
-import link.sendwish.backend.dtos.CollectionCreateRequestDto;
-import link.sendwish.backend.dtos.CollectionUpdateRequestDto;
-import link.sendwish.backend.dtos.CollectionResponseDto;
-import link.sendwish.backend.entity.Collection;
-import link.sendwish.backend.entity.Member;
-import link.sendwish.backend.entity.MemberCollection;
+import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.entity.*;
 import link.sendwish.backend.repository.CollectionRepository;
 import link.sendwish.backend.repository.MemberCollectionRepository;
 import link.sendwish.backend.repository.MemberRepository;
@@ -48,7 +44,7 @@ public class CollectionService {
         collectionRepository.save(collection);
 
         member.addMemberCollection(memberCollection);
-        collection.addMemberCollection(memberCollection);
+        collection.addMemberCollection(memberCollection);//Cascade Option으로 insert문 자동 호출
 
 
         log.info("컬렉션 생성 [ID] : {}, [컬렉션 제목] : {}", member.getMemberId(), collection.getTitle());
@@ -79,6 +75,21 @@ public class CollectionService {
         Collection find = collectionRepository.findById(collectionId).orElseThrow(RuntimeException::new);
         log.info("컬렉션 단건 조회 [ID] : {}, [컬렉션 제목] : {}", memberId, find.getTitle());
         return find;
+    }
+
+    public CollectionDetailResponseDto getDetails(Collection collection,String memberId) {
+        List<Item> items = collection.getCollectionItems()
+                .stream().map(CollectionItem::getItem).toList();
+        return CollectionDetailResponseDto.builder()
+                .collectionId(collection.getId())
+                .memberId(memberId)
+                .dtos(items.stream().map(
+                        target -> ItemResponseDto.builder()
+                                .price(target.getPrice())
+                                .name(target.getName())
+                                .imgUrl(target.getImgUrl())
+                                .build()
+                ).toList()).build();
     }
 
     @Transactional

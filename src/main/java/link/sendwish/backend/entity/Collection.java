@@ -19,10 +19,17 @@ public class Collection extends BaseTime{
     @OneToMany(mappedBy = "collection",cascade = CascadeType.ALL)
     private List<MemberCollection> memberCollections = new ArrayList<>();
 
+    @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL)
+    private List<CollectionItem> collectionItems = new ArrayList<>();
+
     private String title;
 
     public void addMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.add(memberCollection);
+    }
+
+    public void addCollectionItem(CollectionItem collectionItem) {
+        this.collectionItems.add(collectionItem);
     }
 
     public void changeTitle(String newTitle) {

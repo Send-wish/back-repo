@@ -30,6 +30,9 @@ public class SecurityConfig {
                 .antMatchers("/signin").permitAll()
                 .antMatchers("/signup").permitAll()
                 .antMatchers("/").permitAll()
+                .antMatchers("/collections/**").permitAll()
+                .antMatchers("/collection/**").permitAll()
+                .antMatchers("/item/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

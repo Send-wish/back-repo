@@ -1,9 +1,6 @@
 package link.sendwish.backend.controller;
 
-import link.sendwish.backend.dtos.CollectionCreateRequestDto;
-import link.sendwish.backend.dtos.CollectionUpdateRequestDto;
-import link.sendwish.backend.dtos.CollectionResponseDto;
-import link.sendwish.backend.dtos.ResponseErrorDto;
+import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.CollectionService;
@@ -62,6 +59,22 @@ public class CollectionController {
             Collection find = collectionService.findCollection(dto.getCollectionId(),dto.getMemberId());
             CollectionResponseDto responseDto = collectionService.updateCollectionTitle(find, dto);
             return ResponseEntity.ok().body(responseDto);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+    @GetMapping("/collection/{memberId}/{collectionId}")
+    public ResponseEntity<?> getDetailCollection(@PathVariable("memberId") String memberId,
+                                                 @PathVariable("collectionId") Long collectionId) {
+        try {
+            Collection collection = collectionService.findCollection(collectionId,memberId);
+            CollectionDetailResponseDto dto = collectionService.getDetails(collection, memberId);
+            return ResponseEntity.ok().body(dto);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
