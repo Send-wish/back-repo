@@ -1,8 +1,10 @@
 package link.sendwish.backend.controller;
 
-import link.sendwish.backend.dtos.CollectionRequestDto;
+import link.sendwish.backend.dtos.CollectionCreateRequestDto;
+import link.sendwish.backend.dtos.CollectionUpdateRequestDto;
 import link.sendwish.backend.dtos.CollectionResponseDto;
 import link.sendwish.backend.dtos.ResponseErrorDto;
+import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.MemberService;
@@ -37,7 +39,7 @@ public class CollectionController {
     }
 
     @PostMapping("/collection")
-    public ResponseEntity<?> createCollection(@RequestBody CollectionRequestDto dto) {
+    public ResponseEntity<?> createCollection(@RequestBody CollectionCreateRequestDto dto) {
         try {
             CollectionResponseDto savedCollection
                     = collectionService.createCollection(dto);
@@ -51,5 +53,22 @@ public class CollectionController {
         }
     }
 
+    @PatchMapping("/collection")
+    public ResponseEntity<?> updateCollectionTile(@RequestBody CollectionUpdateRequestDto dto) {
+        try {
+            if (dto.getNewTitle() == null || dto.getMemberId() == null || dto.getCollectionId() == null) {
+                throw new RuntimeException("잘못된 DTO 요청입니다.");
+            }
+            Collection find = collectionService.findCollection(dto.getCollectionId(),dto.getMemberId());
+            CollectionResponseDto responseDto = collectionService.updateCollectionTitle(find, dto);
+            return ResponseEntity.ok().body(responseDto);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
 
 }

@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionRequestDto {
+public class CollectionUpdateRequestDto {
     private String memberId;
-    private String title;
+    private String newTitle;
+    private Long collectionId;
 }
