@@ -28,7 +28,6 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final MemberCollectionRepository memberCollectionRepository;
 
     @Transactional
     public Member createMember(MemberRequestDto dto) {
@@ -57,18 +56,5 @@ public class MemberService {
 
     public Member findMember(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(RuntimeException::new);
-    }
-
-    public List<CollectionResponseDto> findMemberCollection(Member member) {
-        return memberCollectionRepository
-                .findAllByMember(member)
-                .orElseThrow(RuntimeException::new)
-                .stream()
-                .map(target -> CollectionResponseDto
-                        .builder()
-                        .title(target.getCollection().getTitle())
-                        .memberId(target.getMember().getUsername())
-                        .build()
-                ).toList();
     }
 }

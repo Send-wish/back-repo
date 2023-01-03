@@ -25,7 +25,7 @@ public class CollectionController {
     public ResponseEntity<?> getCollectionsByMember(@PathVariable("memberId") String memberId) {
         try {
             Member member = memberService.findMember(memberId);
-            List<CollectionResponseDto> memberCollection = memberService.findMemberCollection(member);
+            List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
             return ResponseEntity.ok().body(memberCollection);
         }catch (Exception e) {
             e.printStackTrace();
