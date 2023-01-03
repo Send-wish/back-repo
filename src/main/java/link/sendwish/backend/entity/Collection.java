@@ -24,4 +24,8 @@ public class Collection extends BaseTime{
     public void addMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.add(memberCollection);
     }
+
+    public void changeTitle(String newTitle) {
+        this.title = newTitle;
+    }
 }

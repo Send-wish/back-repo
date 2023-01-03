@@ -1,6 +1,7 @@
 package link.sendwish.backend.service;
 
-import link.sendwish.backend.dtos.CollectionRequestDto;
+import link.sendwish.backend.dtos.CollectionCreateRequestDto;
+import link.sendwish.backend.dtos.CollectionUpdateRequestDto;
 import link.sendwish.backend.dtos.CollectionResponseDto;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Member;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class CollectionService {
 
 
     @Transactional
-    public CollectionResponseDto createCollection(CollectionRequestDto dto) {
+    public CollectionResponseDto createCollection(CollectionCreateRequestDto dto) {
         Collection collection = Collection.builder()
                 .title(dto.getTitle())
                 .memberCollections(new ArrayList<>())
@@ -72,4 +74,28 @@ public class CollectionService {
         log.info("컬렉션 일괄 조회 [ID] : {}, [컬렉션 갯수] : {}", member.getMemberId(), dtos.size());
         return dtos;
     }
+
+    public Collection findCollection(Long collectionId,String memberId) {
+        Collection find = collectionRepository.findById(collectionId).orElseThrow(RuntimeException::new);
+        log.info("컬렉션 단건 조회 [ID] : {}, [컬렉션 제목] : {}", memberId, find.getTitle());
+        return find;
+    }
+
+    @Transactional
+    public CollectionResponseDto updateCollectionTitle(Collection collection,CollectionUpdateRequestDto dto) {
+        assert Objects.equals(collection.getId(), dto.getCollectionId());
+        if (collection.getTitle().equals(dto.getNewTitle())) {
+            throw new RuntimeException("수정하려는 제목이 동일합니다.");
+        }
+        collection.changeTitle(dto.getNewTitle());
+        Collection findByCache = collectionRepository
+                .findById(dto.getCollectionId()).orElseThrow(RuntimeException::new);
+        assert findByCache.getTitle().equals(dto.getNewTitle());
+        log.info("컬렉션 제목 수정 [ID] : {}, [수정된 컬렉션 제목] : {}", dto.getMemberId(), findByCache.getTitle());
+        return CollectionResponseDto.builder()
+                .title(findByCache.getTitle())
+                .memberId(dto.getMemberId())
+                .build();
+    }
+
 }
