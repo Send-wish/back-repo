@@ -52,6 +52,7 @@ public class CollectionService {
         return CollectionResponseDto.builder()
                 .memberId(member.getMemberId())
                 .title(collection.getTitle())
+                .collectionId(collection.getId())
                 .build();
     }
 

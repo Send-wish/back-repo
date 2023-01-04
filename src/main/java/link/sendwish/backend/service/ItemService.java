@@ -41,6 +41,7 @@ public class ItemService {
                 .imgUrl(item.getImgUrl())
                 .name(item.getName())
                 .price(item.getPrice())
+                .originUrl(item.getOriginUrl())
                 .build();
     }
 }
