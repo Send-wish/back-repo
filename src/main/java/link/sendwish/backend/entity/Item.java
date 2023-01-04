@@ -24,6 +24,8 @@ public class Item {
 
     private String imgUrl;
 
+    private String originUrl;
+
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<CollectionItem> collectionItems = new ArrayList<>();
 

@@ -13,4 +13,5 @@ public class ItemResponseDto {
     private int price;
     private String name;
     private String imgUrl;
+    private String originUrl;
 }
