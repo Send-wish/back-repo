@@ -34,6 +34,9 @@ public class ItemController {
 
     // scrapping-server 연결
     public JSONObject createHttpRequestAndSend(String url) {
+        if (url.contains("http://") != true || url.contains("https://") != true){
+            throw new RuntimeException("잘못된 url 입니다.");
+        }
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -60,6 +63,9 @@ public class ItemController {
     @PostMapping("/parsing")
     public ResponseEntity<?> createItem(@RequestBody ItemCreateRequestDto dto) {
         try {
+            if(dto.getUrl() == null){
+                throw new RuntimeException("잘못된 DTO 입니다.");
+            }
             /*
             * Python Server 호출, DB에 Item 등록
             * */
@@ -86,6 +92,10 @@ public class ItemController {
     @PostMapping("/enrollment")
     public ResponseEntity<?> enrollItem(@RequestBody ItemEnrollmentRequestDto dto) {
         try {
+            if (dto.getCollectionId() == null || dto.getItemId() == null || dto.getMemberId() == null){
+                throw new RuntimeException("잘못된 DTO 입니다.");
+            }
+
             /*
             * find Collection 후 , Item 찾아서 (JPA 1차 캐시) 해당 Item을 Collection에 저장
             * 하고 나서 해당 item 상세 정보를 return
