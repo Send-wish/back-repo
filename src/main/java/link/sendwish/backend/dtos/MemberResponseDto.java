@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberResponseDto {
     private Long id;//mypage
-    private String memberId;
+    private String nickname;
 }

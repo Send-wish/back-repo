@@ -24,7 +24,7 @@ public class Member implements UserDetails {
     private Long id;
 
     @Column(nullable = false,unique = true)
-    private String memberId;
+    private String nickname;
 
     @Column(nullable = false)
     private String password;
@@ -49,7 +49,7 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return memberId;
+        return nickname;
     }
 
     @Override

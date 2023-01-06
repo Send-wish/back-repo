@@ -1,5 +1,9 @@
 package link.sendwish.backend.service;
 
+import link.sendwish.backend.common.exception.CollectionSameTitleException;
+import link.sendwish.backend.common.exception.MemberNotFoundException;
+import link.sendwish.backend.common.exception.CollectionNotFoundException;
+import link.sendwish.backend.common.exception.MemberCollectionNotFoundException;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.repository.CollectionRepository;
@@ -32,7 +36,7 @@ public class CollectionService {
                 .memberCollections(new ArrayList<>())
                 .build();
 
-        Member member = memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(RuntimeException::new);
+        Member member = memberRepository.findBynickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
         MemberCollection memberCollection = MemberCollection.builder()
                 .member(member)
                 .collection(collection)
@@ -46,11 +50,10 @@ public class CollectionService {
         member.addMemberCollection(memberCollection);
         collection.addMemberCollection(memberCollection);//Cascade Option으로 insert문 자동 호출
 
-
         assert collection.getTitle().equals(save.getTitle());
-        log.info("컬렉션 생성 [ID] : {}, [컬렉션 제목] : {}", member.getMemberId(), save.getTitle());
+        log.info("컬렉션 생성 [ID] : {}, [컬렉션 제목] : {}", member.getNickname(), save.getTitle());
         return CollectionResponseDto.builder()
-                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
                 .title(collection.getTitle())
                 .collectionId(collection.getId())
                 .build();
@@ -59,31 +62,32 @@ public class CollectionService {
     public List<CollectionResponseDto> findCollectionsByMember(Member member) {
         List<CollectionResponseDto> dtos = memberCollectionRepository
                 .findAllByMember(member)
-                .orElseThrow(RuntimeException::new)
+                .orElseThrow(MemberCollectionNotFoundException::new)
                 .stream()
                 .map(target -> CollectionResponseDto
                         .builder()
                         .title(target.getCollection().getTitle())
-                        .memberId(target.getMember().getUsername())
+                        .nickname(target.getMember().getUsername())
                         .collectionId(target.getCollection().getId())
                         .build()
                 ).toList();
-        log.info("컬렉션 일괄 조회 [ID] : {}, [컬렉션 갯수] : {}", member.getMemberId(), dtos.size());
+
+        log.info("컬렉션 일괄 조회 [ID] : {}, [컬렉션 갯수] : {}", member.getNickname(), dtos.size());
         return dtos;
     }
 
-    public Collection findCollection(Long collectionId,String memberId) {
-        Collection find = collectionRepository.findById(collectionId).orElseThrow(RuntimeException::new);
-        log.info("컬렉션 단건 조회 [ID] : {}, [컬렉션 제목] : {}", memberId, find.getTitle());
+    public Collection findCollection(Long collectionId,String nickname) {
+        Collection find = collectionRepository.findById(collectionId).orElseThrow(CollectionNotFoundException::new);
+        log.info("컬렉션 단건 조회 [ID] : {}, [컬렉션 제목] : {}", nickname, find.getTitle());
         return find;
     }
 
-    public CollectionDetailResponseDto getDetails(Collection collection,String memberId) {
+    public CollectionDetailResponseDto getDetails(Collection collection,String nickname) {
         List<Item> items = collection.getCollectionItems()
                 .stream().map(CollectionItem::getItem).toList();
         return CollectionDetailResponseDto.builder()
                 .collectionId(collection.getId())
-                .memberId(memberId)
+                .nickname(nickname)
                 .dtos(items.stream().map(
                         target -> ItemResponseDto.builder()
                                 .price(target.getPrice())
@@ -97,16 +101,16 @@ public class CollectionService {
     public CollectionResponseDto updateCollectionTitle(Collection collection,CollectionUpdateRequestDto dto) {
         assert Objects.equals(collection.getId(), dto.getCollectionId());
         if (collection.getTitle().equals(dto.getNewTitle())) {
-            throw new RuntimeException("수정하려는 제목이 동일합니다.");
+            throw new CollectionSameTitleException();
         }
         collection.changeTitle(dto.getNewTitle());
         Collection findByCache = collectionRepository
-                .findById(dto.getCollectionId()).orElseThrow(RuntimeException::new);
+                .findById(dto.getCollectionId()).orElseThrow(CollectionNotFoundException::new);
         assert findByCache.getTitle().equals(dto.getNewTitle());
-        log.info("컬렉션 제목 수정 [ID] : {}, [수정된 컬렉션 제목] : {}", dto.getMemberId(), findByCache.getTitle());
+        log.info("컬렉션 제목 수정 [ID] : {}, [수정된 컬렉션 제목] : {}", dto.getNickname(), findByCache.getTitle());
         return CollectionResponseDto.builder()
                 .title(findByCache.getTitle())
-                .memberId(dto.getMemberId())
+                .nickname(dto.getNickname())
                 .build();
     }
 

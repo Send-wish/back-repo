@@ -14,5 +14,5 @@ import java.util.List;
 public class CollectionDetailResponseDto {
     List<ItemResponseDto> dtos;
     Long collectionId;
-    String memberId;
+    String nickname;
 }
