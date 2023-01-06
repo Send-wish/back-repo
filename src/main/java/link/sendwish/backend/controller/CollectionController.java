@@ -38,9 +38,12 @@ public class CollectionController {
     @PostMapping("/collection")
     public ResponseEntity<?> createCollection(@RequestBody CollectionCreateRequestDto dto) {
         try {
-            CollectionResponseDto savedCollection
-                    = collectionService.createCollection(dto);
-            return ResponseEntity.ok().body(savedCollection);
+            if (dto.getMemberId() == null || dto.getTitle() == null) {
+                throw new RuntimeException("잘못된 DTO 요청입니다.");
+            }
+                CollectionResponseDto savedCollection
+                        = collectionService.createCollection(dto);
+                return ResponseEntity.ok().body(savedCollection);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
@@ -51,7 +54,7 @@ public class CollectionController {
     }
 
     @PatchMapping("/collection")
-    public ResponseEntity<?> updateCollectionTile(@RequestBody CollectionUpdateRequestDto dto) {
+    public ResponseEntity<?> updateCollectionTitle(@RequestBody CollectionUpdateRequestDto dto) {
         try {
             if (dto.getNewTitle() == null || dto.getMemberId() == null || dto.getCollectionId() == null) {
                 throw new RuntimeException("잘못된 DTO 요청입니다.");

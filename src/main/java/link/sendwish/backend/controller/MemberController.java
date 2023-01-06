@@ -30,6 +30,9 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody MemberRequestDto dto) {
         try {
+            if(dto.getMemberId() == null || dto.getPassword() == null){
+                throw new RuntimeException("잘못된 DTO 입니다.");
+            }
             log.info("id = {}", dto.getMemberId());
             log.info("pw = {}", dto.getPassword());
             Member member = memberService.createMember(dto);
@@ -49,6 +52,9 @@ public class MemberController {
     @PostMapping("signin")
     public ResponseEntity<?> signin(@RequestBody MemberRequestDto dto) {
         try {
+            if (dto.getMemberId() == null || dto.getPassword() == null){
+                throw new RuntimeException("잘못된 DTO 입니다.");
+            }
             TokenInfo tokenInfo = memberService.login(dto.getMemberId(), dto.getPassword());
             return ResponseEntity.ok().body(tokenInfo);
         }catch (Exception e) {
