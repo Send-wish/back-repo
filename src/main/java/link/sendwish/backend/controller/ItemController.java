@@ -34,10 +34,6 @@ public class ItemController {
 
     // scrapping-server 연결
     public JSONObject createHttpRequestAndSend(String url) {
-        if (url.contains("http://") == true || url.contains("https://") == true){
-            throw new RuntimeException("잘못된 url 입니다.");
-        }
-
         RestTemplate restTemplate = new RestTemplate();
 
         // Request_body 생성
