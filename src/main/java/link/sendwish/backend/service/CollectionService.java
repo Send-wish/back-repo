@@ -41,14 +41,14 @@ public class CollectionService {
         /*
         * Collection의 Cascade 옵션으로 인해 MemberCollectionRepository.save() 호출 X
         * */
-        collectionRepository.save(collection);
+        Collection save = collectionRepository.save(collection);
 
         member.addMemberCollection(memberCollection);
         collection.addMemberCollection(memberCollection);//Cascade Option으로 insert문 자동 호출
 
 
-        log.info("컬렉션 생성 [ID] : {}, [컬렉션 제목] : {}", member.getMemberId(), collection.getTitle());
-
+        assert collection.getTitle().equals(save.getTitle());
+        log.info("컬렉션 생성 [ID] : {}, [컬렉션 제목] : {}", member.getMemberId(), save.getTitle());
         return CollectionResponseDto.builder()
                 .memberId(member.getMemberId())
                 .title(collection.getTitle())
@@ -65,7 +65,7 @@ public class CollectionService {
                         .builder()
                         .title(target.getCollection().getTitle())
                         .memberId(target.getMember().getUsername())
-                        .collectionId(target.getId())
+                        .collectionId(target.getCollection().getId())
                         .build()
                 ).toList();
         log.info("컬렉션 일괄 조회 [ID] : {}, [컬렉션 갯수] : {}", member.getMemberId(), dtos.size());
