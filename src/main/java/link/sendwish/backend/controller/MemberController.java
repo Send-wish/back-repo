@@ -2,6 +2,7 @@ package link.sendwish.backend.controller;
 
 
 import link.sendwish.backend.auth.TokenInfo;
+import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.ResponseErrorDto;
 import link.sendwish.backend.dtos.MemberRequestDto;
 import link.sendwish.backend.dtos.MemberResponseDto;
@@ -30,15 +31,15 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody MemberRequestDto dto) {
         try {
-            if(dto.getMemberId() == null || dto.getPassword() == null){
-                throw new RuntimeException("잘못된 DTO 입니다.");
+            if(dto.getNickname() == null || dto.getPassword() == null){
+                throw new DtoNullException();
             }
-            log.info("id = {}", dto.getMemberId());
+            log.info("id = {}", dto.getNickname());
             log.info("pw = {}", dto.getPassword());
             Member member = memberService.createMember(dto);
             MemberResponseDto returnDto = MemberResponseDto.builder()
                     .id(member.getId())
-                    .memberId(member.getMemberId()).build();
+                    .nickname(member.getNickname()).build();
             return ResponseEntity.ok().body(returnDto);
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,10 +53,10 @@ public class MemberController {
     @PostMapping("signin")
     public ResponseEntity<?> signin(@RequestBody MemberRequestDto dto) {
         try {
-            if (dto.getMemberId() == null || dto.getPassword() == null){
-                throw new RuntimeException("잘못된 DTO 입니다.");
+            if (dto.getNickname() == null || dto.getPassword() == null){
+                throw new DtoNullException();
             }
-            TokenInfo tokenInfo = memberService.login(dto.getMemberId(), dto.getPassword());
+            TokenInfo tokenInfo = memberService.login(dto.getNickname(), dto.getPassword());
             return ResponseEntity.ok().body(tokenInfo);
         }catch (Exception e) {
             e.printStackTrace();

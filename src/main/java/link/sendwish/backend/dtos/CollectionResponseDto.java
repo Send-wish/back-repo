@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class CollectionResponseDto {
     private Long collectionId;
     private String title;
-    private String memberId;
+    private String nickname;
     //추후 item 관련 field 추가
 }

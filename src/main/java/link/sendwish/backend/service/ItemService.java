@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import link.sendwish.backend.common.exception.ItemNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,13 +23,12 @@ public class ItemService {
     @Transactional
     public Long saveItem(Item item) {
         Item save = itemRepository.save(item);
-
         return save.getId();
     }
 
     @Transactional
     public ItemResponseDto enrollItemToCollection(Collection collection, Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(RuntimeException::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         CollectionItem collectionItem = CollectionItem.builder()
                 .item(item)
                 .collection(collection)

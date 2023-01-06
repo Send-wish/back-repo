@@ -1,5 +1,6 @@
 package link.sendwish.backend.controller;
 
+import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.ItemCreateRequestDto;
 import link.sendwish.backend.dtos.ItemEnrollmentRequestDto;
 import link.sendwish.backend.dtos.ItemResponseDto;
@@ -60,7 +61,7 @@ public class ItemController {
     public ResponseEntity<?> createItem(@RequestBody ItemCreateRequestDto dto) {
         try {
             if(dto.getUrl() == null){
-                throw new RuntimeException("잘못된 DTO 입니다.");
+                throw new DtoNullException();
             }
             /*
             * Python Server 호출, DB에 Item 등록
@@ -88,15 +89,15 @@ public class ItemController {
     @PostMapping("/enrollment")
     public ResponseEntity<?> enrollItem(@RequestBody ItemEnrollmentRequestDto dto) {
         try {
-            if (dto.getCollectionId() == null || dto.getItemId() == null || dto.getMemberId() == null){
-                throw new RuntimeException("잘못된 DTO 입니다.");
+            if (dto.getCollectionId() == null || dto.getItemId() == null || dto.getNickname() == null){
+                throw new DtoNullException();
             }
 
             /*
             * find Collection 후 , Item 찾아서 (JPA 1차 캐시) 해당 Item을 Collection에 저장
             * 하고 나서 해당 item 상세 정보를 return
             * */
-            Collection collection = collectionService.findCollection(dto.getCollectionId(), dto.getMemberId());
+            Collection collection = collectionService.findCollection(dto.getCollectionId(), dto.getNickname());
             ItemResponseDto itemResponseDto = itemService.enrollItemToCollection(collection, dto.getItemId());
             return ResponseEntity.ok().body(itemResponseDto);
         }catch (Exception e) {

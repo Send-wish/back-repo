@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class ItemEnrollmentRequestDto {
     private Long itemId;
     private Long collectionId;
-    private String memberId;
+    private String nickname;
 }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CollectionUpdateRequestDto {
-    private String memberId;
+    private String nickname;
     private String newTitle;
     private Long collectionId;
 }

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberRequestDto {
-    private String memberId;
+    private String nickname;
     private String password;
 }
