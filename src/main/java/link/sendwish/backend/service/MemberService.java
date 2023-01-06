@@ -2,6 +2,7 @@ package link.sendwish.backend.service;
 
 import link.sendwish.backend.auth.JwtTokenProvider;
 import link.sendwish.backend.auth.TokenInfo;
+import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.dtos.CollectionResponseDto;
 import link.sendwish.backend.dtos.MemberRequestDto;
 import link.sendwish.backend.entity.Member;
@@ -45,7 +46,7 @@ public class MemberService {
 
     @Transactional
     public TokenInfo login(String memberId, String password) {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(RuntimeException::new);
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
         if (passwordEncoder.matches(password, member.getPassword())) {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -55,6 +56,6 @@ public class MemberService {
     }
 
     public Member findMember(String memberId) {
-        return memberRepository.findByMemberId(memberId).orElseThrow(RuntimeException::new);
+        return memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
     }
 }
