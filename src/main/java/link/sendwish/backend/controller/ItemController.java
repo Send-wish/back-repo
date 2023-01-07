@@ -18,10 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -100,6 +97,25 @@ public class ItemController {
             Collection collection = collectionService.findCollection(dto.getCollectionId(), dto.getNickname());
             ItemResponseDto itemResponseDto = itemService.enrollItemToCollection(collection, dto.getItemId());
             return ResponseEntity.ok().body(itemResponseDto);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<?> deleteItem(@PathVariable("itemId") Long itemId) {
+        try{
+            /*
+             * find Collection 후 , Item 찾아서 (JPA 1차 캐시) 해당 Item을 Collection에 저장
+             * 하고 나서 해당 item 상세 정보를 return
+             * */
+            itemService.deleteItem(itemId);
+
+            return ResponseEntity.ok("Entity deleted");
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()

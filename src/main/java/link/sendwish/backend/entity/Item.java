@@ -26,10 +26,21 @@ public class Item {
 
     private String originUrl;
 
+    @Builder.Default
+    private int reference = 1;
+
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<CollectionItem> collectionItems = new ArrayList<>();
 
     public void addCollectionItem(CollectionItem collectionItem) {
         this.collectionItems.add(collectionItem);
+    }
+
+    public void addReference() {
+        this.reference += 1;
+    }
+
+    public void subtractReference() {
+        this.reference -= 1;
     }
 }

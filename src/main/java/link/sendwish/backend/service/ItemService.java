@@ -44,4 +44,20 @@ public class ItemService {
                 .originUrl(item.getOriginUrl())
                 .build();
     }
+
+    @Transactional
+    public void deleteItem(Long itemId) {
+        Item item = itemRepository
+                .findById(itemId)
+                .orElseThrow(ItemNotFoundException::new);
+
+        if(item.getReference() == 1){
+            itemRepository.delete(item);
+            log.info("아이템 삭제 [ID] : {}, [참조 갯수] : {}", itemId, 0);
+        }else {
+            item.subtractReference();
+            log.info("아이템 삭제 [ID] : {}, [참조 갯수] : {}", itemId, item.getReference());
+        }
+    }
+
 }
