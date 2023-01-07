@@ -5,6 +5,7 @@ import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.common.exception.MemberExisitingIDException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.common.exception.PasswordNotSameException;
+import link.sendwish.backend.dtos.MemberFriendAddRequestDto;
 import link.sendwish.backend.dtos.MemberRequestDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.repository.MemberRepository;
@@ -44,6 +45,7 @@ public class MemberService {
                 .password(encode)
                 .roles(List.of("USER"))
                 .memberCollections(new ArrayList<>())
+                .friends(new ArrayList<>())
                 .build();
         Member savedMember = memberRepository.save(member);
         log.info("새로운 회원가입 [ID] : {}, [PW] : {}", savedMember.getNickname(), savedMember.getPassword());
@@ -75,5 +77,18 @@ public class MemberService {
         }
         return true;
     }
+
+    @Transactional
+    public Member addFriendToMe(MemberFriendAddRequestDto dto){
+        Long myId = dto.getMemberId();
+        Long friendId = dto.getAddMemberId();
+
+        Member myMember = memberRepository.findById(myId).orElseThrow(MemberNotFoundException::new);
+        Member friendMember = memberRepository.findById(friendId).orElseThrow(MemberNotFoundException::new);
+
+        myMember.addFriendInList(friendMember);
+        return friendMember;
+    }
+
 }
 
