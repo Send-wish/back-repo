@@ -111,6 +111,7 @@ public class CollectionController {
                 CollectionAddUserDto CollectionAddUser = CollectionAddUserDto.builder()
                         .collectionId(find.getId())
                         .nickname(memberIdList.get(i))
+                        .build();
                 responseDto = collectionService.addUserToCollection(find, CollectionAddUser);
             }
 
