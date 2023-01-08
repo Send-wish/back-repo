@@ -3,10 +3,7 @@ package link.sendwish.backend.controller;
 
 import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.common.exception.DtoNullException;
-import link.sendwish.backend.dtos.MemberFriendAddRequestDto;
-import link.sendwish.backend.dtos.ResponseErrorDto;
-import link.sendwish.backend.dtos.MemberRequestDto;
-import link.sendwish.backend.dtos.MemberResponseDto;
+import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +29,7 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody MemberRequestDto dto) {
         try {
-            if (dto.getNickname() == null || dto.getPassword() == null) {
+            if (dto.getNickname() == null || dto.getPassword() == null || dto.getNickname() == "" || dto.getPassword() == "") {
                 throw new DtoNullException();
             }
             log.info("id = {}", dto.getNickname());
@@ -74,12 +71,10 @@ public class MemberController {
             if (dto.getMemberId() == null || dto.getAddMemberId() == null) {
                 throw new DtoNullException();
             }
-            Member friendMember = memberService.addFriendToMe(dto);
-            MemberResponseDto returnDto = MemberResponseDto.builder()
-                    .id(friendMember.getId())
-                    .nickname(friendMember.getNickname())
-                    .build();
-            return ResponseEntity.ok().body(returnDto);
+
+            MemberFriendAddResponseDto dtos = memberService.addFriendToMe(dto);
+
+            return ResponseEntity.ok().body(dtos);
         } catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()

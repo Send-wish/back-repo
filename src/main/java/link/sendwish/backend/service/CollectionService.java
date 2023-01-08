@@ -36,7 +36,7 @@ public class CollectionService {
                 .memberCollections(new ArrayList<>())
                 .build();
 
-        Member member = memberRepository.findBynickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByNickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
         MemberCollection memberCollection = MemberCollection.builder()
                 .member(member)
                 .collection(collection)
