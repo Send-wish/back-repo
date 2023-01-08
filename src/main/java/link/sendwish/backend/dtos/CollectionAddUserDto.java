@@ -5,14 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionSharedCreateRequestDto {
-    private List<String> memberIdList;
-    private String title;
-    private Long targetCollectionId;
+public class CollectionAddUserDto {
+    private String nickname;
+    private Long collectionId;
 }

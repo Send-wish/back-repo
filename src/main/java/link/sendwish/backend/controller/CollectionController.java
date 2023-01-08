@@ -88,4 +88,46 @@ public class CollectionController {
         }
     }
 
+    @PostMapping("/collection/shared")
+    public ResponseEntity<?> sharedCollection(@RequestBody CollectionSharedCreateRequestDto dto) {
+        try {
+            if (dto.getTitle() == null || dto.getTitle() == null) {
+                throw new RuntimeException("잘못된 DTO 요청입니다.");
+            }
+            List<String> memberIdList = dto.getMemberIdList();
+
+            // 공유 컬랙션 생성
+            CollectionCreateRequestDto createDto = CollectionCreateRequestDto.builder().build();
+            createDto.setTitle(dto.getTitle());
+            createDto.setNickname(memberIdList.get(0));
+            CollectionResponseDto savedCollection
+                    = collectionService.createCollection(createDto);
+
+            // 생성된 컬랙션에 친구 추가
+            Collection find = collectionService.findCollection
+                    (savedCollection.getCollectionId(),savedCollection.getNickname());
+            CollectionSharedDetailResponseDto responseDto = null;
+            for (var i = 1; i < memberIdList.size(); i += 1) {
+                CollectionAddUserDto CollectionAddUser = CollectionAddUserDto.builder().build();
+                CollectionAddUser.setCollectionId(find.getId());
+                CollectionAddUser.setNickname(memberIdList.get(i));
+                responseDto = collectionService.addUserToCollection(find, CollectionAddUser);
+            }
+
+            // 복사할 컬랙션 존재하면 해당 컬랙션 아이템 전부 복사
+            if (dto.getTargetCollectionId() != null) {
+                Collection findTarget = collectionService.findCollection
+                        (dto.getTargetCollectionId(),savedCollection.getNickname()); // 1차 캐시
+                responseDto = collectionService.copyItemToCollection(findTarget, find);
+            }
+            return ResponseEntity.ok().body(responseDto);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
 }

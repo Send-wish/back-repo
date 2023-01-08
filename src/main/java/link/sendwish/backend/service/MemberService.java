@@ -53,7 +53,7 @@ public class MemberService {
     @Transactional
     public TokenInfo login(String nickname, String password) {
         // 멤버 아이디가 있는지, 패스워드가 제대로 되었는지
-        Member member = memberRepository.findBynickname(nickname).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByNickname(nickname).orElseThrow(MemberNotFoundException::new);
         if (passwordEncoder.matches(password, member.getPassword())) {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(nickname, password);
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -63,14 +63,14 @@ public class MemberService {
     }
 
     public Member findMember(String nickname) {
-        return memberRepository.findBynickname(nickname).orElseThrow(MemberNotFoundException::new);
+        return memberRepository.findByNickname(nickname).orElseThrow(MemberNotFoundException::new);
     }
 
     /**
      * 아이디가 존재하는지 확인
      */
     public boolean checkExistingID(String nickname ){
-        if (!memberRepository.findBynickname(nickname).isEmpty()) {
+        if (!memberRepository.findByNickname(nickname).isEmpty()) {
             return false;
         }
         return true;

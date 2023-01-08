@@ -11,8 +11,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionSharedCreateRequestDto {
-    private List<String> memberIdList;
-    private String title;
-    private Long targetCollectionId;
+public class CollectionSharedDetailResponseDto {
+    List<ItemResponseDto> dtos;
+    Long collectionId;
+    String title;
+    List<String> memberIdList;
 }

@@ -36,7 +36,7 @@ public class CollectionService {
                 .memberCollections(new ArrayList<>())
                 .build();
 
-        Member member = memberRepository.findBynickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByNickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
         MemberCollection memberCollection = MemberCollection.builder()
                 .member(member)
                 .collection(collection)
@@ -112,6 +112,60 @@ public class CollectionService {
                 .title(findByCache.getTitle())
                 .nickname(dto.getNickname())
                 .build();
+    }
+
+    @Transactional
+    public CollectionSharedDetailResponseDto addUserToCollection(Collection find, CollectionAddUserDto dto) {
+        Member member = memberRepository.findByNickname(dto.getNickname()).orElseThrow(RuntimeException::new);
+        find.addReference();
+        MemberCollection memberCollection = MemberCollection.builder()
+                .member(member)
+                .collection(find)
+                .build();
+
+        /*
+         * Collection의 Cascade 옵션으로 인해 MemberCollectionRepository.save() 호출 X
+         * */
+        Collection save = collectionRepository.save(find);
+
+        member.addMemberCollection(memberCollection);
+        find.addMemberCollection(memberCollection);//Cascade Option으로 insert문 자동 호출
+
+        assert find.getId().equals(save.getId());
+        log.info("컬렉션에 사용자 추가 [ID] : {}, [컬렉션 제목] : {}", member.getNickname(), save.getTitle());
+        return CollectionSharedDetailResponseDto.builder()
+                .title(save.getTitle())
+                .collectionId(save.getId())
+                .build();
+    }
+
+    @Transactional
+    public CollectionSharedDetailResponseDto copyItemToCollection(Collection copyCollection, Collection target) {
+        List<Item> items = copyCollection.getCollectionItems()
+                .stream().map(CollectionItem::getItem).toList();
+
+        // 아이템 복사
+        for (var i = 0; i < items.size(); i += 1) {
+            items.get(i).addReference(); // 아이템 ref += 1
+            CollectionItem collectionItem = CollectionItem.builder()
+                    .item(items.get(i))
+                    .collection(target)
+                    .build();
+            items.get(i).addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
+        }
+        Collection findByCache = collectionRepository
+                .findById(target.getId()).orElseThrow(CollectionNotFoundException::new);
+        log.info("컬렉션 아이템 복사 [복사된 컬랙션 제목] : {}", findByCache.getTitle());
+        return CollectionSharedDetailResponseDto.builder()
+                .collectionId(target.getId())
+                .title(target.getTitle())
+                .dtos(items.stream().map(
+                        item -> ItemResponseDto.builder()
+                                .price(item.getPrice())
+                                .name(item.getName())
+                                .imgUrl(item.getImgUrl())
+                                .build()
+                ).toList()).build();
     }
 
 }
