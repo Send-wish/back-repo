@@ -144,15 +144,14 @@ public class CollectionService {
         List<Item> items = copyCollection.getCollectionItems()
                 .stream().map(CollectionItem::getItem).toList();
 
-        // 아이템 복사
-        for (var i = 0; i < items.size(); i += 1) {
-            items.get(i).addReference(); // 아이템 ref += 1
+        items.forEach(item -> {
+            item.addReference(); // 아이템 ref += 1
             CollectionItem collectionItem = CollectionItem.builder()
-                    .item(items.get(i))
+                    .item(item)
                     .collection(target)
                     .build();
-            items.get(i).addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
-        }
+            item.addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
+        });
         Collection findByCache = collectionRepository
                 .findById(target.getId()).orElseThrow(CollectionNotFoundException::new);
         log.info("컬렉션 아이템 복사 [복사된 컬랙션 제목] : {}", findByCache.getTitle());

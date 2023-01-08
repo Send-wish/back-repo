@@ -108,9 +108,9 @@ public class CollectionController {
                     (savedCollection.getCollectionId(),savedCollection.getNickname());
             CollectionSharedDetailResponseDto responseDto = null;
             for (var i = 1; i < memberIdList.size(); i += 1) {
-                CollectionAddUserDto CollectionAddUser = CollectionAddUserDto.builder().build();
-                CollectionAddUser.setCollectionId(find.getId());
-                CollectionAddUser.setNickname(memberIdList.get(i));
+                CollectionAddUserDto CollectionAddUser = CollectionAddUserDto.builder()
+                        .collectionId(find.getId())
+                        .nickname(memberIdList.get(i))
                 responseDto = collectionService.addUserToCollection(find, CollectionAddUser);
             }
 
