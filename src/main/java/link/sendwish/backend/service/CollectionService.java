@@ -64,6 +64,7 @@ public class CollectionService {
                 .findAllByMember(member)
                 .orElseThrow(MemberCollectionNotFoundException::new)
                 .stream()
+                .filter(collection -> collection.getCollection().getReference() == 1)
                 .map(target -> CollectionResponseDto
                         .builder()
                         .title(target.getCollection().getTitle())
