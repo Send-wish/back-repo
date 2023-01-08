@@ -24,6 +24,9 @@ public class Collection extends BaseTime{
 
     private String title;
 
+    @Builder.Default
+    private int reference = 1;
+
     public void addMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.add(memberCollection);
     }
@@ -34,5 +37,13 @@ public class Collection extends BaseTime{
 
     public void changeTitle(String newTitle) {
         this.title = newTitle;
+    }
+
+    public void addReference() {
+        this.reference += 1;
+    }
+
+    public void subtractReference() {
+        this.reference -= 1;
     }
 }
