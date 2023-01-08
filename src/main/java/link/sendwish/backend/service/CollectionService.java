@@ -168,4 +168,22 @@ public class CollectionService {
                 ).toList()).build();
     }
 
+    public List<CollectionResponseDto> findSharedCollectionsByMember(Member member) {
+        List<CollectionResponseDto> dtos = memberCollectionRepository
+                .findAllByMember(member)
+                .orElseThrow(MemberCollectionNotFoundException::new)
+                .stream()
+                .filter(collection -> collection.getCollection().getReference() > 1)
+                .map(target -> CollectionResponseDto
+                        .builder()
+                        .title(target.getCollection().getTitle())
+                        .nickname(target.getMember().getUsername())
+                        .collectionId(target.getCollection().getId())
+                        .build()
+                ).toList();
+
+        log.info("공유 컬렉션 일괄 조회 [ID] : {}, [공유 컬렉션 갯수] : {}", member.getNickname(), dtos.size());
+        return dtos;
+    }
+
 }

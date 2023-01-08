@@ -130,4 +130,19 @@ public class CollectionController {
         }
     }
 
+    @GetMapping("/collections/shared/{nickname}")
+    public ResponseEntity<?> getCollectionsSharedByMember(@PathVariable("nickname") String nickname) {
+        try {
+            Member member = memberService.findMember(nickname);
+            List<CollectionResponseDto> memberCollection = collectionService.findSharedCollectionsByMember(member);
+            return ResponseEntity.ok().body(memberCollection);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
 }
