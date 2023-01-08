@@ -90,4 +90,21 @@ public class CollectionController {
         }
     }
 
+    @DeleteMapping("/collection/{nickname}/{collectionId}")
+    public ResponseEntity<?> deleteCollection(@PathVariable("nickname") String nickname,
+                                              @PathVariable("collectionId") Long collectionId) {
+        try {
+            CollectionResponseDto dtos = collectionService.deleteCollection(collectionId, nickname);
+            return ResponseEntity.ok().body(dtos);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+
+
 }

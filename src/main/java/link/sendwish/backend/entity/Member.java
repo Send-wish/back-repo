@@ -44,6 +44,10 @@ public class Member implements UserDetails {
         this.memberCollections.add(memberCollection);
     }
 
+    public void deleteMemberCollection(MemberCollection memberCollection) {
+        this.memberCollections.remove(memberCollection);
+    }
+
     public void addFriendInList(Member friend){ this.friends.add(friend); }
 
     @Override
