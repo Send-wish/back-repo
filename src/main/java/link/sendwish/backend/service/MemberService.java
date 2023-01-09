@@ -44,6 +44,7 @@ public class MemberService {
                 .password(encode)
                 .roles(List.of("USER"))
                 .memberCollections(new ArrayList<>())
+                .memberItems(new ArrayList<>())
                 .friends(new ArrayList<>())
                 .build();
         Member savedMember = memberRepository.save(member);

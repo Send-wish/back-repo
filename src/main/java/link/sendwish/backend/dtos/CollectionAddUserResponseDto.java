@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemCreateRequestDto {
-    private String url;
+public class CollectionAddUserResponseDto {
     private String nickname;
+    Long collectionId;
 }

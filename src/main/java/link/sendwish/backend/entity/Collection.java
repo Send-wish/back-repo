@@ -39,6 +39,10 @@ public class Collection extends BaseTime{
         this.collectionItems.add(collectionItem);
     }
 
+    public void deleteCollectionItem(CollectionItem collectionItem) {
+        this.collectionItems.remove(collectionItem);
+    }
+
     public void changeTitle(String newTitle) {
         this.title = newTitle;
     }

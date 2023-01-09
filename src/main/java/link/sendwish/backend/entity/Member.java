@@ -37,6 +37,9 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<MemberCollection> memberCollections = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<MemberItem> memberItems = new ArrayList<>();
+
     @OneToMany
     private List<Member> friends = new ArrayList<>();
 
@@ -46,6 +49,14 @@ public class Member implements UserDetails {
 
     public void deleteMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.remove(memberCollection);
+    }
+
+    public void addMemberItem(MemberItem memberItem) {
+        this.memberItems.add(memberItem);
+    }
+
+    public void deleteMemberItem(MemberItem memberItem) {
+        this.memberItems.remove(memberItem);
     }
 
     public void addFriendInList(Member friend){ this.friends.add(friend); }

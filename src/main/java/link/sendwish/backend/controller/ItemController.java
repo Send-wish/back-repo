@@ -18,11 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -73,8 +72,10 @@ public class ItemController {
                     .price((Integer)jsonObject.get("price"))
                     .imgUrl((String)jsonObject.get("img"))
                     .originUrl((String)jsonObject.get("url"))
+                    .memberItems(new ArrayList<>())
+                    .collectionItems(new ArrayList<>())
                     .build();
-            Long saveItem = itemService.saveItem(item);
+            Long saveItem = itemService.saveItem(item, dto.getNickname());
 
             return ResponseEntity.ok().body(saveItem);
         }catch (Exception e) {
@@ -100,6 +101,26 @@ public class ItemController {
             Collection collection = collectionService.findCollection(dto.getCollectionId(), dto.getNickname());
             ItemResponseDto itemResponseDto = itemService.enrollItemToCollection(collection, dto.getItemId());
             return ResponseEntity.ok().body(itemResponseDto);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+    @DeleteMapping("/{nickname}/{itemId}")
+    public ResponseEntity<?> deleteItem(@PathVariable("nickname") String nickname,
+                                        @PathVariable("itemId") Long itemId) {
+        try{
+            /*
+             * find Collection 후 , Item 찾아서 (JPA 1차 캐시) 해당 Item을 Collection에 저장
+             * 하고 나서 해당 item 상세 정보를 return
+             * */
+            itemService.deleteItem(nickname, itemId);
+
+            return ResponseEntity.ok("Entity deleted");
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
