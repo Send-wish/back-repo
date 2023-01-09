@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ItemCreateRequestDto {
     private String url;
+    private String nickname;
 }

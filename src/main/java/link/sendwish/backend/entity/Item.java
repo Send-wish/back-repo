@@ -32,8 +32,23 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<CollectionItem> collectionItems = new ArrayList<>();
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<MemberItem> memberItems = new ArrayList<>();
+
     public void addCollectionItem(CollectionItem collectionItem) {
         this.collectionItems.add(collectionItem);
+    }
+
+    public void deleteCollectionItem(CollectionItem collectionItem) {
+        this.collectionItems.remove(collectionItem);
+    }
+
+    public void addMemberItem(MemberItem memberItem) {
+        this.memberItems.add(memberItem);
+    }
+
+    public void deleteMemberItem(MemberItem memberItem) {
+        this.memberItems.remove(memberItem);
     }
 
     public void addReference() {

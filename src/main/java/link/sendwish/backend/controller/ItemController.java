@@ -21,6 +21,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -70,8 +72,10 @@ public class ItemController {
                     .price((Integer)jsonObject.get("price"))
                     .imgUrl((String)jsonObject.get("img"))
                     .originUrl((String)jsonObject.get("url"))
+                    .memberItems(new ArrayList<>())
+                    .collectionItems(new ArrayList<>())
                     .build();
-            Long saveItem = itemService.saveItem(item);
+            Long saveItem = itemService.saveItem(item, dto.getNickname());
 
             return ResponseEntity.ok().body(saveItem);
         }catch (Exception e) {
@@ -106,14 +110,15 @@ public class ItemController {
         }
     }
 
-    @DeleteMapping("/{itemId}")
-    public ResponseEntity<?> deleteItem(@PathVariable("itemId") Long itemId) {
+    @DeleteMapping("/{nickname}/{itemId}")
+    public ResponseEntity<?> deleteItem(@PathVariable("nickname") String nickname,
+                                        @PathVariable("itemId") Long itemId) {
         try{
             /*
              * find Collection 후 , Item 찾아서 (JPA 1차 캐시) 해당 Item을 Collection에 저장
              * 하고 나서 해당 item 상세 정보를 return
              * */
-            itemService.deleteItem(itemId);
+            itemService.deleteItem(nickname, itemId);
 
             return ResponseEntity.ok("Entity deleted");
         }catch (Exception e) {

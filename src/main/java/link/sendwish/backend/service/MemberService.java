@@ -44,6 +44,7 @@ public class MemberService {
                 .password(encode)
                 .roles(List.of("USER"))
                 .memberCollections(new ArrayList<>())
+                .memberItems(new ArrayList<>())
                 .build();
         Member savedMember = memberRepository.save(member);
         log.info("새로운 회원가입 [ID] : {}, [PW] : {}", savedMember.getNickname(), savedMember.getPassword());
