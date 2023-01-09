@@ -1,6 +1,5 @@
 package link.sendwish.backend.entity;
 
-import link.sendwish.backend.repository.MemberRepository;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,8 +39,9 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<MemberItem> memberItems = new ArrayList<>();
 
-    @OneToMany
-    private List<Member> friends = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "member_id")
+    private List<MemberFriend> friends = new ArrayList<>();
 
     public void addMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.add(memberCollection);
@@ -59,7 +59,7 @@ public class Member implements UserDetails {
         this.memberItems.remove(memberItem);
     }
 
-    public void addFriendInList(Member friend){ this.friends.add(friend); }
+    public void addFriendInList(MemberFriend friend){ this.friends.add(friend); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

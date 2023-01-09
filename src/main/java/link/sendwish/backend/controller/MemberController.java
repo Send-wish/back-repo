@@ -71,9 +71,7 @@ public class MemberController {
             if (dto.getMemberId() == null || dto.getAddMemberId() == null) {
                 throw new DtoNullException();
             }
-
             MemberFriendAddResponseDto dtos = memberService.addFriendToMe(dto);
-
             return ResponseEntity.ok().body(dtos);
         } catch (Exception e) {
             e.printStackTrace();
