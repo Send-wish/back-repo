@@ -5,6 +5,7 @@ import link.sendwish.backend.dtos.CollectionResponseDto;
 import link.sendwish.backend.dtos.ItemResponseDto;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.repository.CollectionItemRepository;
+import link.sendwish.backend.repository.MemberItemRepository;
 import link.sendwish.backend.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class ItemService {
     private final MemberService memberService;
     private final CollectionService collectionService;
     private final CollectionItemRepository collectionItemRepository;
+    private final MemberItemRepository memberItemRepository;
 
     @Transactional
     public Long saveItem(Item item, String nickname) {
@@ -84,6 +86,24 @@ public class ItemService {
                     });
         }
 
+    }
+
+    public List<ItemResponseDto> findItemByMember(Member member) {
+        List<ItemResponseDto> dtos = memberItemRepository
+                .findAllByMember(member)
+                .get()
+                .stream()
+                .map(target -> ItemResponseDto
+                        .builder()
+                        .name(target.getItem().getName())
+                        .originUrl(target.getItem().getOriginUrl())
+                        .imgUrl(target.getItem().getImgUrl())
+                        .price(target.getItem().getPrice())
+                        .build()
+                ).toList();
+
+        log.info("맴버 아이템 일괄 조회 [ID] : {}, [아이템 갯수] : {}", member.getNickname(), dtos.size());
+        return dtos;
     }
 
 }

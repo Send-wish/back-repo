@@ -1,14 +1,13 @@
 package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
-import link.sendwish.backend.dtos.ItemCreateRequestDto;
-import link.sendwish.backend.dtos.ItemEnrollmentRequestDto;
-import link.sendwish.backend.dtos.ItemResponseDto;
-import link.sendwish.backend.dtos.ResponseErrorDto;
+import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Item;
+import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.ItemService;
+import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -22,14 +21,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/item")
 public class ItemController {
 
     private final ItemService itemService;
+    private final MemberService memberService;
     private final CollectionService collectionService;
 
     // scrapping-server 연결
@@ -56,7 +56,7 @@ public class ItemController {
 
 
     //등록된 item id 값 리턴
-    @PostMapping("/parsing")
+    @PostMapping("/item/parsing")
     public ResponseEntity<?> createItem(@RequestBody ItemCreateRequestDto dto) {
         try {
             if(dto.getUrl() == null){
@@ -87,7 +87,7 @@ public class ItemController {
         }
     }
 
-    @PostMapping("/enrollment")
+    @PostMapping("/item/enrollment")
     public ResponseEntity<?> enrollItem(@RequestBody ItemEnrollmentRequestDto dto) {
         try {
             if (dto.getCollectionId() == null || dto.getItemId() == null || dto.getNickname() == null){
@@ -110,7 +110,7 @@ public class ItemController {
         }
     }
 
-    @DeleteMapping("/{nickname}/{itemId}")
+    @DeleteMapping("/item/{nickname}/{itemId}")
     public ResponseEntity<?> deleteItem(@PathVariable("nickname") String nickname,
                                         @PathVariable("itemId") Long itemId) {
         try{
@@ -121,6 +121,21 @@ public class ItemController {
             itemService.deleteItem(nickname, itemId);
 
             return ResponseEntity.ok("Entity deleted");
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+    @GetMapping("/items/{nickname}")
+    public ResponseEntity<?> getItemsByMember(@PathVariable("nickname") String nickname) {
+        try {
+            Member member = memberService.findMember(nickname);
+            List<ItemResponseDto> memberItem = itemService.findItemByMember(member);
+            return ResponseEntity.ok().body(memberItem);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
