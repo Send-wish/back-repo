@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import link.sendwish.backend.common.exception.ItemNotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -104,6 +105,11 @@ public class ItemService {
 
         log.info("맴버 아이템 일괄 조회 [ID] : {}, [아이템 갯수] : {}", member.getNickname(), dtos.size());
         return dtos;
+    }
+
+    public Item findItem(String url) {
+        Optional<Item> findByUrl = itemRepository.findByOriginUrl(url);
+        return findByUrl.orElse(null);
     }
 
 }

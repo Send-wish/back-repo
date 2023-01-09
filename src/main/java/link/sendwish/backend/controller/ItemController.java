@@ -62,6 +62,11 @@ public class ItemController {
             if(dto.getUrl() == null){
                 throw new DtoNullException();
             }
+            Item find = itemService.findItem(dto.getUrl());
+            if(find != null){
+                return ResponseEntity.ok().body(find.getId());
+            }
+
             /*
             * Python Server 호출, DB에 Item 등록
             * */
