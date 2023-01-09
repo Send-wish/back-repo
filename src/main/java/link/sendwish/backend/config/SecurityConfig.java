@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .antMatchers("/collections/**").permitAll()
                 .antMatchers("/collection/**").permitAll()
                 .antMatchers("/item/**").permitAll()
+                .antMatchers("/add/friend").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

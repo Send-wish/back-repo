@@ -7,6 +7,7 @@ import link.sendwish.backend.dtos.MemberFriendAddRequestDto;
 import link.sendwish.backend.dtos.MemberFriendAddResponseDto;
 import link.sendwish.backend.dtos.MemberRequestDto;
 import link.sendwish.backend.entity.Member;
+import link.sendwish.backend.entity.MemberFriend;
 import link.sendwish.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,19 +87,32 @@ public class MemberService {
         Member myMember = memberRepository.findById(myId).orElseThrow(MemberNotFoundException::new);
         Member friendMember = memberRepository.findById(friendId).orElseThrow(MemberNotFoundException::new);
 
-        if (myMember.getFriends().contains(friendMember)){
-            throw new MemberFriendExistingException();
+        assert(myId == myMember.getId());
+        assert(friendId == friendMember.getId());
+
+
+        if (myMember.getId() == friendMember.getId()){
+            throw new FriendMemberSameException();
         }
 
-        myMember.addFriendInList(friendMember);
+        for (MemberFriend f : myMember.getFriends()){
+            if (f.getFriendId().equals(friendMember.getId())){
+                throw new MemberFriendExistingException();
+            } else {
+                log.info("나의 친구 ID : {}", f.getFriendId()); // 현재는 로그가 안나옴
+            }
+        }
 
-        log.info("나의 닉네임 : {}, 친구 닉네임 : {}", myMember.getNickname(), friendMember.getNickname());
+        MemberFriend friend = MemberFriend.builder()
+                .friendId(friendMember.getId())
+                .build();
+
+        myMember.addFriendInList(friend);
 
         return MemberFriendAddResponseDto.builder()
-                .nickname(myMember.getNickname())
-                .friendNickname(friendMember.getNickname())
+                .id(myMember.getId())
+                .friendId(friendMember.getId())
                 .build();
     }
-
 }
 
