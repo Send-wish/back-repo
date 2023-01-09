@@ -97,4 +97,24 @@ public class MemberController {
             return ResponseEntity.internalServerError().body(errorDto);
         }
     }
+
+    @DeleteMapping("/delete/{nickname}/{friendNickname}")
+    public ResponseEntity<?> deleteFriend(@PathVariable("nickname") String nickname,
+                                          @PathVariable("friendNickname") String friendNickname){
+        try{
+            if(nickname == null || friendNickname == null){
+                throw new DtoNullException();
+            }
+            memberService.deleteFriend(nickname, friendNickname);
+            return ResponseEntity.ok().body("친구 삭제 성공");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+
 }

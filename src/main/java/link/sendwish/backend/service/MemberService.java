@@ -131,5 +131,24 @@ public class MemberService {
         }
         return dtos;
     }
+
+    @Transactional
+    public void deleteFriend(String nickname, String friendNickname){
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(MemberNotFoundException::new);
+        Member friendMember = memberRepository.findByNickname(friendNickname)
+                .orElseThrow(MemberNotFoundException::new);
+
+        log.info("친구 삭제 전 - member : {}", member.getFriends());
+
+        for (MemberFriend f : member.getFriends()){
+            if (f.getFriendId().equals(friendMember.getId())){
+                member.removeFriendInList(f);
+                log.info("친구 삭제 후 - member : {}", member.getFriends());
+                return;
+            }
+        }
+        throw new MemberFriendNotFoundException();
+    }
 }
 

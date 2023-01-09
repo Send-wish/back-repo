@@ -8,6 +8,7 @@ public class Messages {
     public static final String NO_COLLECTION_MESSAGE = "콜렉션이 존재하지 않습니다.";
     public static final String NO_ITEM_MESSAGE = "아이템이 존재하지 않습니다.";
     public static final String NO_MEMBER_COLLECTION_MESSAGE = "멤버 콜렉션이 존재하지 않습니다.";
+    public static final String NO_FRIEND_USER_MESSAGE = "친구 멤버가 존재하지 않습니다.";
     public static final String FRIEND_SAME_MEMBER_MESSAGE = "동일한 멤버는 친구가 될 수 없습니다.";
     public static final String SAME_MEMBER_ID_MESSAGE = "이미 존재하는 아이디입니다.";
     public static final String SAME_COLLECTION_TITLE_MESSAGE = "수정하려는 제목이 동일합니다.";
