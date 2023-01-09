@@ -93,6 +93,7 @@ public class CollectionService {
                                 .price(target.getPrice())
                                 .name(target.getName())
                                 .imgUrl(target.getImgUrl())
+                                .originUrl(target.getOriginUrl())
                                 .build()
                 ).toList()).build();
     }
