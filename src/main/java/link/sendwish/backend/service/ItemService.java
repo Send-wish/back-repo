@@ -114,4 +114,23 @@ public class ItemService {
         return findByUrl.orElse(null);
     }
 
+    @Transactional
+    public Long checkMemberReferenceByItem(Item item, String nickname) {
+        Member member = memberService.findMember(nickname);
+        long find = memberItemRepository
+                .findAllByItem(item)
+                .get()
+                .stream()
+                .filter(target -> target
+                        .getMember()
+                        .getId()
+                        .equals(member.getId()))
+                        .count();
+        if(find == 0){
+            item.addReference();
+        }
+        log.info("이미 존재하는 아이템 [ID] : {}, [참조하는 맴버 수] : {}", item.getNickname(), item.getReference());
+        return item.getId();
+    }
+
 }

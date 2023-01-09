@@ -64,6 +64,7 @@ public class ItemController {
             }
             Item find = itemService.findItem(dto.getUrl());
             if(find != null){
+                itemService.checkMemberReferenceByItem(find, dto.getNickname());
                 return ResponseEntity.ok().body(find.getId());
             }
 
