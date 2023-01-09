@@ -111,6 +111,7 @@ public class CollectionService {
         return CollectionResponseDto.builder()
                 .title(findByCache.getTitle())
                 .nickname(dto.getNickname())
+                .collectionId(findByCache.getId())
                 .build();
     }
 
