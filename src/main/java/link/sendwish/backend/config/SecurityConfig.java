@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .antMatchers("/item/**").permitAll()
                 .antMatchers("/items/**").permitAll()
                 .antMatchers("/add/friend").permitAll()
+                .antMatchers("/get/friend/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

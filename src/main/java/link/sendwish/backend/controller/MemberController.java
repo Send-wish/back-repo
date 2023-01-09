@@ -9,10 +9,9 @@ import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -72,6 +71,23 @@ public class MemberController {
                 throw new DtoNullException();
             }
             MemberFriendAddResponseDto dtos = memberService.addFriendToMe(dto);
+            return ResponseEntity.ok().body(dtos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+    @GetMapping("/get/friend/{nickname}")
+    public ResponseEntity<?> getFriendsByMember(@PathVariable("nickname") String nickname){
+        try{
+            if(nickname == null){
+                throw new DtoNullException();
+            }
+            List<MemberFriendResponseDto> dtos = memberService.findFriendsByMember(nickname);
             return ResponseEntity.ok().body(dtos);
         } catch (Exception e) {
             e.printStackTrace();
