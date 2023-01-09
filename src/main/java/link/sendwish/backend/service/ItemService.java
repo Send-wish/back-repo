@@ -57,6 +57,7 @@ public class ItemService {
                 .name(item.getName())
                 .price(item.getPrice())
                 .originUrl(item.getOriginUrl())
+                .itemId(item.getId())
                 .build();
     }
 
@@ -100,6 +101,7 @@ public class ItemService {
                         .originUrl(target.getItem().getOriginUrl())
                         .imgUrl(target.getItem().getImgUrl())
                         .price(target.getItem().getPrice())
+                        .itemId(target.getItem().getId())
                         .build()
                 ).toList();
 
