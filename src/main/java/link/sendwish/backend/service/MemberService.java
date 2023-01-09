@@ -99,7 +99,7 @@ public class MemberService {
             if (f.getFriendId().equals(friendMember.getId())){
                 throw new MemberFriendExistingException();
             } else {
-                log.info("나의 친구 ID : {}", f.getFriendId()); // 현재는 로그가 안나옴
+                log.info("나의 친구 ID : {}", f.getFriendId()); // 현재는 로그 안나옴
             }
         }
 
