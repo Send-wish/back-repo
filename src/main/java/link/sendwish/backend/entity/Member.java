@@ -36,8 +36,23 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<MemberCollection> memberCollections = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<MemberItem> memberItems = new ArrayList<>();
+
     public void addMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.add(memberCollection);
+    }
+
+    public void deleteMemberCollection(MemberCollection memberCollection) {
+        this.memberCollections.remove(memberCollection);
+    }
+
+    public void addMemberItem(MemberItem memberItem) {
+        this.memberItems.add(memberItem);
+    }
+
+    public void deleteMemberItem(MemberItem memberItem) {
+        this.memberItems.remove(memberItem);
     }
 
     @Override

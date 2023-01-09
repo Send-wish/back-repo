@@ -1,14 +1,9 @@
 package link.sendwish.backend.service;
 
-import link.sendwish.backend.common.exception.CollectionSameTitleException;
-import link.sendwish.backend.common.exception.MemberNotFoundException;
-import link.sendwish.backend.common.exception.CollectionNotFoundException;
-import link.sendwish.backend.common.exception.MemberCollectionNotFoundException;
+import link.sendwish.backend.common.exception.*;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.entity.*;
-import link.sendwish.backend.repository.CollectionRepository;
-import link.sendwish.backend.repository.MemberCollectionRepository;
-import link.sendwish.backend.repository.MemberRepository;
+import link.sendwish.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,17 +21,20 @@ public class CollectionService {
 
     private final CollectionRepository collectionRepository;
     private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
     private final MemberCollectionRepository memberCollectionRepository;
+    private final CollectionItemRepository collectionItemRepository;
 
 
     @Transactional
-    public CollectionResponseDto createCollection(CollectionCreateRequestDto dto) {
+    public CollectionResponseDto createCollection(String title,String nickname) {
         Collection collection = Collection.builder()
-                .title(dto.getTitle())
+                .title(title)
                 .memberCollections(new ArrayList<>())
+                .collectionItems(new ArrayList<>())
                 .build();
 
-        Member member = memberRepository.findByNickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByNickname(nickname).orElseThrow(MemberNotFoundException::new);
         MemberCollection memberCollection = MemberCollection.builder()
                 .member(member)
                 .collection(collection)
@@ -115,8 +113,8 @@ public class CollectionService {
     }
 
     @Transactional
-    public CollectionSharedDetailResponseDto addUserToCollection(Collection find, CollectionAddUserDto dto) {
-        Member member = memberRepository.findByNickname(dto.getNickname()).orElseThrow(RuntimeException::new);
+    public CollectionAddUserResponseDto addUserToCollection(Collection find, CollectionAddUserResponseDto dto) {
+        Member member = memberRepository.findByNickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
         find.addReference();
         MemberCollection memberCollection = MemberCollection.builder()
                 .member(member)
@@ -129,23 +127,23 @@ public class CollectionService {
         Collection save = collectionRepository.save(find);
 
         member.addMemberCollection(memberCollection);
-        find.addMemberCollection(memberCollection);//Cascade Option으로 insert문 자동 호출
+        find.addMemberCollection(memberCollection);
+
 
         assert find.getId().equals(save.getId());
         log.info("컬렉션에 사용자 추가 [ID] : {}, [컬렉션 제목] : {}", member.getNickname(), save.getTitle());
-        return CollectionSharedDetailResponseDto.builder()
-                .title(save.getTitle())
+        return CollectionAddUserResponseDto.builder()
                 .collectionId(save.getId())
+                .nickname(member.getNickname())
                 .build();
     }
 
     @Transactional
-    public CollectionSharedDetailResponseDto copyItemToCollection(Collection copyCollection, Collection target) {
+    public List<ItemResponseDto> copyItemToCollection(Collection copyCollection, Collection target) {
         List<Item> items = copyCollection.getCollectionItems()
                 .stream().map(CollectionItem::getItem).toList();
 
         items.forEach(item -> {
-            item.addReference(); // 아이템 ref += 1
             CollectionItem collectionItem = CollectionItem.builder()
                     .item(item)
                     .collection(target)
@@ -155,16 +153,13 @@ public class CollectionService {
         Collection findByCache = collectionRepository
                 .findById(target.getId()).orElseThrow(CollectionNotFoundException::new);
         log.info("컬렉션 아이템 복사 [복사된 컬랙션 제목] : {}", findByCache.getTitle());
-        return CollectionSharedDetailResponseDto.builder()
-                .collectionId(target.getId())
-                .title(target.getTitle())
-                .dtos(items.stream().map(
+        return items.stream().map(
                         item -> ItemResponseDto.builder()
                                 .price(item.getPrice())
                                 .name(item.getName())
                                 .imgUrl(item.getImgUrl())
                                 .build()
-                ).toList()).build();
+                ).toList();
     }
 
     public List<CollectionResponseDto> findSharedCollectionsByMember(Member member) {
@@ -183,6 +178,26 @@ public class CollectionService {
 
         log.info("공유 컬렉션 일괄 조회 [ID] : {}, [공유 컬렉션 갯수] : {}", member.getNickname(), dtos.size());
         return dtos;
+    }
+
+    @Transactional
+    public void deleteCollectionItem(Long collectionId, Long itemId) {
+        Collection collection = collectionRepository
+                .findById(collectionId)
+                .orElseThrow(CollectionNotFoundException::new);
+
+        Item item = itemRepository
+                .findById(itemId)
+                .orElseThrow(ItemNotFoundException::new);
+
+        CollectionItem collectionItem =
+                collectionItemRepository.findByCollectionAndItem(collection, item).get();
+
+        collectionItemRepository.deleteByCollectionAndItem(collection, item);
+        item.deleteCollectionItem(collectionItem);
+        collection.deleteCollectionItem(collectionItem);
+        assert collectionRepository.findById(collectionItem.getId()).isEmpty() == true;
+        log.info("해당 컬랙션에서 [ID] : {}, 해당 아이템이 [아이템 이름] : {} 삭제되었습니다.", collectionId, itemId);
     }
 
 }
