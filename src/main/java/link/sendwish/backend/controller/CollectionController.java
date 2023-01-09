@@ -25,7 +25,9 @@ public class CollectionController {
     public ResponseEntity<?> getCollectionsByMember(@PathVariable("nickname") String nickname) {
         try {
             Member member = memberService.findMember(nickname);
+
             List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
+
             return ResponseEntity.ok().body(memberCollection);
         }catch (Exception e) {
             e.printStackTrace();
@@ -87,5 +89,22 @@ public class CollectionController {
             return ResponseEntity.internalServerError().body(errorDto);
         }
     }
+
+    @DeleteMapping("/collection/{nickname}/{collectionId}")
+    public ResponseEntity<?> deleteCollection(@PathVariable("nickname") String nickname,
+                                              @PathVariable("collectionId") Long collectionId) {
+        try {
+            CollectionResponseDto dtos = collectionService.deleteCollection(collectionId, nickname);
+            return ResponseEntity.ok().body(dtos);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+
 
 }
