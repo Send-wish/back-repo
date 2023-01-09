@@ -2,9 +2,9 @@ package link.sendwish.backend.service;
 
 import link.sendwish.backend.auth.JwtTokenProvider;
 import link.sendwish.backend.auth.TokenInfo;
-import link.sendwish.backend.common.exception.MemberExisitingIDException;
-import link.sendwish.backend.common.exception.MemberNotFoundException;
-import link.sendwish.backend.common.exception.PasswordNotSameException;
+import link.sendwish.backend.common.exception.*;
+import link.sendwish.backend.dtos.MemberFriendAddRequestDto;
+import link.sendwish.backend.dtos.MemberFriendAddResponseDto;
 import link.sendwish.backend.dtos.MemberRequestDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.repository.MemberRepository;
@@ -45,6 +45,7 @@ public class MemberService {
                 .roles(List.of("USER"))
                 .memberCollections(new ArrayList<>())
                 .memberItems(new ArrayList<>())
+                .friends(new ArrayList<>())
                 .build();
         Member savedMember = memberRepository.save(member);
         log.info("새로운 회원가입 [ID] : {}, [PW] : {}", savedMember.getNickname(), savedMember.getPassword());
@@ -76,5 +77,28 @@ public class MemberService {
         }
         return true;
     }
+
+    @Transactional
+    public MemberFriendAddResponseDto addFriendToMe(MemberFriendAddRequestDto dto){
+        Long myId = dto.getMemberId();
+        Long friendId = dto.getAddMemberId();
+
+        Member myMember = memberRepository.findById(myId).orElseThrow(MemberNotFoundException::new);
+        Member friendMember = memberRepository.findById(friendId).orElseThrow(MemberNotFoundException::new);
+
+        if (myMember.getFriends().contains(friendMember)){
+            throw new MemberFriendExistingException();
+        }
+
+        myMember.addFriendInList(friendMember);
+
+        log.info("나의 닉네임 : {}, 친구 닉네임 : {}", myMember.getNickname(), friendMember.getNickname());
+
+        return MemberFriendAddResponseDto.builder()
+                .nickname(myMember.getNickname())
+                .friendNickname(friendMember.getNickname())
+                .build();
+    }
+
 }
 
