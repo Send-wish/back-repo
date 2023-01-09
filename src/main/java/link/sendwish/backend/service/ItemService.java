@@ -69,10 +69,10 @@ public class ItemService {
 
         if(item.getReference() == 1){
             itemRepository.delete(item);
-            log.info("아이템 삭제 [ID] : {}, [남은 참조 갯수] : {}", itemId, 0);
+            log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, 0);
         }else {
             item.subtractReference();
-            log.info("아이템 삭제 [ID] : {}, [남은 참조 갯수] : {}", itemId, item.getReference());
+            log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
 
             Member member = memberService.findMember(nickname);
             List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
