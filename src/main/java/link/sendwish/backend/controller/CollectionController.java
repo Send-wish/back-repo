@@ -86,6 +86,7 @@ public class CollectionController {
     public ResponseEntity<?> getDetailCollection(@PathVariable("nickname") String nickname,
                                                  @PathVariable("collectionId") Long collectionId) {
         try {
+
             CollectionDetailResponseDto dto = collectionService.getDetails(collectionId, nickname);
 
             return ResponseEntity.ok().body(dto);
