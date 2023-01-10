@@ -83,16 +83,18 @@ public class MemberService {
     @Transactional
     public MemberFriendAddResponseDto addFriendToMe(MemberFriendAddRequestDto dto){
         Long myId = dto.getMemberId();
-        Long friendId = dto.getAddMemberId();
 
-        Member myMember = memberRepository.findById(myId).orElseThrow(MemberNotFoundException::new);
-        Member friendMember = memberRepository.findById(friendId).orElseThrow(MemberNotFoundException::new);
+        String myNickname = dto.getMemberNickname();
+        String friendNickname = dto.getAddMemberNickname();
+
+        Member myMember = memberRepository.findByNickname(myNickname).orElseThrow(MemberNotFoundException::new);
+        Member friendMember = memberRepository.findByNickname(friendNickname).orElseThrow(MemberNotFoundException::new);
 
         assert(myId == myMember.getId());
-        assert(friendId == friendMember.getId());
+        assert (myNickname == myMember.getNickname());
+        assert(friendNickname == friendMember.getNickname());
 
-
-        if (myMember.getId() == friendMember.getId()){
+        if (myMember.getNickname() == friendMember.getNickname()){
             throw new FriendMemberSameException();
         }
 
@@ -100,6 +102,7 @@ public class MemberService {
             if (f.getFriendId().equals(friendMember.getId())){
                 throw new MemberFriendExistingException();
             } else {
+                log.info("나의 친구 nickname : {}", friendNickname);
                 log.info("나의 친구 ID : {}", f.getFriendId());
             }
         }
@@ -112,7 +115,8 @@ public class MemberService {
 
         return MemberFriendAddResponseDto.builder()
                 .id(myMember.getId())
-                .friendId(friendMember.getId())
+                .myNickname(myMember.getNickname())
+                .friendNickname(friendMember.getNickname())
                 .build();
     }
 
