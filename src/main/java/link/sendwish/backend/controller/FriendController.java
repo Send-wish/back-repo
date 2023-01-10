@@ -39,7 +39,7 @@ public class FriendController {
     @PostMapping("/friend")
     public ResponseEntity<?> addFriend(@RequestBody MemberFriendAddRequestDto dto) {
         try {
-            if (dto.getMemberId() == null || dto.getMemberNickname() == null || dto.getAddMemberNickname() == null) {
+            if (dto.getMemberNickname() == null || dto.getAddMemberNickname() == null) {
                 throw new DtoNullException();
             }
             MemberFriendAddResponseDto dtos = memberService.addFriendToMe(dto);

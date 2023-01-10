@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberFriendAddRequestDto {
-    private Long memberId; // 친구를 추가할 본인의 memberId
-    private String memberNickname;
-    private String addMemberNickname; // 추가할 친구의 memberId
+    private String memberNickname; // 친구를 추가할 본인의 memberNickname
+    private String addMemberNickname; // 추가할 친구의 memberNickname
 }

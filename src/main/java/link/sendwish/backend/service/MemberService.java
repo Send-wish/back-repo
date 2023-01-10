@@ -82,15 +82,12 @@ public class MemberService {
 
     @Transactional
     public MemberFriendAddResponseDto addFriendToMe(MemberFriendAddRequestDto dto){
-        Long myId = dto.getMemberId();
-
         String myNickname = dto.getMemberNickname();
         String friendNickname = dto.getAddMemberNickname();
 
         Member myMember = memberRepository.findByNickname(myNickname).orElseThrow(MemberNotFoundException::new);
         Member friendMember = memberRepository.findByNickname(friendNickname).orElseThrow(MemberNotFoundException::new);
 
-        assert(myId == myMember.getId());
         assert (myNickname == myMember.getNickname());
         assert(friendNickname == friendMember.getNickname());
 
@@ -114,7 +111,6 @@ public class MemberService {
         myMember.addFriendInList(friend);
 
         return MemberFriendAddResponseDto.builder()
-                .id(myMember.getId())
                 .myNickname(myMember.getNickname())
                 .friendNickname(friendMember.getNickname())
                 .build();
