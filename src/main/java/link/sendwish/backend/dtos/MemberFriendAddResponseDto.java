@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberFriendAddResponseDto {
     private Long id; // my id
-    private Long friendId; // 친구의 id
+    private String myNickname; // my nickname
+    private String friendNickname; // 친구의 nickname
 }
