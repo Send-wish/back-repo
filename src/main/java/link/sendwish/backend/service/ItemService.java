@@ -129,7 +129,7 @@ public class ItemService {
         if(find == 0){
             item.addReference();
         }
-        log.info("이미 존재하는 아이템 [ID] : {}, [참조하는 맴버 수] : {}", item.getNickname(), item.getReference());
+        log.info("이미 존재하는 아이템 [ID] : {}, [참조하는 맴버 수] : {}", item.getId(), item.getReference());
         return item.getId();
     }
 
