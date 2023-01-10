@@ -2,6 +2,7 @@ package link.sendwish.backend.service;
 
 
 import link.sendwish.backend.dtos.CollectionResponseDto;
+import link.sendwish.backend.dtos.ItemListResponseDto;
 import link.sendwish.backend.dtos.ItemResponseDto;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.entity.Collection;
@@ -16,6 +17,8 @@ import link.sendwish.backend.common.exception.ItemNotFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,22 +46,25 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemResponseDto enrollItemToCollection(Collection collection, Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
-        CollectionItem collectionItem = CollectionItem.builder()
-                .item(item)
-                .collection(collection)
-                .build();
+    public ItemListResponseDto enrollItemToCollection(String nickname, Collection collection, List<Long> itemIdList) {
+        for (Long itemId : itemIdList){
+            Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+            CollectionItem collectionItem = CollectionItem.builder()
+                    .item(item)
+                    .collection(collection)
+                    .build();
 
-        item.addCollectionItem(collectionItem);
-        collection.addCollectionItem(collectionItem);//Cascade Option으로 insert문 자동 호출
+            item.addCollectionItem(collectionItem);
+            collection.addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
+        }
 
-        return ItemResponseDto.builder()
-                .imgUrl(item.getImgUrl())
-                .name(item.getName())
-                .price(item.getPrice())
-                .originUrl(item.getOriginUrl())
-                .itemId(item.getId())
+        List<Item> reverseItemList = itemRepository.findAllByCollectionIdOrderByIdDesc(collection.getId());
+        List<Long> reverseItemIdList = reverseItemList.stream().map(Item::getId).collect(Collectors.toList());
+
+        return ItemListResponseDto.builder()
+                .nickname(nickname)
+                .collectionId(collection.getId())
+                .itemIdList(reverseItemIdList)
                 .build();
     }
 

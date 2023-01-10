@@ -1,5 +1,6 @@
 package link.sendwish.backend.dtos;
 
+import link.sendwish.backend.entity.Item;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemEnrollmentRequestDto {
+public class ItemListResponseDto {
     private List<Long> itemIdList;
     private Long collectionId;
     private String nickname;
