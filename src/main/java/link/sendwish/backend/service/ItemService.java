@@ -92,27 +92,22 @@ public class ItemService {
     }
 
     public List<ItemResponseDto> findItemByMember(Member member) {
-        Stack<MemberItem> stack = new Stack<>();
-        List<ItemResponseDto> dtos = new ArrayList<>();
-        if (memberItemRepository.findAllByMember(member).isEmpty()) {
+        List<ItemResponseDto> dtos;
+        if (memberItemRepository.findAllByMemberOrderByIdDesc(member).isEmpty()) {
+            dtos = new ArrayList<>();
             log.info("맴버 아이템 일괄 조회 [ID] : {},해당 멤버는 가진 아이템이 없습니다.", member.getNickname());
             return dtos;
         }
-        List<MemberItem> memberItems = memberItemRepository.findAllByMember(member).get();
-        for (MemberItem memberItem : memberItems) {
-            stack.push(memberItem);
-        }
-        while (!stack.isEmpty()) {
-            MemberItem memberItem = stack.pop();
-            Item item = memberItem.getItem();
-            dtos.add(ItemResponseDto.builder()
-                    .itemId(item.getId())
-                    .name(item.getName())
-                    .price(item.getPrice())
-                    .imgUrl(item.getImgUrl())
-                    .originUrl(item.getOriginUrl())
-                    .build());
-        }
+        dtos = memberItemRepository.findAllByMemberOrderByIdDesc(member)
+                .get()
+                .stream().map(target -> ItemResponseDto.builder()
+                        .originUrl(target.getItem().getOriginUrl())
+                        .name(target.getItem().getName())
+                        .price(target.getItem().getPrice())
+                        .imgUrl(target.getItem().getImgUrl())
+                        .itemId(target.getItem().getId())
+                        .build()
+                ).collect(Collectors.toList());
         log.info("맴버 아이템 일괄 조회 [ID] : {}, [아이템 갯수] : {}", member.getNickname(), dtos.size());
         return dtos;
     }
