@@ -85,6 +85,7 @@ public class CollectionService {
     public CollectionDetailResponseDto getDetails(Collection collection,String nickname) {
         List<Item> items = collection.getCollectionItems()
                 .stream().map(CollectionItem::getItem).toList();
+
         return CollectionDetailResponseDto.builder()
                 .collectionId(collection.getId())
                 .nickname(nickname)
@@ -230,23 +231,27 @@ public class CollectionService {
     }
 
     @Transactional
-    public void deleteCollectionItem(Long collectionId, Long itemId) {
+    public void deleteCollectionItem(Long collectionId, List<Long> itemIdList) {
         Collection collection = collectionRepository
                 .findById(collectionId)
                 .orElseThrow(CollectionNotFoundException::new);
 
-        Item item = itemRepository
-                .findById(itemId)
-                .orElseThrow(ItemNotFoundException::new);
+        for (Long itemId : itemIdList){
+            Item item = itemRepository
+                    .findById(itemId)
+                    .orElseThrow(ItemNotFoundException::new);
 
-        CollectionItem collectionItem =
-                collectionItemRepository.findByCollectionAndItem(collection, item).get();
+            CollectionItem collectionItem = collectionItemRepository
+                    .findByCollectionAndItem(collection, item)
+                    .orElseThrow(CollectionItemNotFoundException::new);
 
-        collectionItemRepository.deleteByCollectionAndItem(collection, item);
-        item.deleteCollectionItem(collectionItem);
-        collection.deleteCollectionItem(collectionItem);
-        assert collectionRepository.findById(collectionItem.getId()).isEmpty() == true;
-        log.info("해당 컬랙션에서 [ID] : {}, 해당 아이템이 [아이템 이름] : {} 삭제되었습니다.", collectionId, itemId);
+            collectionItemRepository.deleteByCollectionAndItem(collection, item);
+            item.deleteCollectionItem(collectionItem);
+            collection.deleteCollectionItem(collectionItem);
+        }
+
+//        assert collectionRepository.findById(collectionItem.getId()).isEmpty() == true;
+        log.info("컬렉션 아이템 일괄 삭제 [컬렉션 ID] : {}, [삭제된 아이템 갯수] : {}", collectionId, itemIdList.size());
     }
 
 }

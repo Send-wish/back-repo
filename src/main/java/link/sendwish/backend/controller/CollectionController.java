@@ -1,8 +1,10 @@
 package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
+import link.sendwish.backend.common.exception.ItemNotFoundException;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.entity.Collection;
+import link.sendwish.backend.entity.Item;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.MemberService;
@@ -81,6 +83,7 @@ public class CollectionController {
         try {
             Collection collection = collectionService.findCollection(collectionId,nickname);
             CollectionDetailResponseDto dto = collectionService.getDetails(collection, nickname);
+
             return ResponseEntity.ok().body(dto);
         }catch (Exception e) {
             e.printStackTrace();
@@ -172,12 +175,17 @@ public class CollectionController {
         }
     }
 
-    @DeleteMapping("/collection/item/{collectionId}/{itemId}")
-    public ResponseEntity<?> deleteItem(@PathVariable("collectionId") Long collectionId,
-                                        @PathVariable("itemId") Long itemId) {
+    @DeleteMapping("/collection/item")
+    public ResponseEntity<?> deleteItem(@RequestBody CollectionItemDeleteRequestDto dto) {
+        if(dto.getItemIdList() == null || dto.getCollectionId() == null || dto.getCollectionId() == null){
+            throw new DtoNullException();
+        }
         try{
-            collectionService.deleteCollectionItem(collectionId, itemId);
-            return ResponseEntity.ok("Entity deleted");
+            if (dto.getItemIdList().isEmpty()){
+                throw new ItemNotFoundException();
+            }
+            collectionService.deleteCollectionItem(dto.getCollectionId(), dto.getItemIdList());
+            return ResponseEntity.ok("Entities deleted");
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()

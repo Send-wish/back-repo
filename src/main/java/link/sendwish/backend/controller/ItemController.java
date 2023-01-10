@@ -96,7 +96,7 @@ public class ItemController {
     @PostMapping("/item/enrollment")
     public ResponseEntity<?> enrollItem(@RequestBody ItemEnrollmentRequestDto dto) {
         try {
-            if (dto.getCollectionId() == null || dto.getItemId() == null || dto.getNickname() == null){
+            if (dto.getCollectionId() == null || dto.getItemIdList() == null || dto.getNickname() == null){
                 throw new DtoNullException();
             }
 
@@ -105,8 +105,8 @@ public class ItemController {
             * 하고 나서 해당 item 상세 정보를 return
             * */
             Collection collection = collectionService.findCollection(dto.getCollectionId(), dto.getNickname());
-            ItemResponseDto itemResponseDto = itemService.enrollItemToCollection(collection, dto.getItemId());
-            return ResponseEntity.ok().body(itemResponseDto);
+            ItemListResponseDto itemListResponseDto = itemService.enrollItemToCollection(dto.getNickname(), collection, dto.getItemIdList());
+            return ResponseEntity.ok().body(itemListResponseDto);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
