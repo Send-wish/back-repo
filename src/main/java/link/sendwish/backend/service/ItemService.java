@@ -4,6 +4,7 @@ package link.sendwish.backend.service;
 import link.sendwish.backend.dtos.CollectionResponseDto;
 import link.sendwish.backend.dtos.ItemResponseDto;
 import link.sendwish.backend.entity.*;
+import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.repository.CollectionItemRepository;
 import link.sendwish.backend.repository.MemberItemRepository;
 import link.sendwish.backend.repository.ItemRepository;
@@ -13,8 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import link.sendwish.backend.common.exception.ItemNotFoundException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -91,20 +92,27 @@ public class ItemService {
     }
 
     public List<ItemResponseDto> findItemByMember(Member member) {
-        List<ItemResponseDto> dtos = memberItemRepository
-                .findAllByMember(member)
-                .get()
-                .stream()
-                .map(target -> ItemResponseDto
-                        .builder()
-                        .name(target.getItem().getName())
-                        .originUrl(target.getItem().getOriginUrl())
-                        .imgUrl(target.getItem().getImgUrl())
-                        .price(target.getItem().getPrice())
-                        .itemId(target.getItem().getId())
-                        .build()
-                ).toList();
-
+        Stack<MemberItem> stack = new Stack<>();
+        List<ItemResponseDto> dtos = new ArrayList<>();
+        if (memberItemRepository.findAllByMember(member).isEmpty()) {
+            log.info("맴버 아이템 일괄 조회 [ID] : {},해당 멤버는 가진 아이템이 없습니다.", member.getNickname());
+            return dtos;
+        }
+        List<MemberItem> memberItems = memberItemRepository.findAllByMember(member).get();
+        for (MemberItem memberItem : memberItems) {
+            stack.push(memberItem);
+        }
+        while (!stack.isEmpty()) {
+            MemberItem memberItem = stack.pop();
+            Item item = memberItem.getItem();
+            dtos.add(ItemResponseDto.builder()
+                    .itemId(item.getId())
+                    .name(item.getName())
+                    .price(item.getPrice())
+                    .imgUrl(item.getImgUrl())
+                    .originUrl(item.getOriginUrl())
+                    .build());
+        }
         log.info("맴버 아이템 일괄 조회 [ID] : {}, [아이템 갯수] : {}", member.getNickname(), dtos.size());
         return dtos;
     }
