@@ -90,6 +90,8 @@ public class CollectionService {
                 .nickname(nickname)
                 .dtos(items.stream().map(
                         target -> ItemResponseDto.builder()
+                                .originUrl(target.getOriginUrl())
+                                .itemId(target.getId())
                                 .price(target.getPrice())
                                 .name(target.getName())
                                 .imgUrl(target.getImgUrl())
@@ -199,6 +201,8 @@ public class CollectionService {
         log.info("컬렉션 아이템 복사 [복사된 컬랙션 제목] : {}", findByCache.getTitle());
         return items.stream().map(
                         item -> ItemResponseDto.builder()
+                                .itemId(item.getId())
+                                .originUrl(item.getOriginUrl())
                                 .price(item.getPrice())
                                 .name(item.getName())
                                 .imgUrl(item.getImgUrl())
