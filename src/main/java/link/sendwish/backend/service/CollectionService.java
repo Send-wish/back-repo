@@ -245,8 +245,8 @@ public class CollectionService {
         collectionItemRepository.deleteByCollectionAndItem(collection, item);
         item.deleteCollectionItem(collectionItem);
         collection.deleteCollectionItem(collectionItem);
-        assert collectionRepository.findById(collectionItem.getId()).isEmpty() == true;
-        log.info("해당 컬랙션에서 [ID] : {}, 해당 아이템이 [아이템 이름] : {} 삭제되었습니다.", collectionId, itemId);
+        assert collectionRepository.findById(collectionItem.getId()).isEmpty();
+        log.info("해당 컬랙션에서 [ID] : {}, 해당 아이템 [ID] : {} 삭제되었습니다.", collectionId, itemId);
     }
 
 }
