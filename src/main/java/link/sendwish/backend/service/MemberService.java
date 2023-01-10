@@ -99,8 +99,7 @@ public class MemberService {
             if (f.getFriendId().equals(friendMember.getId())){
                 throw new MemberFriendExistingException();
             } else {
-                log.info("나의 친구 nickname : {}", friendNickname);
-                log.info("나의 친구 ID : {}", f.getFriendId());
+                log.info("나의 nickname : {}, 친구의 nickname : {}", myNickname, friendNickname);
             }
         }
 
@@ -126,8 +125,9 @@ public class MemberService {
                     .orElseThrow(MemberNotFoundException::new);
             dtos.add(MemberFriendResponseDto.builder()
                     .friend_id(friendMember.getId())
+                    .friend_nickname(friendMember.getNickname())
                     .build());
-            log.info("친구 ID : {}", f.getFriendId());
+            log.info("친구 NickName : {}", friendMember.getNickname());
         }
         return dtos;
     }
