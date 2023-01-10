@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import link.sendwish.backend.common.exception.ItemNotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -56,6 +57,7 @@ public class ItemService {
                 .name(item.getName())
                 .price(item.getPrice())
                 .originUrl(item.getOriginUrl())
+                .itemId(item.getId())
                 .build();
     }
 
@@ -67,10 +69,10 @@ public class ItemService {
 
         if(item.getReference() == 1){
             itemRepository.delete(item);
-            log.info("아이템 삭제 [ID] : {}, [남은 참조 갯수] : {}", itemId, 0);
+            log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, 0);
         }else {
             item.subtractReference();
-            log.info("아이템 삭제 [ID] : {}, [남은 참조 갯수] : {}", itemId, item.getReference());
+            log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
 
             Member member = memberService.findMember(nickname);
             List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
@@ -99,11 +101,36 @@ public class ItemService {
                         .originUrl(target.getItem().getOriginUrl())
                         .imgUrl(target.getItem().getImgUrl())
                         .price(target.getItem().getPrice())
+                        .itemId(target.getItem().getId())
                         .build()
                 ).toList();
 
         log.info("맴버 아이템 일괄 조회 [ID] : {}, [아이템 갯수] : {}", member.getNickname(), dtos.size());
         return dtos;
+    }
+
+    public Item findItem(String url) {
+        Optional<Item> findByUrl = itemRepository.findByOriginUrl(url);
+        return findByUrl.orElse(null);
+    }
+
+    @Transactional
+    public Long checkMemberReferenceByItem(Item item, String nickname) {
+        Member member = memberService.findMember(nickname);
+        long find = memberItemRepository
+                .findAllByItem(item)
+                .get()
+                .stream()
+                .filter(target -> target
+                        .getMember()
+                        .getId()
+                        .equals(member.getId()))
+                        .count();
+        if(find == 0){
+            item.addReference();
+        }
+        log.info("이미 존재하는 아이템 [ID] : {}, [참조하는 맴버 수] : {}", item.getNickname(), item.getReference());
+        return item.getId();
     }
 
 }
