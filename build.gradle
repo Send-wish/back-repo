@@ -38,6 +38,9 @@ dependencies {
 
 	//json
 	implementation 'org.json:json:20200518'
+
+	//websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {
