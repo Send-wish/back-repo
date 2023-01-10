@@ -39,7 +39,7 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<MemberItem> memberItems = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "member_id")
     private List<MemberFriend> friends = new ArrayList<>();
 
@@ -59,7 +59,13 @@ public class Member implements UserDetails {
         this.memberItems.remove(memberItem);
     }
 
-    public void addFriendInList(MemberFriend friend){ this.friends.add(friend); }
+    public void addFriendInList(MemberFriend friend){
+        this.friends.add(friend);
+    }
+
+    public void removeFriendInList(MemberFriend friend) {
+        this.friends.remove(friend);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
