@@ -12,4 +12,5 @@ public interface CollectionItemRepository extends JpaRepository<CollectionItem, 
     Optional<CollectionItem> findByCollectionAndItem(Collection collection, Item item);
     void deleteByCollectionAndItem(Collection collection, Item item);
     List<CollectionItem> findAllByCollectionOrderByIdDesc(Collection collection);
+    List<CollectionItem> findAllByCollection(Collection collection);
 }

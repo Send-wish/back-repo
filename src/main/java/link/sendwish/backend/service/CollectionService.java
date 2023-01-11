@@ -80,13 +80,22 @@ public class CollectionService {
         return dtos;
     }
 
-    public Collection findCollection(Long collectionId,String nickname) {
+    public CollectionResponseDto findCollection(Long collectionId,String nickname) {
         Collection find = collectionRepository.findById(collectionId).orElseThrow(CollectionNotFoundException::new);
         log.info("컬렉션 단건 조회 [ID] : {}, [컬렉션 제목] : {}", nickname, find.getTitle());
-        return find;
+        return CollectionResponseDto.builder()
+                .collectionId(find.getId())
+                .nickname(nickname)
+                .title(find.getTitle())
+                .build();
     }
 
-    public CollectionDetailResponseDto getDetails(Collection collection, String nickname) {
+    public CollectionDetailResponseDto getDetails(Long collectionId,String nickname) {
+        Collection collection = collectionRepository
+                .findById(collectionId)
+                .orElseThrow(CollectionNotFoundException::new);
+        log.info("컬렉션 단건 조회 [ID] : {}, [컬렉션 제목] : {}", nickname, collection.getTitle());
+
         List<Item> items = collection.getCollectionItems()
                 .stream().map(CollectionItem::getItem).toList();
 
@@ -106,20 +115,19 @@ public class CollectionService {
     }
 
     @Transactional
-    public CollectionResponseDto updateCollectionTitle(Collection collection, CollectionUpdateRequestDto dto) {
-        assert Objects.equals(collection.getId(), dto.getCollectionId());
+    public CollectionResponseDto updateCollectionTitle(CollectionUpdateRequestDto dto) {
+        Collection collection = collectionRepository
+                .findById(dto.getCollectionId())
+                .orElseThrow(CollectionNotFoundException::new);
         if (collection.getTitle().equals(dto.getNewTitle())) {
             throw new CollectionSameTitleException();
         }
         collection.changeTitle(dto.getNewTitle());
-        Collection findByCache = collectionRepository
-                .findById(dto.getCollectionId()).orElseThrow(CollectionNotFoundException::new);
-        assert findByCache.getTitle().equals(dto.getNewTitle());
-        log.info("컬렉션 제목 수정 [ID] : {}, [수정된 컬렉션 제목] : {}", dto.getNickname(), findByCache.getTitle());
+        log.info("컬렉션 제목 수정 [ID] : {}, [수정된 컬렉션 제목] : {}", dto.getNickname(), collection.getTitle());
         return CollectionResponseDto.builder()
-                .title(findByCache.getTitle())
+                .title(collection.getTitle())
                 .nickname(dto.getNickname())
-                .collectionId(findByCache.getId())
+                .collectionId(collection.getId())
                 .build();
     }
 
@@ -165,7 +173,8 @@ public class CollectionService {
     }
 
     @Transactional
-    public CollectionAddUserResponseDto addUserToCollection(Collection find, CollectionAddUserResponseDto dto) {
+    public CollectionAddUserResponseDto addUserToCollection(Long collectionId, CollectionAddUserResponseDto dto) {
+        Collection find = collectionRepository.findById(collectionId).orElseThrow(CollectionNotFoundException::new);
         Member member = memberRepository.findByNickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
         find.addReference();
         MemberCollection memberCollection = MemberCollection.builder()
@@ -191,8 +200,10 @@ public class CollectionService {
     }
 
     @Transactional
-    public List<ItemResponseDto> copyItemToCollection(Collection copyCollection, Collection target) {
-        List<Item> items = copyCollection.getCollectionItems()
+    public List<ItemResponseDto> copyItemToCollection(Long copiedId, Long targetId) {
+        Collection copied = collectionRepository.findById(copiedId).orElseThrow(CollectionNotFoundException::new);
+        Collection target = collectionRepository.findById(targetId).orElseThrow(CollectionNotFoundException::new);
+        List<Item> items = copied.getCollectionItems()
                 .stream().map(CollectionItem::getItem).toList();
 
         items.forEach(item -> {

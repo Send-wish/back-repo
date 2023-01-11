@@ -105,8 +105,7 @@ public class ItemController {
             * find Collection 후 , Item 찾아서 (JPA 1차 캐시) 해당 Item을 Collection에 저장
             * 하고 나서 해당 item 상세 정보를 return
             * */
-            Collection collection = collectionService.findCollection(dto.getCollectionId(), dto.getNickname());
-            ItemListResponseDto itemListResponseDto = itemService.enrollItemToCollection(dto.getNickname(), collection, dto.getItemIdList());
+            ItemListResponseDto itemListResponseDto = itemService.enrollItemToCollection(dto.getNickname(), dto.getCollectionId(), dto.getItemIdList());
             return ResponseEntity.ok().body(itemListResponseDto);
         }catch (Exception e) {
             e.printStackTrace();
