@@ -33,8 +33,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     }
 
 
-/** Swagger UI 를 Resource Handler 에 등록 */
-/////Spring Boot- 주석하면 mapping안되는 문제.../////
+    /** Swagger UI 를 Resource Handler 에 등록 */
 
 	 @Override public void addResourceHandlers(ResourceHandlerRegistry registry) {
 	 registry.addResourceHandler("swagger-ui.html").addResourceLocations(
