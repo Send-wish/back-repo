@@ -1,10 +1,12 @@
 package link.sendwish.backend.controller;
 
-import link.sendwish.backend.model.ChatRoom;
+import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.ChatService;
+import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,38 +16,54 @@ import java.util.List;
 @RequestMapping("/chat")
 public class ChatRoomController {
     private final ChatService chatService;
-
-    // 채팅 리스트 화면
-    @GetMapping("/room")
-    public String rooms(Model model) {
-        return "/chat/room";
-    }
+    private final MemberService memberService;
 
     // 모든 채팅방 목록 조회
-    @GetMapping("/rooms")
-    @ResponseBody
-    public List<ChatRoom> room() {
-        return chatService.findAllRoom();
+    @GetMapping("/rooms/{nickname}")
+    public ResponseEntity<?> getRoomsByMember(@PathVariable("nickname") String nickname) {
+        try{
+            Member member = memberService.findMember(nickname);
+
+            List<ChatRoomResponseDto> chatRooms = chatService.findRoomByMember(member);
+
+            return ResponseEntity.ok().body(chatRooms);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
     }
 
     // 채팅방 생성
     @PostMapping("/room")
-    @ResponseBody
-    public ChatRoom createRoom(@RequestParam String name) {
-        return chatService.createRoom(name);
+    public ResponseEntity<?> createRoom(@RequestBody ChatRoomRequestDto dto) {
+        try{
+            ChatRoomResponseDto savedRoom = chatService.createRoom(dto.getTitle(), dto.getNickname());
+            return ResponseEntity.ok().body(savedRoom);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
     }
 
-    // 채팅방 입장 화면
+    // 채팅방 입장
     @GetMapping("/room/enter/{roomId}")
-    public String roomDetail(Model model, @PathVariable String roomId) {
-        model.addAttribute("roomId", roomId);
-        return "/chat/roomdetail";
+    public ResponseEntity<?> roomDetail(@PathVariable("roomId") Long roomId) {
+        try{
+            ChatRoomResponseDto room = chatService.findRoomById(roomId);
+            return ResponseEntity.ok().body(room);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
     }
 
-    // 특정 채팅방 조회
-    @GetMapping("/room/{roomId}")
-    @ResponseBody
-    public ChatRoom roomInfo(@PathVariable String roomId) {
-        return chatService.findById(roomId);
-    }
 }
