@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.collection;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

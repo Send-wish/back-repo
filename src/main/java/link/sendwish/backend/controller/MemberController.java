@@ -4,14 +4,14 @@ package link.sendwish.backend.controller;
 import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.member.MemberRequestDto;
+import link.sendwish.backend.dtos.member.MemberResponseDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor

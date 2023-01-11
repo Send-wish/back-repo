@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberResponseDto {
-    private Long id;//mypage
+public class ItemEnrollmentRequestDto {
+    private Long itemId;
+    private Long collectionId;
     private String nickname;
 }

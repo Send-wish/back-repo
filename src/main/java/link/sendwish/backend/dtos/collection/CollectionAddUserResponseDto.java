@@ -1,19 +1,15 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.collection;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionSharedDetailResponseDto {
-    List<ItemResponseDto> dtos;
+public class CollectionAddUserResponseDto {
+    private String nickname;
     Long collectionId;
-    String title;
-    List<String> memberIdList;
 }

@@ -3,10 +3,10 @@ package link.sendwish.backend.service;
 import link.sendwish.backend.auth.JwtTokenProvider;
 import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.common.exception.*;
-import link.sendwish.backend.dtos.MemberFriendAddRequestDto;
-import link.sendwish.backend.dtos.MemberFriendAddResponseDto;
-import link.sendwish.backend.dtos.MemberFriendResponseDto;
-import link.sendwish.backend.dtos.MemberRequestDto;
+import link.sendwish.backend.dtos.friend.FriendAddRequestDto;
+import link.sendwish.backend.dtos.friend.FriendAddResponseDto;
+import link.sendwish.backend.dtos.friend.FriendResponseDto;
+import link.sendwish.backend.dtos.member.MemberRequestDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.entity.MemberFriend;
 import link.sendwish.backend.repository.MemberRepository;
@@ -81,7 +81,7 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberFriendAddResponseDto addFriendToMe(MemberFriendAddRequestDto dto){
+    public FriendAddResponseDto addFriendToMe(FriendAddRequestDto dto){
         String myNickname = dto.getMemberNickname();
         String friendNickname = dto.getAddMemberNickname();
 
@@ -109,21 +109,21 @@ public class MemberService {
 
         myMember.addFriendInList(friend);
 
-        return MemberFriendAddResponseDto.builder()
+        return FriendAddResponseDto.builder()
                 .myNickname(myMember.getNickname())
                 .friendNickname(friendMember.getNickname())
                 .build();
     }
 
-    public List<MemberFriendResponseDto> findFriendsByMember(String nickname){
+    public List<FriendResponseDto> findFriendsByMember(String nickname){
         Member member = memberRepository.findByNickname(nickname)
                                         .orElseThrow(MemberNotFoundException::new);
 
-        List<MemberFriendResponseDto> dtos = new ArrayList<>();
+        List<FriendResponseDto> dtos = new ArrayList<>();
         for (MemberFriend f : member.getFriends()){
             Member friendMember = memberRepository.findById(f.getFriendId())
                     .orElseThrow(MemberNotFoundException::new);
-            dtos.add(MemberFriendResponseDto.builder()
+            dtos.add(FriendResponseDto.builder()
                     .friend_id(friendMember.getId())
                     .friend_nickname(friendMember.getNickname())
                     .build());

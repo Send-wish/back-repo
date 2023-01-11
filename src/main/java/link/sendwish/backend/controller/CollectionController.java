@@ -2,6 +2,8 @@ package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.collection.*;
+import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.CollectionService;
