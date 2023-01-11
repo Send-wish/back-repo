@@ -50,8 +50,15 @@ public class ItemService {
 
     @Transactional
     public ItemListResponseDto enrollItemToCollection(String nickname, Long colletionId, List<Long> itemIdList) {
-        Collection collection = collectionRepository.findById(colletionId).orElseThrow(CollectionNotFoundException::new);
+        Collection collection = collectionRepository
+                .findById(colletionId).orElseThrow(CollectionNotFoundException::new);
+        List<CollectionItem> collectionItemList = collectionItemRepository.findAllByCollection(collection);
+        List<Item> itemList = collectionItemList.stream().map(CollectionItem::getItem).collect(Collectors.toList());
+        List<Long> itemIdCheckList = itemList.stream().map(Item::getId).collect(Collectors.toList());
         for (Long itemId : itemIdList){
+            if (itemIdCheckList.contains(itemId)){
+                continue;
+            }
             Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
             CollectionItem collectionItem = CollectionItem.builder()
                     .item(item)
