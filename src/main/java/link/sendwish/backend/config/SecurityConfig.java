@@ -36,7 +36,17 @@ public class SecurityConfig {
                 .antMatchers("/items/**").permitAll()
                 .antMatchers("/add/friend").permitAll()
                 .antMatchers("/get/friend/**").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/chat/**").permitAll()
+                .antMatchers("/",
+                        "/error",
+                        "/favicon.ico",
+                        "/**/*.png",
+                        "/**/*.gif",
+                        "/**/*.svg",
+                        "/**/*.jpg",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js").permitAll()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
