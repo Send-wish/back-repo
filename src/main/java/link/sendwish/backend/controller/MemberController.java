@@ -4,14 +4,15 @@ package link.sendwish.backend.controller;
 import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.member.MemberRequestDto;
+import link.sendwish.backend.dtos.member.MemberResponseDto;
+import link.sendwish.backend.dtos.member.SignInResponseDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -53,24 +54,14 @@ public class MemberController {
             if (dto.getNickname() == null || dto.getPassword() == null) {
                 throw new DtoNullException();
             }
+
             TokenInfo tokenInfo = memberService.login(dto.getNickname(), dto.getPassword());
-            return ResponseEntity.ok().body(tokenInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ResponseErrorDto errorDto = ResponseErrorDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(errorDto);
-        }
-    }
+            Member member = memberService.findMember(dto.getNickname());
 
-    @PostMapping("/add/friend")
-    public ResponseEntity<?> addFriend(@RequestBody MemberFriendAddRequestDto dto) {
-        try {
-            if (dto.getMemberId() == null || dto.getAddMemberId() == null) {
-                throw new DtoNullException();
-            }
-            MemberFriendAddResponseDto dtos = memberService.addFriendToMe(dto);
+            SignInResponseDto dtos = SignInResponseDto.builder()
+                    .tokenInfo(tokenInfo)
+                    .nickname(member.getNickname()).build();
+
             return ResponseEntity.ok().body(dtos);
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,41 +71,4 @@ public class MemberController {
             return ResponseEntity.internalServerError().body(errorDto);
         }
     }
-
-    @GetMapping("/get/friend/{nickname}")
-    public ResponseEntity<?> getFriendsByMember(@PathVariable("nickname") String nickname){
-        try{
-            if(nickname == null){
-                throw new DtoNullException();
-            }
-            List<MemberFriendResponseDto> dtos = memberService.findFriendsByMember(nickname);
-            return ResponseEntity.ok().body(dtos);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ResponseErrorDto errorDto = ResponseErrorDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(errorDto);
-        }
-    }
-
-    @DeleteMapping("/delete/{nickname}/{friendNickname}")
-    public ResponseEntity<?> deleteFriend(@PathVariable("nickname") String nickname,
-                                          @PathVariable("friendNickname") String friendNickname){
-        try{
-            if(nickname == null || friendNickname == null){
-                throw new DtoNullException();
-            }
-            memberService.deleteFriend(nickname, friendNickname);
-            return ResponseEntity.ok().body("친구 삭제 성공");
-        } catch (Exception e) {
-            e.printStackTrace();
-            ResponseErrorDto errorDto = ResponseErrorDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(errorDto);
-        }
-    }
-
-
 }

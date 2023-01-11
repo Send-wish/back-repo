@@ -1,20 +1,26 @@
 package link.sendwish.backend.service;
 
 
-import link.sendwish.backend.dtos.CollectionResponseDto;
-import link.sendwish.backend.dtos.ItemResponseDto;
+import link.sendwish.backend.common.exception.CollectionNotFoundException;
+import link.sendwish.backend.common.exception.MemberNotFoundException;
+import link.sendwish.backend.dtos.collection.CollectionResponseDto;
+import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
+import link.sendwish.backend.dtos.item.ItemResponseDto;
+import link.sendwish.backend.dtos.ItemListResponseDto;
 import link.sendwish.backend.entity.*;
-import link.sendwish.backend.repository.CollectionItemRepository;
-import link.sendwish.backend.repository.MemberItemRepository;
-import link.sendwish.backend.repository.ItemRepository;
+import link.sendwish.backend.entity.Collection;
+import link.sendwish.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import link.sendwish.backend.common.exception.ItemNotFoundException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.reverse;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,6 +33,8 @@ public class ItemService {
     private final CollectionService collectionService;
     private final CollectionItemRepository collectionItemRepository;
     private final MemberItemRepository memberItemRepository;
+    private final MemberRepository memberRepository;
+    private final CollectionRepository collectionRepository;
 
     @Transactional
     public Long saveItem(Item item, String nickname) {
@@ -42,69 +50,98 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemResponseDto enrollItemToCollection(Collection collection, Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
-        CollectionItem collectionItem = CollectionItem.builder()
-                .item(item)
-                .collection(collection)
-                .build();
+    public ItemListResponseDto enrollItemToCollection(String nickname, Long colletionId, List<Long> itemIdList) {
+        Collection collection = collectionRepository
+                .findById(colletionId).orElseThrow(CollectionNotFoundException::new);
+        List<CollectionItem> collectionItemList = collectionItemRepository.findAllByCollection(collection);
+        List<Item> itemList = collectionItemList.stream().map(CollectionItem::getItem).collect(Collectors.toList());
+        List<Long> itemIdCheckList = itemList.stream().map(Item::getId).collect(Collectors.toList());
 
-        item.addCollectionItem(collectionItem);
-        collection.addCollectionItem(collectionItem);//Cascade Option으로 insert문 자동 호출
+        List<Long> itemIdListToSave = new ArrayList<>();
+        for (Long itemId : itemIdList){
+            if (itemIdCheckList.contains(itemId)){
+                continue;
+            }
+            Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+            CollectionItem collectionItem = CollectionItem.builder()
+                    .item(item)
+                    .collection(collection)
+                    .build();
 
-        return ItemResponseDto.builder()
-                .imgUrl(item.getImgUrl())
-                .name(item.getName())
-                .price(item.getPrice())
-                .originUrl(item.getOriginUrl())
-                .itemId(item.getId())
+            item.addCollectionItem(collectionItem);
+            collection.addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
+            itemIdListToSave.add(itemId);
+        }
+
+        List<CollectionItem> reverseCollectionItemList = collectionItemRepository
+                .findAllByCollectionOrderByIdDesc(collection);
+
+        Collections.reverse(itemIdListToSave);
+
+        return ItemListResponseDto.builder()
+                .nickname(nickname)
+                .collectionId(collection.getId())
+                .itemIdList(itemIdListToSave)
                 .build();
     }
 
     @Transactional
-    public void deleteItem(String nickname, Long itemId) {
-        Item item = itemRepository
-                .findById(itemId)
-                .orElseThrow(ItemNotFoundException::new);
+    public ItemDeleteResponseDto deleteItem(String nickname, List<Long> listItemId) {
 
-        if(item.getReference() == 1){
-            itemRepository.delete(item);
-            log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, 0);
-        }else {
-            item.subtractReference();
-            log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(MemberNotFoundException::new);
 
-            Member member = memberService.findMember(nickname);
-            List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
+        for (Long itemId : listItemId){
+            Item item = itemRepository
+                    .findById(itemId)
+                    .orElseThrow(ItemNotFoundException::new);
 
-            memberCollection.forEach(
-                    target -> {
-                        Collection collection = collectionService.findCollection(target.getCollectionId(), nickname);
-                        CollectionItem collectionItem =
-                                collectionItemRepository.findByCollectionAndItem(collection, item).get();
-                        collectionItemRepository.deleteByCollectionAndItem(collection, item);
-                        item.deleteCollectionItem(collectionItem);
-                        collection.deleteCollectionItem(collectionItem);
-                    });
+            if(item.getReference() == 1){
+                itemRepository.delete(item);
+                log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, 0);
+
+            }else {
+                item.subtractReference();
+                log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
+
+                List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
+
+                memberCollection.forEach(
+                        target -> {
+                            Collection collection = collectionRepository.findById(target.getCollectionId())
+                                    .orElseThrow(CollectionNotFoundException::new);
+                            CollectionItem collectionItem =
+                                    collectionItemRepository.findByCollectionAndItem(collection, item).get();
+                            collectionItemRepository.deleteByCollectionAndItem(collection, item);
+                            item.deleteCollectionItem(collectionItem);
+                            collection.deleteCollectionItem(collectionItem);
+                        });
+                }
         }
 
+        return(ItemDeleteResponseDto.builder()
+                .itemIdList(listItemId)
+                .nickname(member.getNickname())
+                .build());
     }
 
     public List<ItemResponseDto> findItemByMember(Member member) {
-        List<ItemResponseDto> dtos = memberItemRepository
-                .findAllByMember(member)
+        List<ItemResponseDto> dtos;
+        if (memberItemRepository.findAllByMemberOrderByIdDesc(member).isEmpty()) {
+            dtos = new ArrayList<>();
+            log.info("맴버 아이템 일괄 조회 [ID] : {},해당 멤버는 가진 아이템이 없습니다.", member.getNickname());
+            return dtos;
+        }
+        dtos = memberItemRepository.findAllByMemberOrderByIdDesc(member)
                 .get()
-                .stream()
-                .map(target -> ItemResponseDto
-                        .builder()
-                        .name(target.getItem().getName())
+                .stream().map(target -> ItemResponseDto.builder()
                         .originUrl(target.getItem().getOriginUrl())
-                        .imgUrl(target.getItem().getImgUrl())
+                        .name(target.getItem().getName())
                         .price(target.getItem().getPrice())
+                        .imgUrl(target.getItem().getImgUrl())
                         .itemId(target.getItem().getId())
                         .build()
-                ).toList();
-
+                ).collect(Collectors.toList());
         log.info("맴버 아이템 일괄 조회 [ID] : {}, [아이템 갯수] : {}", member.getNickname(), dtos.size());
         return dtos;
     }

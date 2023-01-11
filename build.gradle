@@ -52,6 +52,10 @@ dependencies {
 	implementation 'org.webjars.bower:vue:2.5.16'
 	implementation 'org.webjars.bower:axios:0.17.1'
 	implementation 'com.google.code.gson:gson:2.8.0'
+
+	//swagger
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
 }
 
 tasks.named('test') {

@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.friend;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemEnrollmentRequestDto {
-    private Long itemId;
-    private Long collectionId;
-    private String nickname;
+public class FriendDeleteRequestDto {
+    private String nickname; // 내 닉네임
+    private String friendNickname;
 }

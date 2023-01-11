@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionSharedCreateRequestDto {
-    private List<String> memberIdList;
-    private String title;
-    private Long targetCollectionId;
+public class ItemDeleteRequestDto {
+    private String nickname;
+    private List<Long> itemIdList;
 }

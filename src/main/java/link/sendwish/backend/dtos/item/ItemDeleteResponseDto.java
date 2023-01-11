@@ -1,15 +1,17 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberFriendAddResponseDto {
-    private Long id; // my id
-    private Long friendId; // 친구의 id
+public class ItemDeleteResponseDto {
+    private String nickname;
+    private List<Long> itemIdList;
 }

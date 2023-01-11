@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.collection;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-
 @AllArgsConstructor
-public class ResponseErrorDto {
-    private String error;
+public class CollectionUpdateRequestDto {
     private String nickname;
+    private String newTitle;
+    private Long collectionId;
 }

@@ -3,10 +3,11 @@ package link.sendwish.backend.service;
 import link.sendwish.backend.auth.JwtTokenProvider;
 import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.common.exception.*;
-import link.sendwish.backend.dtos.MemberFriendAddRequestDto;
-import link.sendwish.backend.dtos.MemberFriendAddResponseDto;
-import link.sendwish.backend.dtos.MemberFriendResponseDto;
-import link.sendwish.backend.dtos.MemberRequestDto;
+import link.sendwish.backend.dtos.friend.FriendAddRequestDto;
+import link.sendwish.backend.dtos.friend.FriendAddResponseDto;
+import link.sendwish.backend.dtos.friend.FriendDeleteResponseDto;
+import link.sendwish.backend.dtos.friend.FriendResponseDto;
+import link.sendwish.backend.dtos.member.MemberRequestDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.entity.MemberFriend;
 import link.sendwish.backend.repository.MemberRepository;
@@ -81,18 +82,17 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberFriendAddResponseDto addFriendToMe(MemberFriendAddRequestDto dto){
-        Long myId = dto.getMemberId();
-        Long friendId = dto.getAddMemberId();
+    public FriendAddResponseDto addFriendToMe(FriendAddRequestDto dto){
+        String myNickname = dto.getMemberNickname();
+        String friendNickname = dto.getAddMemberNickname();
 
-        Member myMember = memberRepository.findById(myId).orElseThrow(MemberNotFoundException::new);
-        Member friendMember = memberRepository.findById(friendId).orElseThrow(MemberNotFoundException::new);
+        Member myMember = memberRepository.findByNickname(myNickname).orElseThrow(MemberNotFoundException::new);
+        Member friendMember = memberRepository.findByNickname(friendNickname).orElseThrow(MemberNotFoundException::new);
 
-        assert(myId == myMember.getId());
-        assert(friendId == friendMember.getId());
+        assert (myNickname == myMember.getNickname());
+        assert(friendNickname == friendMember.getNickname());
 
-
-        if (myMember.getId() == friendMember.getId()){
+        if (myMember.getNickname() == friendMember.getNickname()){
             throw new FriendMemberSameException();
         }
 
@@ -100,7 +100,7 @@ public class MemberService {
             if (f.getFriendId().equals(friendMember.getId())){
                 throw new MemberFriendExistingException();
             } else {
-                log.info("나의 친구 ID : {}", f.getFriendId());
+                log.info("나의 nickname : {}, 친구의 nickname : {}", myNickname, friendNickname);
             }
         }
 
@@ -110,30 +110,31 @@ public class MemberService {
 
         myMember.addFriendInList(friend);
 
-        return MemberFriendAddResponseDto.builder()
-                .id(myMember.getId())
-                .friendId(friendMember.getId())
+        return FriendAddResponseDto.builder()
+                .myNickname(myMember.getNickname())
+                .friendNickname(friendMember.getNickname())
                 .build();
     }
 
-    public List<MemberFriendResponseDto> findFriendsByMember(String nickname){
+    public List<FriendResponseDto> findFriendsByMember(String nickname){
         Member member = memberRepository.findByNickname(nickname)
                                         .orElseThrow(MemberNotFoundException::new);
 
-        List<MemberFriendResponseDto> dtos = new ArrayList<>();
+        List<FriendResponseDto> dtos = new ArrayList<>();
         for (MemberFriend f : member.getFriends()){
             Member friendMember = memberRepository.findById(f.getFriendId())
                     .orElseThrow(MemberNotFoundException::new);
-            dtos.add(MemberFriendResponseDto.builder()
+            dtos.add(FriendResponseDto.builder()
                     .friend_id(friendMember.getId())
+                    .friend_nickname(friendMember.getNickname())
                     .build());
-            log.info("친구 ID : {}", f.getFriendId());
+            log.info("친구 NickName : {}", friendMember.getNickname());
         }
         return dtos;
     }
 
     @Transactional
-    public void deleteFriend(String nickname, String friendNickname){
+    public FriendDeleteResponseDto deleteFriend(String nickname, String friendNickname){
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(MemberNotFoundException::new);
         Member friendMember = memberRepository.findByNickname(friendNickname)
@@ -145,7 +146,10 @@ public class MemberService {
             if (f.getFriendId().equals(friendMember.getId())){
                 member.removeFriendInList(f);
                 log.info("친구 삭제 후 - member : {}", member.getFriends());
-                return;
+                return FriendDeleteResponseDto.builder()
+                        .nickname(member.getNickname())
+                        .friendNickname(friendMember.getNickname())
+                        .build();
             }
         }
         throw new MemberFriendNotFoundException();

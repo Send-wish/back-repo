@@ -1,5 +1,6 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.member;
 
+import link.sendwish.backend.auth.TokenInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionResponseDto {
-    private Long collectionId;
-    private String title;
+public class SignInResponseDto {
+    private TokenInfo tokenInfo;
     private String nickname;
-    //추후 item 관련 field 추가
 }

@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-
 @AllArgsConstructor
-public class ResponseErrorDto {
-    private String error;
+public class MemberResponseDto {
+    private Long id;//mypage
     private String nickname;
 }

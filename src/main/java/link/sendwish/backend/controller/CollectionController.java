@@ -1,8 +1,12 @@
 package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
+import link.sendwish.backend.common.exception.ItemNotFoundException;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.collection.*;
+import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.Collection;
+import link.sendwish.backend.entity.Item;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.MemberService;
@@ -12,7 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,8 +35,10 @@ public class CollectionController {
             Member member = memberService.findMember(nickname);
 
             List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
+            List<CollectionResponseDto> reversedMemberCollection = new ArrayList<>(memberCollection);
+            Collections.reverse(reversedMemberCollection);
 
-            return ResponseEntity.ok().body(memberCollection);
+            return ResponseEntity.ok().body(reversedMemberCollection);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
@@ -63,8 +72,7 @@ public class CollectionController {
             if (dto.getNewTitle() == null || dto.getNickname() == null || dto.getCollectionId() == null) {
                 throw new DtoNullException();
             }
-            Collection find = collectionService.findCollection(dto.getCollectionId(),dto.getNickname());
-            CollectionResponseDto responseDto = collectionService.updateCollectionTitle(find, dto);
+            CollectionResponseDto responseDto = collectionService.updateCollectionTitle(dto);
             return ResponseEntity.ok().body(responseDto);
         }catch (Exception e) {
             e.printStackTrace();
@@ -79,8 +87,8 @@ public class CollectionController {
     public ResponseEntity<?> getDetailCollection(@PathVariable("nickname") String nickname,
                                                  @PathVariable("collectionId") Long collectionId) {
         try {
-            Collection collection = collectionService.findCollection(collectionId,nickname);
-            CollectionDetailResponseDto dto = collectionService.getDetails(collection, nickname);
+            CollectionDetailResponseDto dto = collectionService.getDetails(collectionId, nickname);
+
             return ResponseEntity.ok().body(dto);
         }catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +102,7 @@ public class CollectionController {
     @PostMapping("/collection/shared")
     public ResponseEntity<?> sharedCollection(@RequestBody CollectionSharedCreateRequestDto dto) {
         try {
-            if (dto.getTitle() == null || dto.getTitle() == null) {
+            if (dto.getTitle() == null || dto.getTargetCollectionId() == null) {
                 throw new RuntimeException("잘못된 DTO 요청입니다.");
             }
 
@@ -108,28 +116,28 @@ public class CollectionController {
             members.add(owner);
 
             // 생성된 컬랙션에 친구 추가 => query X
-            Collection find = collectionService.findCollection
-                    (savedCollection.getCollectionId(),savedCollection.getNickname());
+            CollectionResponseDto find = collectionService.findCollection
+                    (savedCollection.getCollectionId(), savedCollection.getNickname());
             CollectionSharedDetailResponseDto responseDto = CollectionSharedDetailResponseDto.builder()
                     .title(find.getTitle())
-                    .collectionId(find.getId())
+                    .collectionId(find.getCollectionId())
                     .memberIdList(members)
                     .build();
 
             for (var i = 1; i < dto.getMemberIdList().size(); i += 1) {
                 CollectionAddUserResponseDto CollectionAddUserRequest = CollectionAddUserResponseDto.builder()
-                        .collectionId(find.getId())
+                        .collectionId(find.getCollectionId())
                         .nickname(dto.getMemberIdList().get(i))
                         .build();
-                CollectionAddUserResponseDto collectionAddUser = collectionService.addUserToCollection(find, CollectionAddUserRequest);
+                CollectionAddUserResponseDto collectionAddUser = collectionService.addUserToCollection(find.getCollectionId(), CollectionAddUserRequest);
                 responseDto.getMemberIdList().add(collectionAddUser.getNickname());
             }
 
             // 복사할 컬랙션 존재하면 해당 컬랙션 아이템 전부 복사
             if (dto.getTargetCollectionId() != null) {
-                Collection findTarget = collectionService.findCollection
-                        (dto.getTargetCollectionId(),savedCollection.getNickname()); // 1차 캐시
-                List<ItemResponseDto> copyItemToCollection = collectionService.copyItemToCollection(findTarget, find);
+                CollectionResponseDto copyTarget = collectionService.findCollection
+                        (dto.getTargetCollectionId(), savedCollection.getNickname());// 1차 캐시
+                List<ItemResponseDto> copyItemToCollection = collectionService.copyItemToCollection(copyTarget.getCollectionId(),find.getCollectionId());
                 responseDto.setDtos(copyItemToCollection);
             }
             return ResponseEntity.ok().body(responseDto);
@@ -172,12 +180,17 @@ public class CollectionController {
         }
     }
 
-    @DeleteMapping("/collection/item/{collectionId}/{itemId}")
-    public ResponseEntity<?> deleteItem(@PathVariable("collectionId") Long collectionId,
-                                        @PathVariable("itemId") Long itemId) {
+    @DeleteMapping("/collection/item")
+    public ResponseEntity<?> deleteItem(@RequestBody CollectionItemDeleteRequestDto dto) {
+        if(dto.getItemIdList() == null || dto.getCollectionId() == null || dto.getCollectionId() == null){
+            throw new DtoNullException();
+        }
         try{
-            collectionService.deleteCollectionItem(collectionId, itemId);
-            return ResponseEntity.ok("Entity deleted");
+            if (dto.getItemIdList().isEmpty()){
+                throw new ItemNotFoundException();
+            }
+            collectionService.deleteCollectionItem(dto.getCollectionId(), dto.getItemIdList());
+            return ResponseEntity.ok("Entities deleted");
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
