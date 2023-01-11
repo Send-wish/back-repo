@@ -58,8 +58,17 @@ public class ItemService {
             collection.addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
         }
 
-        List<Item> reverseItemList = itemRepository.findAllByCollectionIdOrderByIdDesc(collection.getId());
-        List<Long> reverseItemIdList = reverseItemList.stream().map(Item::getId).collect(Collectors.toList());
+        List<CollectionItem> reverseCollectionItemList = collectionItemRepository
+                .findAllByCollectionOrderByIdDesc(collection);
+
+        List<Item> reverseItemList = reverseCollectionItemList.stream()
+                .map(CollectionItem::getItem)
+                .filter(item -> itemIdList.contains(item.getId()))
+                .collect(Collectors.toList());
+
+        List<Long> reverseItemIdList = reverseItemList.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
 
         return ItemListResponseDto.builder()
                 .nickname(nickname)
