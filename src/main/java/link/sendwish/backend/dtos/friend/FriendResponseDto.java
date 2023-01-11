@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.friend;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionAddUserResponseDto {
-    private String nickname;
-    Long collectionId;
+public class FriendResponseDto {
+    private Long friend_id;
+    private String friend_nickname;
 }

@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollectionResponseDto {
-    private Long collectionId;
-    private String title;
+public class ItemCreateRequestDto {
+    private String url;
     private String nickname;
-    //추후 item 관련 field 추가
 }

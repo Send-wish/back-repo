@@ -1,8 +1,8 @@
 package link.sendwish.backend.service;
 
 
-import link.sendwish.backend.dtos.CollectionResponseDto;
-import link.sendwish.backend.dtos.ItemResponseDto;
+import link.sendwish.backend.dtos.collection.CollectionResponseDto;
+import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.repository.CollectionItemRepository;

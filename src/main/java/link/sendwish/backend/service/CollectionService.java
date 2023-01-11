@@ -1,7 +1,11 @@
 package link.sendwish.backend.service;
 
 import link.sendwish.backend.common.exception.*;
-import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.collection.CollectionAddUserResponseDto;
+import link.sendwish.backend.dtos.collection.CollectionDetailResponseDto;
+import link.sendwish.backend.dtos.collection.CollectionResponseDto;
+import link.sendwish.backend.dtos.collection.CollectionUpdateRequestDto;
+import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +31,7 @@ public class CollectionService {
 
 
     @Transactional
-    public CollectionResponseDto createCollection(String title,String nickname) {
+    public CollectionResponseDto createCollection(String title, String nickname) {
         Collection collection = Collection.builder()
                 .title(title)
                 .memberCollections(new ArrayList<>())
@@ -82,7 +86,7 @@ public class CollectionService {
         return find;
     }
 
-    public CollectionDetailResponseDto getDetails(Collection collection,String nickname) {
+    public CollectionDetailResponseDto getDetails(Collection collection, String nickname) {
         List<Item> items = collection.getCollectionItems()
                 .stream().map(CollectionItem::getItem).toList();
         return CollectionDetailResponseDto.builder()
@@ -101,7 +105,7 @@ public class CollectionService {
     }
 
     @Transactional
-    public CollectionResponseDto updateCollectionTitle(Collection collection,CollectionUpdateRequestDto dto) {
+    public CollectionResponseDto updateCollectionTitle(Collection collection, CollectionUpdateRequestDto dto) {
         assert Objects.equals(collection.getId(), dto.getCollectionId());
         if (collection.getTitle().equals(dto.getNewTitle())) {
             throw new CollectionSameTitleException();
