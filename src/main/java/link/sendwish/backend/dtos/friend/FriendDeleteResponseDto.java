@@ -1,4 +1,4 @@
-package link.sendwish.backend.dtos;
+package link.sendwish.backend.dtos.friend;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-
 @AllArgsConstructor
-public class ResponseErrorDto {
-    private String error;
-    private String nickname;
+public class FriendDeleteResponseDto {
+    private String nickname; // 내 닉네임
+    private String friendNickname;
 }

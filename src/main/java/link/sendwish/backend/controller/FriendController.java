@@ -3,10 +3,7 @@ package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.*;
-import link.sendwish.backend.dtos.friend.FriendAddRequestDto;
-import link.sendwish.backend.dtos.friend.FriendAddResponseDto;
-import link.sendwish.backend.dtos.friend.FriendDeleteRequestDto;
-import link.sendwish.backend.dtos.friend.FriendResponseDto;
+import link.sendwish.backend.dtos.friend.*;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,8 +58,9 @@ public class FriendController {
             if(dto.getNickname() == null || dto.getFriendNickname() == null){
                 throw new DtoNullException();
             }
-            memberService.deleteFriend(dto.getNickname(), dto.getFriendNickname());
-            return ResponseEntity.ok().body("친구 삭제 성공");
+            FriendDeleteResponseDto dtos = memberService.deleteFriend(dto.getNickname(), dto.getFriendNickname());
+
+            return ResponseEntity.ok().body(dtos);
         } catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()

@@ -6,6 +6,7 @@ import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.dtos.member.MemberRequestDto;
 import link.sendwish.backend.dtos.member.MemberResponseDto;
+import link.sendwish.backend.dtos.member.SignInResponseDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -53,8 +54,15 @@ public class MemberController {
             if (dto.getNickname() == null || dto.getPassword() == null) {
                 throw new DtoNullException();
             }
+
             TokenInfo tokenInfo = memberService.login(dto.getNickname(), dto.getPassword());
-            return ResponseEntity.ok().body(tokenInfo);
+            Member member = memberService.findMember(dto.getNickname());
+
+            SignInResponseDto dtos = SignInResponseDto.builder()
+                    .tokenInfo(tokenInfo)
+                    .nickname(member.getNickname()).build();
+
+            return ResponseEntity.ok().body(dtos);
         } catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
