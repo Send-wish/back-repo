@@ -5,6 +5,7 @@ import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.common.exception.*;
 import link.sendwish.backend.dtos.friend.FriendAddRequestDto;
 import link.sendwish.backend.dtos.friend.FriendAddResponseDto;
+import link.sendwish.backend.dtos.friend.FriendDeleteResponseDto;
 import link.sendwish.backend.dtos.friend.FriendResponseDto;
 import link.sendwish.backend.dtos.member.MemberRequestDto;
 import link.sendwish.backend.entity.Member;
@@ -133,7 +134,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteFriend(String nickname, String friendNickname){
+    public FriendDeleteResponseDto deleteFriend(String nickname, String friendNickname){
         Member member = memberRepository.findByNickname(nickname)
                 .orElseThrow(MemberNotFoundException::new);
         Member friendMember = memberRepository.findByNickname(friendNickname)
@@ -145,7 +146,10 @@ public class MemberService {
             if (f.getFriendId().equals(friendMember.getId())){
                 member.removeFriendInList(f);
                 log.info("친구 삭제 후 - member : {}", member.getFriends());
-                return;
+                return FriendDeleteResponseDto.builder()
+                        .nickname(member.getNickname())
+                        .friendNickname(friendMember.getNickname())
+                        .build();
             }
         }
         throw new MemberFriendNotFoundException();
