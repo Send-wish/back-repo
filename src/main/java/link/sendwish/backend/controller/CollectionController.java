@@ -16,7 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,8 +35,10 @@ public class CollectionController {
             Member member = memberService.findMember(nickname);
 
             List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
+            List<CollectionResponseDto> reversedMemberCollection = new ArrayList<>(memberCollection);
+            Collections.reverse(reversedMemberCollection);
 
-            return ResponseEntity.ok().body(memberCollection);
+            return ResponseEntity.ok().body(reversedMemberCollection);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()

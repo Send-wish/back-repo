@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .antMatchers("/").permitAll()
                 .antMatchers("/collections/**").permitAll()
                 .antMatchers("/collection/**").permitAll()
+                .antMatchers("/collection").permitAll()
                 .antMatchers("/item/**").permitAll()
                 .antMatchers("/items/**").permitAll()
                 .antMatchers("/friend").permitAll()

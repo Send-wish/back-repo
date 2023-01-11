@@ -1,7 +1,9 @@
 package link.sendwish.backend.service;
 
 
+import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.dtos.collection.CollectionResponseDto;
+import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.dtos.ItemListResponseDto;
 import link.sendwish.backend.entity.*;
@@ -9,6 +11,7 @@ import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.repository.CollectionItemRepository;
 import link.sendwish.backend.repository.MemberItemRepository;
 import link.sendwish.backend.repository.ItemRepository;
+import link.sendwish.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,7 @@ public class ItemService {
     private final CollectionService collectionService;
     private final CollectionItemRepository collectionItemRepository;
     private final MemberItemRepository memberItemRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Long saveItem(Item item, String nickname) {
@@ -78,32 +82,42 @@ public class ItemService {
     }
 
     @Transactional
-    public void deleteItem(String nickname, Long itemId) {
-        Item item = itemRepository
-                .findById(itemId)
-                .orElseThrow(ItemNotFoundException::new);
+    public ItemDeleteResponseDto deleteItem(String nickname, List<Long> listItemId) {
 
-        if(item.getReference() == 1){
-            itemRepository.delete(item);
-            log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, 0);
-        }else {
-            item.subtractReference();
-            log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(MemberNotFoundException::new);
 
-            Member member = memberService.findMember(nickname);
-            List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
+        for (Long itemId : listItemId){
+            Item item = itemRepository
+                    .findById(itemId)
+                    .orElseThrow(ItemNotFoundException::new);
 
-            memberCollection.forEach(
-                    target -> {
-                        Collection collection = collectionService.findCollection(target.getCollectionId(), nickname);
-                        CollectionItem collectionItem =
-                                collectionItemRepository.findByCollectionAndItem(collection, item).get();
-                        collectionItemRepository.deleteByCollectionAndItem(collection, item);
-                        item.deleteCollectionItem(collectionItem);
-                        collection.deleteCollectionItem(collectionItem);
-                    });
+            if(item.getReference() == 1){
+                itemRepository.delete(item);
+                log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, 0);
+
+            }else {
+                item.subtractReference();
+                log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
+
+                List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
+
+                memberCollection.forEach(
+                        target -> {
+                            Collection collection = collectionService.findCollection(target.getCollectionId(), nickname);
+                            CollectionItem collectionItem =
+                                    collectionItemRepository.findByCollectionAndItem(collection, item).get();
+                            collectionItemRepository.deleteByCollectionAndItem(collection, item);
+                            item.deleteCollectionItem(collectionItem);
+                            collection.deleteCollectionItem(collectionItem);
+                        });
+                }
         }
 
+        return(ItemDeleteResponseDto.builder()
+                .itemIdList(listItemId)
+                .nickname(member.getNickname())
+                .build());
     }
 
     public List<ItemResponseDto> findItemByMember(Member member) {

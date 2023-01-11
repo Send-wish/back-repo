@@ -2,9 +2,7 @@ package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.*;
-import link.sendwish.backend.dtos.item.ItemCreateRequestDto;
-import link.sendwish.backend.dtos.item.ItemEnrollmentRequestDto;
-import link.sendwish.backend.dtos.item.ItemResponseDto;
+import link.sendwish.backend.dtos.item.*;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Item;
 import link.sendwish.backend.entity.Member;
@@ -119,17 +117,22 @@ public class ItemController {
         }
     }
 
-    @DeleteMapping("/item/{nickname}/{itemId}")
-    public ResponseEntity<?> deleteItem(@PathVariable("nickname") String nickname,
-                                        @PathVariable("itemId") Long itemId) {
+    @DeleteMapping("/items")
+    public ResponseEntity<?> deleteItem(@RequestBody ItemDeleteRequestDto dto) {
         try{
+            if (dto.getNickname() == null || dto.getItemIdList() == null){
+                throw new DtoNullException();
+            }
+            String nickname = dto.getNickname();
+            List<Long> itemIdList = dto.getItemIdList();
+
             /*
              * find Collection 후 , Item 찾아서 (JPA 1차 캐시) 해당 Item을 Collection에 저장
              * 하고 나서 해당 item 상세 정보를 return
              * */
-            itemService.deleteItem(nickname, itemId);
+            ItemDeleteResponseDto dtos = itemService.deleteItem(nickname, itemIdList);
 
-            return ResponseEntity.ok("Entity deleted");
+            return ResponseEntity.ok().body(dtos);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
