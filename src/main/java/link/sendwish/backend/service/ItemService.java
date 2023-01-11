@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.reverse;
 
 @Service
 @Transactional(readOnly = true)
@@ -55,6 +56,8 @@ public class ItemService {
         List<CollectionItem> collectionItemList = collectionItemRepository.findAllByCollection(collection);
         List<Item> itemList = collectionItemList.stream().map(CollectionItem::getItem).collect(Collectors.toList());
         List<Long> itemIdCheckList = itemList.stream().map(Item::getId).collect(Collectors.toList());
+
+        List<Long> itemIdListToSave = new ArrayList<>();
         for (Long itemId : itemIdList){
             if (itemIdCheckList.contains(itemId)){
                 continue;
@@ -67,24 +70,18 @@ public class ItemService {
 
             item.addCollectionItem(collectionItem);
             collection.addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
+            itemIdListToSave.add(itemId);
         }
 
         List<CollectionItem> reverseCollectionItemList = collectionItemRepository
                 .findAllByCollectionOrderByIdDesc(collection);
 
-        List<Item> reverseItemList = reverseCollectionItemList.stream()
-                .map(CollectionItem::getItem)
-                .filter(item -> itemIdList.contains(item.getId()))
-                .collect(Collectors.toList());
-
-        List<Long> reverseItemIdList = reverseItemList.stream()
-                .map(Item::getId)
-                .collect(Collectors.toList());
+        Collections.reverse(itemIdListToSave);
 
         return ItemListResponseDto.builder()
                 .nickname(nickname)
                 .collectionId(collection.getId())
-                .itemIdList(reverseItemIdList)
+                .itemIdList(itemIdListToSave)
                 .build();
     }
 
