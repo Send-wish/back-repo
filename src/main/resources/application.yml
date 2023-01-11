@@ -9,7 +9,19 @@ spring:
     include:
       - aws
       - auth
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
   mvc:
+    view:
+      suffix: .html
     pathmatch:
       matching-strategy: ant_path_matcher
 
