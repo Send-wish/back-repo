@@ -1,6 +1,7 @@
 package link.sendwish.backend.service;
 
 
+import link.sendwish.backend.common.exception.CollectionNotFoundException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.dtos.collection.CollectionResponseDto;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
@@ -8,10 +9,7 @@ import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.dtos.ItemListResponseDto;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.entity.Collection;
-import link.sendwish.backend.repository.CollectionItemRepository;
-import link.sendwish.backend.repository.MemberItemRepository;
-import link.sendwish.backend.repository.ItemRepository;
-import link.sendwish.backend.repository.MemberRepository;
+import link.sendwish.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,6 +33,7 @@ public class ItemService {
     private final CollectionItemRepository collectionItemRepository;
     private final MemberItemRepository memberItemRepository;
     private final MemberRepository memberRepository;
+    private final CollectionRepository collectionRepository;
 
     @Transactional
     public Long saveItem(Item item, String nickname) {
@@ -50,7 +49,8 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemListResponseDto enrollItemToCollection(String nickname, Collection collection, List<Long> itemIdList) {
+    public ItemListResponseDto enrollItemToCollection(String nickname, Long colletionId, List<Long> itemIdList) {
+        Collection collection = collectionRepository.findById(colletionId).orElseThrow(CollectionNotFoundException::new);
         for (Long itemId : itemIdList){
             Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
             CollectionItem collectionItem = CollectionItem.builder()
@@ -104,7 +104,8 @@ public class ItemService {
 
                 memberCollection.forEach(
                         target -> {
-                            Collection collection = collectionService.findCollection(target.getCollectionId(), nickname);
+                            Collection collection = collectionRepository.findById(target.getCollectionId())
+                                    .orElseThrow(CollectionNotFoundException::new);
                             CollectionItem collectionItem =
                                     collectionItemRepository.findByCollectionAndItem(collection, item).get();
                             collectionItemRepository.deleteByCollectionAndItem(collection, item);
