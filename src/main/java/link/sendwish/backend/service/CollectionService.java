@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -260,12 +259,10 @@ public class CollectionService {
                     .findByCollectionAndItem(collection, item)
                     .orElseThrow(CollectionItemNotFoundException::new);
 
-            collectionItemRepository.deleteByCollectionAndItem(collection, item);
+            collectionItemRepository.delete(collectionItem);
             item.deleteCollectionItem(collectionItem);
             collection.deleteCollectionItem(collectionItem);
         }
-
-//        assert collectionRepository.findById(collectionItem.getId()).isEmpty() == true;
         log.info("컬렉션 아이템 일괄 삭제 [컬렉션 ID] : {}, [삭제된 아이템 갯수] : {}", collectionId, itemIdList.size());
     }
 
