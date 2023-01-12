@@ -22,7 +22,7 @@ public class Item {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false,length = 500)
+    @Column(nullable = false,length = 1000)
     private String imgUrl;
 
     @Column(nullable = false)
