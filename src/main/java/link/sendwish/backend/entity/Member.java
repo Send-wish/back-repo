@@ -44,6 +44,9 @@ public class Member implements UserDetails {
     @JoinColumn(name = "member_id")
     private List<MemberFriend> friends = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
+
     public void addMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.add(memberCollection);
     }
@@ -66,6 +69,14 @@ public class Member implements UserDetails {
 
     public void removeFriendInList(MemberFriend friend) {
         this.friends.remove(friend);
+    }
+
+    public void addMemberChatRoom(ChatRoomMember chatRoomMember) {
+        this.chatRoomMembers.add(chatRoomMember);
+    }
+
+    public void deleteMemberChatRoom(ChatRoomMember chatRoomMember) {
+        this.chatRoomMembers.remove(chatRoomMember);
     }
 
     @Override

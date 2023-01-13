@@ -17,15 +17,8 @@ public class Messages {
     public static final String NOT_DELETE_COLLECTION = "콜렉션이 삭제되지 않았습니다.";
     public static final String PASSWORD_NOT_EQUAL = "비밀번호가 일치하지 않습니다.";
     public static final String DTO_NULL_MESSAGE = "잘못된 DTO 요청입니다.";
-
-
-
-
-
-
-
-
-
+    public static final String NO_CHAT_ROOM_MESSAGE = "채팅방이 존재하지 않습니다.";
+    public static final String NO_MEMBER_CHAT_ROOM_MESSAGE = "멤버 채팅방이 존재하지 않습니다.";
 
 }
 
