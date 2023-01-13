@@ -1,6 +1,9 @@
 package link.sendwish.backend.controller;
 
+import io.swagger.models.Model;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.chat.ChatRoomRequestDto;
+import link.sendwish.backend.dtos.chat.ChatRoomResponseDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.ChatService;
 import link.sendwish.backend.service.MemberService;
@@ -17,6 +20,13 @@ import java.util.List;
 public class ChatRoomController {
     private final ChatService chatService;
     private final MemberService memberService;
+
+    // 채팅 리스트 화면
+    @GetMapping("/room")
+    public String rooms(Model model) {
+        return "/chat/room";
+    }
+
 
     // 모든 채팅방 목록 조회
     @GetMapping("/rooms/{nickname}")
