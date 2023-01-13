@@ -50,7 +50,7 @@ public class ItemController {
 
         // Post 요청, JSONobject로 응답
         JSONObject jsonObject = new JSONObject(
-                restTemplate.postForObject("http://52.79.109.223:5000/webscrap", entity, String.class));
+                restTemplate.postForObject("http://52.79.109.223:5001/webscrap", entity, String.class));
 
         return jsonObject;
     }
