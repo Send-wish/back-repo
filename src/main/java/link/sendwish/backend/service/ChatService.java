@@ -121,7 +121,7 @@ public class ChatService {
                 .message(message.getMessage())
                 .roomId(message.getRoomId())
                 .sender(message.getSender())
-                .messageType(message.getMessageType())
+                .type(message.getType())
                 .build();
         ChatRoomMessage chatRoomMessage = ChatRoomMessage.builder()
                 .chatRoom(chatRoom)

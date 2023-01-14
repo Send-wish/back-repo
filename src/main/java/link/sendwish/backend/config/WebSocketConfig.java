@@ -11,7 +11,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override // messageBroker는 송신자에게 수신자의 이전 메세지 프로토콜 변환해주는 모듈 중 하나. 요청 오면 해당하는 통신 채널로 전송
     public void registerStompEndpoints(StompEndpointRegistry registry) { // 최초 소켓 연결시 endpoint
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("*"); // reacti-native에서 SockJS생성자를 통해 연결
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS(); // reacti-native에서 SockJS생성자를 통해 연결
     }
 
     @Override

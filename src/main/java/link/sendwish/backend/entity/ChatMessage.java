@@ -18,6 +18,14 @@ public class ChatMessage extends BaseTime{
     @Column(nullable = false)
     private Long roomId;
 
+    public enum MessageType {
+        ENTER, TALK
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MessageType type;
+
     @Column(nullable = false)
     private String sender;
 
