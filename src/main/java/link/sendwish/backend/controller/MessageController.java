@@ -1,38 +1,26 @@
 package link.sendwish.backend.controller;
 
 import link.sendwish.backend.entity.ChatMessage;
-import link.sendwish.backend.entity.ChatRoomMessage;
 import link.sendwish.backend.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 
-import java.util.List;
 
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class MessageController {
     private final ChatService chatService;
-    private final SimpMessageSendingOperations sendingOperations;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    @MessageMapping("/chat/message")
-    public void enter(ChatMessage message){
-            /* 채팅방 입장 */
-            if (ChatMessage.MessageType.ENTER.equals(message.getMessageType())) {
-                message.setMessage(message.getSender() + "님이 입장하셨습니다.");
-                List<ChatRoomMessage> chatList  = chatService.findAllChatByRoomId(message.getRoomId());
-                if(chatList != null){
-                    for(ChatRoomMessage chat : chatList ){
-                        message.setSender(chat.getChatMessage().getSender());
-                        message.setMessage(chat.getChatMessage().getMessage());
-                    }
-                }
-            }
-            /* 채팅방에 메세지 전달 */
-            sendingOperations.convertAndSend("/topic/chat/room/" + message.getRoomId(), message);
+    @MessageMapping("/chat") // 해당 url로 메세지 전송되면 메서드 호출
+    public void sendMessage(ChatMessage message, SimpMessageHeaderAccessor accessor){
+            System.out.println("message = " + message.getMessage());
+            simpMessagingTemplate.convertAndSend("/sub/chat/" + message.getRoomId(), message);
             chatService.saveChatMessage(message);
     }
 }
