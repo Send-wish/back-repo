@@ -50,13 +50,13 @@ public class ItemController {
         // Request_header, Request_body 합친 entity
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
         queue.offer(entity);
-        JSONObject jsonObject;
+        JSONObject jsonObject = null;
 
         log.info("====START PARSING :" + MDC.get("traceId") + "===="); // 파싱 시작
         // Post 요청, JSONobject로 응답
         try{
             jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://3.35.140.78:5001/webscrap", queue.poll(), String.class));
+                    restTemplate.postForObject("http://43.201.7.239:5001/webscrap", queue.poll(), String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }
