@@ -19,7 +19,7 @@ public class ChatMessage extends BaseTime{
     private Long roomId;
 
     public enum MessageType {
-        ENTER, TALK
+        ENTER, TALK, QUIT
     }
 
     @Enumerated(EnumType.STRING)
