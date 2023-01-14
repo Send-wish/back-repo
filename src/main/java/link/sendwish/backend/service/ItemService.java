@@ -73,9 +73,6 @@ public class ItemService {
             itemIdListToSave.add(itemId);
         }
 
-        List<CollectionItem> reverseCollectionItemList = collectionItemRepository
-                .findAllByCollectionOrderByIdDesc(collection);
-
         Collections.reverse(itemIdListToSave);
 
         return ItemListResponseDto.builder()

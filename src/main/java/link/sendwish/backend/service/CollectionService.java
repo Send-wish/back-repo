@@ -59,17 +59,20 @@ public class CollectionService {
                 .nickname(member.getNickname())
                 .title(collection.getTitle())
                 .collectionId(collection.getId())
+                .defaultURL(collection.getDefaultURL())
                 .build();
     }
 
     public List<CollectionResponseDto> findCollectionsByMember(Member member) {
+
         List<CollectionResponseDto> dtos = memberCollectionRepository
-                .findAllByMember(member)
+                .findAllByMemberOrderByIdDesc(member)
                 .orElseThrow(MemberCollectionNotFoundException::new)
                 .stream()
                 .filter(collection -> collection.getCollection().getReference() == 1)
                 .map(target -> CollectionResponseDto
                         .builder()
+                        .defaultURL(target.getCollection().getDefaultURL())
                         .title(target.getCollection().getTitle())
                         .nickname(target.getMember().getUsername())
                         .collectionId(target.getCollection().getId())
@@ -268,5 +271,4 @@ public class CollectionService {
 //        assert collectionRepository.findById(collectionItem.getId()).isEmpty() == true;
         log.info("컬렉션 아이템 일괄 삭제 [컬렉션 ID] : {}, [삭제된 아이템 갯수] : {}", collectionId, itemIdList.size());
     }
-
 }
