@@ -17,15 +17,6 @@ public class Messages {
     public static final String NOT_DELETE_COLLECTION = "콜렉션이 삭제되지 않았습니다.";
     public static final String PASSWORD_NOT_EQUAL = "비밀번호가 일치하지 않습니다.";
     public static final String DTO_NULL_MESSAGE = "잘못된 DTO 요청입니다.";
-
-
-
-
-
-
-
-
-
-
+    public static final String SCRAPING_ERROR_MESSAGE = "스크래핑 에러 입니다.";
 }
 
