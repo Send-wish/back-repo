@@ -15,20 +15,12 @@ public class ChatMessage extends BaseTime{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public enum MessageType {
-        ENTER, TALK
-    }
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private MessageType messageType;
-
     @Column(nullable = false)
     private Long roomId;
 
     @Column(nullable = false)
     private String sender;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String message;
 }
