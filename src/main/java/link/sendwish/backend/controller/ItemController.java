@@ -1,7 +1,6 @@
 package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
-import link.sendwish.backend.common.exception.ParsingException;
 import link.sendwish.backend.common.exception.ScrapingException;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.dtos.item.*;
