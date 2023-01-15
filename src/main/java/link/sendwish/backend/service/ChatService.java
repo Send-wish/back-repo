@@ -31,7 +31,6 @@ public class ChatService {
                 .map(target -> ChatRoomResponseDto
                         .builder()
                         .chatRoomId(target.getChatRoom().getId())
-                        .title(target.getChatRoom().getTitle())
                         .build()
                 ).toList();
         log.info("해당 맴버의 [닉네임] : {}, 채팅방 일괄 조회 [채팅방 갯수] : {}", member.getNickname(), rooms.size());
@@ -40,45 +39,43 @@ public class ChatService {
 
     public ChatRoomResponseDto findRoomById(Long roomId){
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(ChatRoomNotFoundException::new);
-        log.info("채팅방 단건 조회 [제목] : {}", chatRoom.getTitle());
+        log.info("채팅방 단건 조회 [ID] : {}", chatRoom.getId());
         return ChatRoomResponseDto.builder()
                 .chatRoomId(chatRoom.getId())
-                .title(chatRoom.getTitle())
                 .build();
     }
 
     @Transactional
-    public ChatRoomResponseDto createRoom(String title, String nickname){
+    public ChatRoomResponseDto createRoom(List<String> memberIdList, Long CollectionId){
         ChatRoom chatRoom = ChatRoom.builder()
-                .title(title)
+                .collectionId(CollectionId)
                 .chatRoomMembers(new ArrayList<>())
-                .build();
-
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(MemberNotFoundException::new);
-
-        ChatRoomMember chatRoomMember = ChatRoomMember
-                .builder()
-                .chatRoom(chatRoom)
-                .member(member)
                 .build();
 
         ChatRoom save = chatRoomRepository.save(chatRoom);
 
-        member.addMemberChatRoom(chatRoomMember);
-        chatRoom.addMemberChatRoom(chatRoomMember);
+        // [todo] memberList가 해당 collection에 속한 member인지 확인
+        List<ChatRoomMember> chatRoomMembers = memberIdList.stream().map(nickname -> {
+            Member member = memberRepository.findByNickname(nickname).orElseThrow(MemberNotFoundException::new);
+            ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+                    .chatRoom(chatRoom)
+                    .member(member)
+                    .build();
+            chatRoom.addMemberChatRoom(chatRoomMember);
+            member.addMemberChatRoom(chatRoomMember);
+            return chatRoomMember;
+        }).toList();
 
-        assert chatRoom.getTitle().equals(save.getTitle());
-        log.info("채팅방 생성 [제목] : {}", save.getTitle());
+        assert chatRoom.getCollectionId().equals(chatRoomMembers.get(0).getChatRoom().getCollectionId());
+        log.info("채팅방 생성 [ID] : {}", chatRoom.getId());
         return ChatRoomResponseDto.builder()
                 .chatRoomId(save.getId())
-                .title(save.getTitle())
                 .build();
     }
 
     @Transactional
     public ChatRoomResponseDto saveMessage(String title, String nickname){
         ChatRoom chatRoom = ChatRoom.builder()
-                .title(title)
                 .chatRoomMembers(new ArrayList<>())
                 .build();
 
@@ -95,11 +92,10 @@ public class ChatService {
         member.addMemberChatRoom(chatRoomMember);
         chatRoom.addMemberChatRoom(chatRoomMember);
 
-        assert chatRoom.getTitle().equals(save.getTitle());
-        log.info("채팅방 생성 [제목] : {}", save.getTitle());
+        assert chatRoom.getId().equals(save.getId());
+        log.info("채팅방 생성 [ID] : {}", save.getId());
         return ChatRoomResponseDto.builder()
                 .chatRoomId(save.getId())
-                .title(save.getTitle())
                 .build();
     }
 
@@ -108,7 +104,7 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(MemberChatRoomNotFoundException::new);
         // 해당 채팅방의 모든 채팅목록 불러와서
         List<ChatRoomMessage> chatList = chatRoomMessageRepository.findAllByChatRoom(chatRoom);
-        log.info("해당 방 [이름] : {}, 채팅내역 일괄 조회 [채팅 메세지 갯수] : {}", chatRoom.getTitle(), chatList.size());
+        log.info("해당 방 [ID] : {}, 채팅내역 일괄 조회 [채팅 메세지 갯수] : {}", chatRoom.getId(), chatList.size());
         return chatList;
     }
 
