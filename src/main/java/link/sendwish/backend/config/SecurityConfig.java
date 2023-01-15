@@ -35,6 +35,18 @@ public class SecurityConfig {
                 .antMatchers("/collection").permitAll()
                 .antMatchers("/item/**").permitAll()
                 .antMatchers("/items/**").permitAll()
+                .antMatchers("/chat/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
+                .antMatchers("/",
+                        "/error",
+                        "/favicon.ico",
+                        "/**/*.png",
+                        "/**/*.gif",
+                        "/**/*.svg",
+                        "/**/*.jpg",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js").permitAll()
                 .antMatchers("/friend").permitAll()
                 .antMatchers("/friend/**").permitAll()
                 .antMatchers("/v2/api-docs/**").permitAll()

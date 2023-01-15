@@ -99,30 +99,27 @@ public class ItemService {
             if(item.getReference() == 1){
                 itemRepository.delete(item);
                 log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, 0);
-
-            }else {
+            }else{
                 item.subtractReference();
                 log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
+                /*
+                * Cascade Option 적용 X
+                * */
+                MemberItem memberItem = memberItemRepository.findByMemberAndItem(member, item)
+                        .orElseThrow(RuntimeException::new);
+                memberItemRepository.delete(memberItem);
 
-                List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
-
-                memberCollection.forEach(
-                        target -> {
-                            Collection collection = collectionRepository.findById(target.getCollectionId())
-                                    .orElseThrow(CollectionNotFoundException::new);
-                            CollectionItem collectionItem =
-                                    collectionItemRepository.findByCollectionAndItem(collection, item).get();
-                            collectionItemRepository.deleteByCollectionAndItem(collection, item);
-                            item.deleteCollectionItem(collectionItem);
-                            collection.deleteCollectionItem(collectionItem);
-                        });
-                }
+                collectionItemRepository.findAllByItem(item).forEach(collectionItem -> {
+                    collectionItemRepository.delete(collectionItem);
+                    log.info("컬렉션 아이템 삭제 [ID] : {}", collectionItem.getId());
+                });
+            }
         }
 
-        return(ItemDeleteResponseDto.builder()
+        return ItemDeleteResponseDto.builder()
                 .itemIdList(listItemId)
                 .nickname(member.getNickname())
-                .build());
+                .build();
     }
 
     public List<ItemResponseDto> findItemByMember(Member member) {

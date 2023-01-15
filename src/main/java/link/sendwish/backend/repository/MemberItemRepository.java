@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface MemberItemRepository extends JpaRepository<MemberItem, Long> {
     Optional<List<MemberItem>> findAllByMemberOrderByIdDesc(Member member);
     Optional<List<MemberItem>> findAllByItem(Item item);
+    Optional<MemberItem> findByMemberAndItem(Member member, Item item);
 }
