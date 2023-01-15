@@ -24,7 +24,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
 
     public List<ChatRoomResponseDto> findRoomByMember(Member member) {
-        List<ChatRoomResponseDto> rooms = chatRoomMemberRepository
+        List<ChatRoomResponseDto> dtos = chatRoomMemberRepository
                 .findAllByMemberOrderByIdDesc(member)
                 .orElseThrow(MemberChatRoomNotFoundException::new)
                 .stream()
@@ -33,8 +33,8 @@ public class ChatService {
                         .chatRoomId(target.getChatRoom().getId())
                         .build()
                 ).toList();
-        log.info("해당 맴버의 [닉네임] : {}, 채팅방 일괄 조회 [채팅방 갯수] : {}", member.getNickname(), rooms.size());
-        return rooms;
+        log.info("해당 맴버의 [닉네임] : {}, 채팅방 일괄 조회 [채팅방 갯수] : {}", member.getNickname(), dtos.size());
+        return dtos;
     }
 
     public ChatRoomResponseDto findRoomById(Long roomId){
@@ -68,32 +68,6 @@ public class ChatService {
 
         assert chatRoom.getCollectionId().equals(chatRoomMembers.get(0).getChatRoom().getCollectionId());
         log.info("채팅방 생성 [ID] : {}", chatRoom.getId());
-        return ChatRoomResponseDto.builder()
-                .chatRoomId(save.getId())
-                .build();
-    }
-
-    @Transactional
-    public ChatRoomResponseDto saveMessage(String title, String nickname){
-        ChatRoom chatRoom = ChatRoom.builder()
-                .chatRoomMembers(new ArrayList<>())
-                .build();
-
-        Member member = memberRepository.findByNickname(nickname).orElseThrow(MemberNotFoundException::new);
-
-        ChatRoomMember chatRoomMember = ChatRoomMember
-                .builder()
-                .chatRoom(chatRoom)
-                .member(member)
-                .build();
-
-        ChatRoom save = chatRoomRepository.save(chatRoom);
-
-        member.addMemberChatRoom(chatRoomMember);
-        chatRoom.addMemberChatRoom(chatRoomMember);
-
-        assert chatRoom.getId().equals(save.getId());
-        log.info("채팅방 생성 [ID] : {}", save.getId());
         return ChatRoomResponseDto.builder()
                 .chatRoomId(save.getId())
                 .build();
