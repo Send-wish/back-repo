@@ -238,6 +238,7 @@ public class CollectionService {
                         .title(target.getCollection().getTitle())
                         .nickname(target.getMember().getUsername())
                         .collectionId(target.getCollection().getId())
+                        .defaultImage(target.getCollection().getDefaultImgURL())
                         .build()
                 ).toList();
 
