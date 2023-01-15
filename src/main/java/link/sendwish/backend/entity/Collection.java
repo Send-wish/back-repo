@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -57,6 +58,12 @@ public class Collection extends BaseTime{
 
     public void subtractReference() {
         this.reference -= 1;
+    }
+
+    public List<CollectionItem> getReverseCollectionItems() {
+        List<CollectionItem> reverseCollectionItems = new ArrayList<>(this.collectionItems);
+        Collections.reverse(reverseCollectionItems);
+        return reverseCollectionItems;
     }
 
     public String getDefaultURL() {

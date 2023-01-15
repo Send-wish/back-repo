@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -99,7 +100,7 @@ public class CollectionService {
                 .orElseThrow(CollectionNotFoundException::new);
         log.info("컬렉션 단건 조회 [ID] : {}, [컬렉션 제목] : {}", nickname, collection.getTitle());
 
-        List<Item> items = collection.getCollectionItems()
+        List<Item> items = collection.getReverseCollectionItems()
                 .stream().map(CollectionItem::getItem).toList();
 
         return CollectionDetailResponseDto.builder()
