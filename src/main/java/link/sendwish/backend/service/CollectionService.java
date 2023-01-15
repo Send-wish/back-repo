@@ -1,10 +1,7 @@
 package link.sendwish.backend.service;
 
 import link.sendwish.backend.common.exception.*;
-import link.sendwish.backend.dtos.collection.CollectionAddUserResponseDto;
-import link.sendwish.backend.dtos.collection.CollectionDetailResponseDto;
-import link.sendwish.backend.dtos.collection.CollectionResponseDto;
-import link.sendwish.backend.dtos.collection.CollectionUpdateRequestDto;
+import link.sendwish.backend.dtos.collection.*;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.repository.*;
@@ -269,5 +266,38 @@ public class CollectionService {
             collection.deleteCollectionItem(collectionItem);
         }
         log.info("컬렉션 아이템 일괄 삭제 [컬렉션 ID] : {}, [삭제된 아이템 갯수] : {}", collectionId, itemIdList.size());
+    }
+
+    @Transactional
+    public CollectionSharedDetailResponseDto getSharedCollectionDetails(Long collectionId) {
+        Collection collection = collectionRepository
+                .findById(collectionId)
+                .orElseThrow(CollectionNotFoundException::new);
+        log.info("공유 컬렉션 단건 조회 [컬렉션 제목] : {}", collection.getTitle());
+
+        String title = collection.getTitle();
+
+        List<Item> items = collection.getReverseCollectionItems()
+                .stream().map(CollectionItem::getItem).toList();
+
+        List<String> MemberList = memberCollectionRepository.findAllByCollection(collection)
+                .orElseThrow(MemberCollectionNotFoundException::new)
+                .stream()
+                .map(memberCollection -> memberCollection.getMember().getNickname())
+                .toList();
+
+        return CollectionSharedDetailResponseDto.builder()
+                .title(title)
+                .collectionId(collectionId)
+                .memberList(MemberList)
+                .dtos(items.stream().map(
+                        target -> ItemResponseDto.builder()
+                                .itemId(target.getId())
+                                .price(target.getPrice())
+                                .name(target.getName())
+                                .imgUrl(target.getImgUrl())
+                                .originUrl(target.getOriginUrl())
+                                .build()
+                ).toList()).build();
     }
 }
