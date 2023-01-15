@@ -4,6 +4,7 @@ import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.common.exception.ItemNotFoundException;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.dtos.collection.*;
+import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Item;
@@ -184,15 +185,12 @@ public class CollectionController {
 
     @DeleteMapping("/collection/item")
     public ResponseEntity<?> deleteItem(@RequestBody CollectionItemDeleteRequestDto dto) {
-        if(dto.getItemIdList() == null || dto.getCollectionId() == null || dto.getCollectionId() == null){
-            throw new DtoNullException();
-        }
         try{
-            if (dto.getItemIdList().isEmpty()){
-                throw new ItemNotFoundException();
+            if(dto.getItemIdList() == null || dto.getItemIdList().isEmpty() || dto.getCollectionId() == null || dto.getNickname() == null){
+                throw new DtoNullException();
             }
             collectionService.deleteCollectionItem(dto.getCollectionId(), dto.getItemIdList());
-            return ResponseEntity.ok("Entities deleted");
+            return ResponseEntity.ok().body("삭제 성공");
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()

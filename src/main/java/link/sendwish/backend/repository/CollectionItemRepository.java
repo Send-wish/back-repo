@@ -10,8 +10,7 @@ import java.util.Optional;
 
 public interface CollectionItemRepository extends JpaRepository<CollectionItem, Long> {
     Optional<CollectionItem> findByCollectionAndItem(Collection collection, Item item);
-    void deleteByCollectionAndItem(Collection collection, Item item);
     List<CollectionItem> findAllByCollectionOrderByIdDesc(Collection collection);
     List<CollectionItem> findAllByCollection(Collection collection);
-
+    List<CollectionItem> findAllByItem(Item item);
 }

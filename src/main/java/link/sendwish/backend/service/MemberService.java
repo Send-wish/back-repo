@@ -49,6 +49,7 @@ public class MemberService {
                 .memberCollections(new ArrayList<>())
                 .memberItems(new ArrayList<>())
                 .friends(new ArrayList<>())
+                .chatRoomMembers(new ArrayList<>())
                 .build();
         Member savedMember = memberRepository.save(member);
         log.info("새로운 회원가입 [ID] : {}, [PW] : {}", savedMember.getNickname(), savedMember.getPassword());
