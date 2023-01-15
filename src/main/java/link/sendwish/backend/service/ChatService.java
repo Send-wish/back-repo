@@ -134,10 +134,12 @@ public class ChatService {
 
         assert message.getMessage().equals(save.getMessage());
         log.info("메세지 저장 [내용] : {}", save.getMessage());
+        log.info("메세지 저장 [일시] : {}", save.getCreateAt());
         return ChatMessageResponseDto.builder()
                 .chatRoomId(save.getRoomId())
                 .message(save.getMessage())
                 .sender(save.getSender())
+                .createAt(save.getCreateAt())
                 .build();
     }
 }

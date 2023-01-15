@@ -1,5 +1,6 @@
 package link.sendwish.backend.controller;
 
+import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
 import link.sendwish.backend.entity.ChatMessage;
 import link.sendwish.backend.entity.ChatRoomMessage;
 import link.sendwish.backend.service.ChatService;
@@ -31,7 +32,8 @@ public class MessageController {
         else if (ChatMessage.MessageType.QUIT.equals(dto.getType())) {
             dto.setMessage(dto.getSender() + "님이 나가셨습니다.");
         }
-        simpMessagingTemplate.convertAndSend("/sub/chat/" + dto.getRoomId(), dto);
-        chatService.saveChatMessage(dto);
+        ChatMessageResponseDto responseDto = chatService.saveChatMessage(dto);
+        simpMessagingTemplate
+                .convertAndSend("/sub/chat/" + responseDto.getChatRoomId(), responseDto);
     }
 }
