@@ -56,7 +56,7 @@ public class CollectionService {
                 .nickname(member.getNickname())
                 .title(collection.getTitle())
                 .collectionId(collection.getId())
-                .defaultURL(collection.getDefaultURL())
+                .defaultImage(collection.getDefaultImgURL())
                 .build();
     }
 
@@ -69,11 +69,10 @@ public class CollectionService {
                 .filter(collection -> collection.getCollection().getReference() == 1)
                 .map(target -> CollectionResponseDto
                         .builder()
-                        .defaultURL(target.getCollection().getDefaultURL())
+                        .defaultImage(target.getCollection().getDefaultImgURL())
                         .title(target.getCollection().getTitle())
                         .nickname(target.getMember().getUsername())
                         .collectionId(target.getCollection().getId())
-                        .defaultImage("https://sendwish-img-bucket.s3.ap-northeast-2.amazonaws.com/collection_default.png")
                         .build()
                 ).toList();
 
