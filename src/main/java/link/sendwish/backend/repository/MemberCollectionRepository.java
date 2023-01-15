@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface MemberCollectionRepository extends JpaRepository<MemberCollection, Long> {
     Optional<List<MemberCollection>> findAllByMember(Member member);
+    Optional<List<MemberCollection>> findAllByMemberOrderByIdDesc(Member member);
     Optional<MemberCollection> findByMemberAndCollection(Member member, Collection collection);
 
     void deleteByMemberAndCollection(Member member, Collection collection);

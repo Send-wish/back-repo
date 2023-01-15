@@ -36,10 +36,9 @@ public class CollectionController {
             Member member = memberService.findMember(nickname);
 
             List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
-            List<CollectionResponseDto> reversedMemberCollection = new ArrayList<>(memberCollection);
-            Collections.reverse(reversedMemberCollection);
+            Collections.reverse(memberCollection);
 
-            return ResponseEntity.ok().body(reversedMemberCollection);
+            return ResponseEntity.ok().body(memberCollection);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
@@ -88,6 +87,7 @@ public class CollectionController {
     public ResponseEntity<?> getDetailCollection(@PathVariable("nickname") String nickname,
                                                  @PathVariable("collectionId") Long collectionId) {
         try {
+
             CollectionDetailResponseDto dto = collectionService.getDetails(collectionId, nickname);
 
             return ResponseEntity.ok().body(dto);

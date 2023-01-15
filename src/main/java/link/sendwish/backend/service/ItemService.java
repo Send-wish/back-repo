@@ -1,12 +1,14 @@
 package link.sendwish.backend.service;
 
 
+
 import link.sendwish.backend.common.exception.CollectionNotFoundException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.dtos.collection.CollectionResponseDto;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.dtos.ItemListResponseDto;
+
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.repository.*;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.reverse;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -72,9 +75,6 @@ public class ItemService {
             collection.addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
             itemIdListToSave.add(itemId);
         }
-
-        List<CollectionItem> reverseCollectionItemList = collectionItemRepository
-                .findAllByCollectionOrderByIdDesc(collection);
 
         Collections.reverse(itemIdListToSave);
 

@@ -15,4 +15,6 @@ public class CollectionResponseDto {
     private String nickname;
     private String defaultImage;
     //추후 item 관련 field 추가
+    private String defaultURL;
+
 }
