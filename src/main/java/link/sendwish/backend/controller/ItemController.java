@@ -1,6 +1,7 @@
 package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
+import link.sendwish.backend.common.exception.ScrapingException;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.dtos.item.*;
 import link.sendwish.backend.entity.Collection;
@@ -12,6 +13,7 @@ import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.slf4j.MDC;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,8 +23,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class ItemController {
     private final ItemService itemService;
     private final MemberService memberService;
     private final CollectionService collectionService;
+    Queue queue = new LinkedList<>();
 
     // scrapping-server 연결
     public JSONObject createHttpRequestAndSend(String url) {
@@ -47,10 +49,19 @@ public class ItemController {
 
         // Request_header, Request_body 합친 entity
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+        queue.offer(entity);
+        JSONObject jsonObject = null;
 
+        log.info("====START PARSING :" + MDC.get("traceId") + "===="); // 파싱 시작
         // Post 요청, JSONobject로 응답
-        JSONObject jsonObject = new JSONObject(
-                restTemplate.postForObject("http://52.79.109.223:5000/webscrap", entity, String.class));
+        try{
+            jsonObject = new JSONObject(
+                    restTemplate.postForObject("http://43.201.7.239:5001/webscrap", queue.poll(), String.class));
+        }catch (Exception e){
+            throw new ScrapingException();
+        }
+        log.info("====FINISH PARSING :" + MDC.get("traceId") + "===="); // 파싱 종료
+
 
         return jsonObject;
     }
@@ -69,9 +80,14 @@ public class ItemController {
                 return ResponseEntity.ok().body(find.getId());
             }
 
+
             /*
             * Python Server 호출, DB에 Item 등록
             * */
+            String traceId = UUID.randomUUID().toString();
+            MDC.put("traceId", traceId);
+            log.info("====START CREATING:" + MDC.get("traceId") + "====");
+
             JSONObject jsonObject = createHttpRequestAndSend(dto.getUrl());
 
             Item item = Item.builder()
@@ -84,6 +100,8 @@ public class ItemController {
                     .build();
             Long saveItem = itemService.saveItem(item, dto.getNickname());
 
+            log.info("====FINISH CREATING:" + MDC.get("traceId") + "====");
+            MDC.clear();
             return ResponseEntity.ok().body(saveItem);
         }catch (Exception e) {
             e.printStackTrace();

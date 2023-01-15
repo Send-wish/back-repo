@@ -19,6 +19,6 @@ public class Messages {
     public static final String DTO_NULL_MESSAGE = "잘못된 DTO 요청입니다.";
     public static final String NO_CHAT_ROOM_MESSAGE = "채팅방이 존재하지 않습니다.";
     public static final String NO_MEMBER_CHAT_ROOM_MESSAGE = "멤버 채팅방이 존재하지 않습니다.";
-
+    public static final String SCRAPING_ERROR_MESSAGE = "스크래핑 에러 입니다.";
 }
 

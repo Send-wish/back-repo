@@ -103,7 +103,7 @@ public class CollectionController {
     @PostMapping("/collection/shared")
     public ResponseEntity<?> sharedCollection(@RequestBody CollectionSharedCreateRequestDto dto) {
         try {
-            if (dto.getTitle() == null || dto.getTargetCollectionId() == null) {
+            if (dto.getTitle() == null) {
                 throw new RuntimeException("잘못된 DTO 요청입니다.");
             }
 
@@ -140,6 +140,8 @@ public class CollectionController {
                         (dto.getTargetCollectionId(), savedCollection.getNickname());// 1차 캐시
                 List<ItemResponseDto> copyItemToCollection = collectionService.copyItemToCollection(copyTarget.getCollectionId(),find.getCollectionId());
                 responseDto.setDtos(copyItemToCollection);
+            } else {
+                responseDto.setDtos(Collections.emptyList());
             }
             return ResponseEntity.ok().body(responseDto);
             }catch (Exception e) {
