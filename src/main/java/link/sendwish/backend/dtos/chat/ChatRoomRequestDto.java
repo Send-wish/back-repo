@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ChatRoomRequestDto {
     private List<String> memberIdList;
-    private Long CollectionId;
+    private Long collectionId;
 }
