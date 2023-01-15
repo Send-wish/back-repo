@@ -17,7 +17,7 @@ public class ChatRoom extends BaseTime{
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private Long collectionId;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();

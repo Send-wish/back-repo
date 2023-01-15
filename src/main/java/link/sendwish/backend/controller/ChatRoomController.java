@@ -50,7 +50,7 @@ public class ChatRoomController {
     @PostMapping("/room")
     public ResponseEntity<?> createRoom(@RequestBody ChatRoomRequestDto dto) {
         try{
-            ChatRoomResponseDto savedRoom = chatService.createRoom(dto.getTitle(), dto.getNickname());
+            ChatRoomResponseDto savedRoom = chatService.createRoom(dto.getMemberIdList(), dto.getCollectionId());
             return ResponseEntity.ok().body(savedRoom);
         }catch (Exception e) {
             e.printStackTrace();

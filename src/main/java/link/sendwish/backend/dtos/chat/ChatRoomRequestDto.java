@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomRequestDto {
-    private String nickname;
-    private String title;
+    private List<String> memberIdList;
+    private Long collectionId;
 }

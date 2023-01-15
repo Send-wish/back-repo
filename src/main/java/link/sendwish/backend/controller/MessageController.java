@@ -24,7 +24,7 @@ public class MessageController {
 
     @MessageMapping("/chat") // 해당 url로 메세지 전송되면 메서드 호출
     public void sendMessage(ChatMessage dto){
-        /* 채팅방 입장 */
+        /* 채팅방 첫 입장 */
         if (ChatMessage.MessageType.ENTER.equals(dto.getType())) {
             dto.setMessage(dto.getSender() + "님이 입장하셨습니다.");
         }
