@@ -17,7 +17,7 @@ public class ChatController {
     @GetMapping("/chats/{chatRoomId}")
     public ResponseEntity<?> getChatsByChatRoomId(@PathVariable("chatRoomId") Long chatRoomId) {
         try{
-            chatService.findRoomById(chatRoomId);
+            chatService.getChatsByRoom(chatRoomId);
             return ResponseEntity.ok().body(null);
         }catch (Exception e) {
             e.printStackTrace();

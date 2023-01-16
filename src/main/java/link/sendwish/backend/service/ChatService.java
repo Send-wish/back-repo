@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +76,9 @@ public class ChatService {
 
     @Transactional
     public ChatMessageResponseDto saveChatMessage(ChatMessageRequestDto message) {
+        log.warn("채팅 메시지 저장 [내용] : {}", message.getMessage());
+        log.warn("메세지 [사용자] : {}", message.getSender());
+        log.warn("메세지 [TYPE] : {}", message.getType());
         ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId())
                 .orElseThrow(MemberChatRoomNotFoundException::new);
 
@@ -105,7 +109,18 @@ public class ChatService {
         return chatRoom.getId();
     }
 
-//    public List<ChatMessageResponseDto> getChatsByRoom(Long roomId){
-//
-//    }
+    public List<ChatMessageResponseDto> getChatsByRoom(Long roomId){
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(ChatRoomNotFoundException::new);
+        if (chatMessageRepository.findAllByChatRoom(chatRoom).isEmpty()) {
+            throw new ChatMessageNotFoundException();
+        }
+        List<ChatMessageResponseDto> chats = chatMessageRepository.findAllByChatRoom(chatRoom).get().stream()
+                .map(target -> ChatMessageResponseDto.builder()
+                        .message(target.getMessage())
+                        .sender(target.getSender())
+                        .chatRoomId(target.getChatRoom().getId())
+                        .build()).collect(Collectors.toList());
+        log.info("채팅방 [ID] : {}, 채팅 메시지 일괄 조회 [메시지 갯수] : {}", chatRoom.getId(), chats.size());
+        return chats;
+    }
 }

@@ -56,7 +56,7 @@ public class ItemController {
         // Post 요청, JSONobject로 응답
         try{
             jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://15.164.15.33:5001/webscrap", queue.poll(), String.class));
+                    restTemplate.postForObject("http://13.209.229.237:5001/webscrap", queue.poll(), String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }
@@ -74,6 +74,7 @@ public class ItemController {
             if(dto.getUrl() == null){
                 throw new DtoNullException();
             }
+            log.info("등록할 상품의 [URL] = {}", dto.getUrl());
             Item find = itemService.findItem(dto.getUrl());
             if(find != null){
                 itemService.checkMemberReferenceByItem(find, dto.getNickname());
