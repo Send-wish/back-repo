@@ -3,6 +3,8 @@ package link.sendwish.backend.repository;
 import link.sendwish.backend.entity.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChatRoomRepository extends JpaRepository<ChatRoom,Long> {
-    ChatRoom findRoomByCollectionId(Long collectionId);
+import java.util.Optional;
+
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
+    Optional<ChatRoom> findByCollectionId(Long collectionId);
 }

@@ -14,18 +14,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat")
 public class ChatRoomController {
     private final ChatService chatService;
     private final MemberService memberService;
-
-    // 채팅 리스트 화면
-    @GetMapping("/room")
-    public String rooms(Model model) {
-        return "/chat/room";
-    }
 
 
     // 모든 채팅방 목록 조회
@@ -46,34 +40,5 @@ public class ChatRoomController {
         }
     }
 
-    // 채팅방 생성
-    @PostMapping("/room")
-    public ResponseEntity<?> createRoom(@RequestBody ChatRoomRequestDto dto) {
-        try{
-            ChatRoomResponseDto savedRoom = chatService.createRoom(dto.getMemberIdList(), dto.getCollectionId());
-            return ResponseEntity.ok().body(savedRoom);
-        }catch (Exception e) {
-            e.printStackTrace();
-            ResponseErrorDto errorDto = ResponseErrorDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(errorDto);
-        }
-    }
-
-    // 채팅방 입장
-    @GetMapping("/room/enter/{roomId}")
-    public ResponseEntity<?> roomDetail(@PathVariable("roomId") Long roomId) {
-        try{
-            ChatRoomResponseDto room = chatService.findRoomById(roomId);
-            return ResponseEntity.ok().body(room);
-        }catch (Exception e) {
-            e.printStackTrace();
-            ResponseErrorDto errorDto = ResponseErrorDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(errorDto);
-        }
-    }
 
 }

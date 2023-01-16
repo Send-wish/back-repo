@@ -3,12 +3,14 @@ package link.sendwish.backend.controller;
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.common.exception.ItemNotFoundException;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.chat.ChatRoomResponseDto;
 import link.sendwish.backend.dtos.collection.*;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Item;
 import link.sendwish.backend.entity.Member;
+import link.sendwish.backend.service.ChatService;
 import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class CollectionController {
 
     private final MemberService memberService;
     private final CollectionService collectionService;
+    private final ChatService chatService;
 
     @GetMapping("/collections/{nickname}")
     public ResponseEntity<?> getCollectionsByMember(@PathVariable("nickname") String nickname) {
@@ -36,7 +39,6 @@ public class CollectionController {
             Member member = memberService.findMember(nickname);
 
             List<CollectionResponseDto> memberCollection = collectionService.findCollectionsByMember(member);
-            Collections.reverse(memberCollection);
 
             return ResponseEntity.ok().body(memberCollection);
         }catch (Exception e) {
@@ -100,6 +102,22 @@ public class CollectionController {
         }
     }
 
+    @GetMapping("/collection/shared/{collectionId}")
+    public ResponseEntity<?> getDetailSharedCollection(@PathVariable("collectionId") Long collectionId) {
+        try{
+            CollectionSharedDetailResponseDto dto = collectionService
+                    .getSharedCollectionDetails(collectionId);
+
+            return ResponseEntity.ok().body(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
     @PostMapping("/collection/shared")
     public ResponseEntity<?> sharedCollection(@RequestBody CollectionSharedCreateRequestDto dto) {
         try {
@@ -115,6 +133,7 @@ public class CollectionController {
 
             ArrayList<String> members = new ArrayList<>();
             members.add(owner);
+            chatService.createRoom(dto.getMemberIdList(), savedCollection.getCollectionId());
 
             // 생성된 컬랙션에 친구 추가 => query X
             CollectionResponseDto find = collectionService.findCollection
@@ -122,7 +141,7 @@ public class CollectionController {
             CollectionSharedDetailResponseDto responseDto = CollectionSharedDetailResponseDto.builder()
                     .title(find.getTitle())
                     .collectionId(find.getCollectionId())
-                    .memberIdList(members)
+                    .memberList(members)
                     .build();
 
             for (var i = 1; i < dto.getMemberIdList().size(); i += 1) {
@@ -131,7 +150,7 @@ public class CollectionController {
                         .nickname(dto.getMemberIdList().get(i))
                         .build();
                 CollectionAddUserResponseDto collectionAddUser = collectionService.addUserToCollection(find.getCollectionId(), CollectionAddUserRequest);
-                responseDto.getMemberIdList().add(collectionAddUser.getNickname());
+                responseDto.getMemberList().add(collectionAddUser.getNickname());
             }
 
             // 복사할 컬랙션 존재하면 해당 컬랙션 아이템 전부 복사
@@ -191,6 +210,20 @@ public class CollectionController {
             }
             collectionService.deleteCollectionItem(dto.getCollectionId(), dto.getItemIdList());
             return ResponseEntity.ok().body("삭제 성공");
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+    @GetMapping("/collection/roomId/{collectionId}")
+    public ResponseEntity<?> getRoomId(@PathVariable("collectionId") Long collectionId) {
+        try {
+            Long roomId = chatService.getRoomId(collectionId);
+            return ResponseEntity.ok().body(roomId);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
