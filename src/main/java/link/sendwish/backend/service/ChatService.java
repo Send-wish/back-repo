@@ -19,11 +19,9 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Slf4j
 public class ChatService {
-    private final ItemRepository itemRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final MemberRepository memberRepository;
-    private final ChatRoomMessageRepository chatRoomMessageRepository;
     private final ChatMessageRepository chatMessageRepository;
 
     public List<ChatRoomResponseDto> findRoomByMember(Member member) {
@@ -76,15 +74,6 @@ public class ChatService {
                 .build();
     }
 
-    // 해당 채팅방의 모든 채팅목록 불러오기
-    public List<ChatRoomMessage> findAllChatByRoomId(Long roomId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(MemberChatRoomNotFoundException::new);
-        // 해당 채팅방의 모든 채팅목록 불러와서
-        List<ChatRoomMessage> chatList = chatRoomMessageRepository.findAllByChatRoom(chatRoom);
-        log.info("해당 방 [ID] : {}, 채팅내역 일괄 조회 [채팅 메세지 갯수] : {}", chatRoom.getId(), chatList.size());
-        return chatList;
-    }
-
     @Transactional
     public ChatMessageResponseDto saveChatMessage(ChatMessageRequestDto message) {
         log.info("채팅 메시지 저장 [내용] : {}", message.getMessage());
@@ -113,7 +102,6 @@ public class ChatService {
                 .message(save.getMessage())
                 .sender(save.getSender())
                 .createAt(save.getCreateAt())
-                .item(item.orElse(null))
                 .build();
     }
 

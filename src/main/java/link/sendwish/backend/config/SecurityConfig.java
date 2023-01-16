@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .antMatchers("/item/**").permitAll()
                 .antMatchers("/items/**").permitAll()
                 .antMatchers("/chat/**").permitAll()
+                .antMatchers("/chats/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
                 .antMatchers("/",
                         "/error",

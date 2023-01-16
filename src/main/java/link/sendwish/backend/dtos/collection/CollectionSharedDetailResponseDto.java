@@ -16,5 +16,5 @@ public class CollectionSharedDetailResponseDto {
     List<ItemResponseDto> dtos;
     Long collectionId;
     String title;
-    List<String> memberIdList;
+    List<String> memberList;
 }

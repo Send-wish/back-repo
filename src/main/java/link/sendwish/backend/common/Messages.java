@@ -22,3 +22,4 @@ public class Messages {
     public static final String SCRAPING_ERROR_MESSAGE = "스크래핑 에러 입니다.";
     public static final String NOT_SAVED_CHAT_MESSAGE = "채팅 메시지를 찾을 수 없습니다.";
 }
+
