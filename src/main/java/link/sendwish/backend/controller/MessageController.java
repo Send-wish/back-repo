@@ -20,14 +20,6 @@ public class MessageController {
 
     @MessageMapping("/chat") // 해당 url로 메세지 전송되면 메서드 호출
     public void sendMessage(ChatMessageRequestDto dto){
-        /* 채팅방 첫 입장 */
-        if (ChatMessage.MessageType.ENTER.equals(dto.getType())) {
-            dto.setMessage(dto.getSender() + "님이 입장하셨습니다.");
-        }
-        /* 채팅방 나가기 */
-        else if (ChatMessage.MessageType.QUIT.equals(dto.getType())) {
-            dto.setMessage(dto.getSender() + "님이 나가셨습니다.");
-        }
         ChatMessageResponseDto responseDto = chatService.saveChatMessage(dto);
         simpMessagingTemplate
                 .convertAndSend("/sub/chat/" + responseDto.getChatRoomId(), responseDto);

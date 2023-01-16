@@ -76,9 +76,9 @@ public class ChatService {
 
     @Transactional
     public ChatMessageResponseDto saveChatMessage(ChatMessageRequestDto message) {
-        log.warn("채팅 메시지 저장 [내용] : {}", message.getMessage());
-        log.warn("메세지 [사용자] : {}", message.getSender());
-        log.warn("메세지 [TYPE] : {}", message.getType());
+        log.info("채팅 메시지 저장 [내용] : {}", message.getMessage());
+        log.info("메세지 [사용자] : {}", message.getSender());
+        log.info("메세지 [TYPE] : {}", message.getType());
         ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId())
                 .orElseThrow(MemberChatRoomNotFoundException::new);
 
@@ -90,6 +90,7 @@ public class ChatService {
                 .build();
 
         ChatMessage save = chatMessageRepository.save(chatMessage);
+        Optional<Item> item = itemRepository.findById(save.getItem_id());
 
         chatRoom.addChatMessage(chatMessage);
 

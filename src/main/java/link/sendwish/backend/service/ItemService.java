@@ -2,8 +2,11 @@ package link.sendwish.backend.service;
 
 
 
+import link.sendwish.backend.common.exception.ChatRoomNotFoundException;
 import link.sendwish.backend.common.exception.CollectionNotFoundException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
+import link.sendwish.backend.controller.MessageController;
+import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.collection.CollectionResponseDto;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
@@ -77,6 +80,24 @@ public class ItemService {
         }
 
         Collections.reverse(itemIdListToSave);
+
+        /* 공유 컬랙션에 아이템 추가시 채팅방 메세지 알림 */
+        if (collection.getReference() >= 2) {
+            ChatRoom chatRoom = chatRoomRepository.findByCollectionId(collection.getId())
+                    .orElseThrow(ChatRoomNotFoundException::new);
+            itemList.stream()
+                    .map(Item::getId)
+                    .forEach(itemId -> {
+                        ChatMessageRequestDto chatMessage = ChatMessageRequestDto.builder()
+                                .sender(nickname)
+                                .message(nickname + "님이 " + collection.getTitle() + "에 아이템을 추가했습니다.")
+                                .roomId(chatRoom.getId())
+                                .type(ChatMessage.MessageType.ITEM)
+                                .item_id(itemId)
+                                .build();
+                        messageController.sendMessage(chatMessage);
+            });
+        }
 
         return ItemListResponseDto.builder()
                 .nickname(nickname)
