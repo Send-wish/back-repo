@@ -4,7 +4,6 @@ import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.common.exception.ScrapingException;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.dtos.item.*;
-import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Item;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.CollectionService;
@@ -55,8 +54,7 @@ public class ItemController {
         log.info("====START PARSING :" + MDC.get("traceId") + "===="); // 파싱 시작
         // Post 요청, JSONobject로 응답
         try{
-            jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://13.209.229.237:5001/webscrap", queue.poll(), String.class));
+            jsonObject = new JSONObject(restTemplate.postForObject("http://13.209.229.237:5001/webscrap", queue.poll(), String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }

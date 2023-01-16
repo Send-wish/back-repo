@@ -1,5 +1,7 @@
 package link.sendwish.backend.dtos.chat;
 
+import link.sendwish.backend.entity.ChatMessage;
+import link.sendwish.backend.entity.Item;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,4 +18,6 @@ public class ChatMessageResponseDto {
     private String sender;
     private String message;
     private LocalDateTime createAt;
+    private ChatMessage.MessageType type;
+    private Item item;
 }
