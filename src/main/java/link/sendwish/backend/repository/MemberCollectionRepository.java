@@ -12,6 +12,6 @@ public interface MemberCollectionRepository extends JpaRepository<MemberCollecti
     Optional<List<MemberCollection>> findAllByMember(Member member);
     Optional<List<MemberCollection>> findAllByMemberOrderByIdDesc(Member member);
     Optional<MemberCollection> findByMemberAndCollection(Member member, Collection collection);
-
     void deleteByMemberAndCollection(Member member, Collection collection);
+    Optional<List<MemberCollection>> findAllByCollection(Collection collection);
 }
