@@ -66,7 +66,7 @@ public class Collection extends BaseTime{
         return reverseCollectionItems;
     }
 
-    public String getDefaultURL() {
+    public String getDefaultImgURL() {
        int collectionItemsLength = this.collectionItems.size();
 
         if (this.collectionItems.isEmpty()) {
