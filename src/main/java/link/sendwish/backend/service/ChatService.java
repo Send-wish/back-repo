@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Slf4j
 public class ChatService {
-    private final ItemRepository itemRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final MemberRepository memberRepository;
@@ -90,8 +89,7 @@ public class ChatService {
                 .type(message.getType())
                 .build();
 
-        ChatMessage save = chatMessageRepository.save(message);
-        Optional<Item> item = itemRepository.findById(save.getItem_id());
+        ChatMessage save = chatMessageRepository.save(chatMessage);
 
         chatRoom.addChatMessage(chatMessage);
 
@@ -103,7 +101,6 @@ public class ChatService {
                 .message(save.getMessage())
                 .sender(save.getSender())
                 .createAt(save.getCreateAt())
-                .item(item.orElse(null))
                 .build();
     }
 
