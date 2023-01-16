@@ -119,6 +119,7 @@ public class ChatService {
                         .message(target.getMessage())
                         .sender(target.getSender())
                         .chatRoomId(target.getChatRoom().getId())
+                        .createAt(target.getCreateAt())
                         .build()).collect(Collectors.toList());
         log.info("채팅방 [ID] : {}, 채팅 메시지 일괄 조회 [메시지 갯수] : {}", chatRoom.getId(), chats.size());
         return chats;
