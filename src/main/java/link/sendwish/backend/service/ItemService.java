@@ -2,8 +2,11 @@ package link.sendwish.backend.service;
 
 
 
+import link.sendwish.backend.common.exception.ChatRoomNotFoundException;
 import link.sendwish.backend.common.exception.CollectionNotFoundException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
+import link.sendwish.backend.controller.MessageController;
+import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.collection.CollectionResponseDto;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
@@ -33,11 +36,12 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final MemberService memberService;
-    private final CollectionService collectionService;
     private final CollectionItemRepository collectionItemRepository;
     private final MemberItemRepository memberItemRepository;
     private final MemberRepository memberRepository;
     private final CollectionRepository collectionRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final MessageController messageController;
 
     @Transactional
     public Long saveItem(Item item, String nickname) {

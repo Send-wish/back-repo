@@ -300,4 +300,11 @@ public class CollectionService {
                                 .build()
                 ).toList()).build();
     }
+
+    public boolean isSharedCollection(Long collectionId) {
+        Collection collection = collectionRepository
+                .findById(collectionId)
+                .orElseThrow(CollectionNotFoundException::new);
+        return collection.getReference() > 1;
+    }
 }

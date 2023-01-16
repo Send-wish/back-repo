@@ -1,9 +1,11 @@
 package link.sendwish.backend.service;
 
 import link.sendwish.backend.common.exception.*;
+import link.sendwish.backend.dtos.chat.ChatAllMessageResponseDto;
 import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
 import link.sendwish.backend.dtos.chat.ChatRoomResponseDto;
+import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Slf4j
 public class ChatService {
+    private final ItemRepository itemRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final MemberRepository memberRepository;
@@ -87,21 +90,43 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .sender(message.getSender())
                 .type(message.getType())
+                .itemId(message.getItemId())
                 .build();
 
         ChatMessage save = chatMessageRepository.save(chatMessage);
 
         chatRoom.addChatMessage(chatMessage);
-
         assert message.getMessage().equals(save.getMessage());
         log.info("메세지 저장 [내용] : {}", save.getMessage());
         log.info("메세지 저장 [일시] : {}", save.getCreateAt());
-        return ChatMessageResponseDto.builder()
+
+        ChatMessageResponseDto responseDto = ChatMessageResponseDto.builder()
                 .chatRoomId(save.getChatRoom().getId())
                 .message(save.getMessage())
                 .sender(save.getSender())
                 .createAt(save.getCreateAt())
                 .build();
+
+        /* TALK인 경우 */
+        if (save.getItemId() == null) {
+            log.info("TALK 메세지 저장 [내용] : {}", save.getMessage());
+            responseDto.setItem(null);
+            return responseDto;
+        }
+
+        Item item = itemRepository.findById(save.getItemId()).orElseThrow(ItemNotFoundException::new);
+        ItemResponseDto itemResponseDto = ItemResponseDto.builder()
+                .itemId(item.getId())
+                .name(item.getName())
+                .price(item.getPrice())
+                .imgUrl(item.getImgUrl())
+                .originUrl(item.getOriginUrl())
+                .build();
+
+        responseDto.setItem(itemResponseDto);
+        log.info("ITEM 메세지 저장 [내용] : {}", save.getMessage());
+
+        return responseDto;
     }
 
     public Long getRoomId(Long collectionId){
@@ -109,19 +134,32 @@ public class ChatService {
         return chatRoom.getId();
     }
 
-    public List<ChatMessageResponseDto> getChatsByRoom(Long roomId){
+    public List<ChatAllMessageResponseDto> getChatsByRoom(Long roomId){
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(ChatRoomNotFoundException::new);
         if (chatMessageRepository.findAllByChatRoom(chatRoom).isEmpty()) {
             throw new ChatMessageNotFoundException();
         }
-        List<ChatMessageResponseDto> chats = chatMessageRepository.findAllByChatRoom(chatRoom).get().stream()
-                .map(target -> ChatMessageResponseDto.builder()
+        List<ChatAllMessageResponseDto> chats = chatMessageRepository.findAllByChatRoom(chatRoom).get().stream()
+                .map(target -> ChatAllMessageResponseDto.builder()
                         .message(target.getMessage())
                         .sender(target.getSender())
                         .chatRoomId(target.getChatRoom().getId())
-                        .createAt(target.getCreateAt())
+                        .createAt(target.getCreateAt().toString())
+                        .item(target.getItemId() == null ? null :
+                                ItemResponseDto.builder()
+                                .itemId(itemRepository.findById(target.getItemId()).orElseThrow(ItemNotFoundException::new).getId())
+                                .name(itemRepository.findById(target.getItemId()).get().getName())
+                                .price(itemRepository.findById(target.getItemId()).get().getPrice())
+                                .imgUrl(itemRepository.findById(target.getItemId()).get().getImgUrl())
+                                .originUrl(itemRepository.findById(target.getItemId()).get().getOriginUrl())
+                                .build())
                         .build()).collect(Collectors.toList());
         log.info("채팅방 [ID] : {}, 채팅 메시지 일괄 조회 [메시지 갯수] : {}", chatRoom.getId(), chats.size());
         return chats;
+    }
+
+    public Long getChatRoomIdByCollectionId(Long collectionId){
+        ChatRoom chatRoom = chatRoomRepository.findByCollectionId(collectionId).orElseThrow(ChatRoomNotFoundException::new);
+        return chatRoom.getId();
     }
 }
