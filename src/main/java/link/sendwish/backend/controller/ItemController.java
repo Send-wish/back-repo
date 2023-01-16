@@ -33,7 +33,7 @@ public class ItemController {
     private final ItemService itemService;
     private final MemberService memberService;
     private final CollectionService collectionService;
-    Queue queue = new LinkedList<>();
+    Queue<HttpEntity<MultiValueMap<String, String>>> queue = new LinkedList<>();
 
     // scrapping-server 연결
     public JSONObject createHttpRequestAndSend(String url) {
@@ -56,7 +56,7 @@ public class ItemController {
         // Post 요청, JSONobject로 응답
         try{
             jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://43.201.7.239:5001/webscrap", queue.poll(), String.class));
+                    restTemplate.postForObject("http://13.209.229.237:5001/webscrap", queue.poll(), String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }
@@ -74,6 +74,7 @@ public class ItemController {
             if(dto.getUrl() == null){
                 throw new DtoNullException();
             }
+            log.info("등록할 상품의 [URL] = {}", dto.getUrl());
             Item find = itemService.findItem(dto.getUrl());
             if(find != null){
                 itemService.checkMemberReferenceByItem(find, dto.getNickname());

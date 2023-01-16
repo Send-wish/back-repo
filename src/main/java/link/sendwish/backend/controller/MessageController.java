@@ -1,18 +1,14 @@
 package link.sendwish.backend.controller;
 
+import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
 import link.sendwish.backend.entity.ChatMessage;
-import link.sendwish.backend.entity.ChatRoomMessage;
 import link.sendwish.backend.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-
-import java.util.List;
 
 
 @Slf4j
@@ -23,7 +19,7 @@ public class MessageController {
     private final SimpMessageSendingOperations simpMessagingTemplate;
 
     @MessageMapping("/chat") // 해당 url로 메세지 전송되면 메서드 호출
-    public void sendMessage(ChatMessage dto){
+    public void sendMessage(ChatMessageRequestDto dto){
         /* 채팅방 첫 입장 */
         if (ChatMessage.MessageType.ENTER.equals(dto.getType())) {
             dto.setMessage(dto.getSender() + "님이 입장하셨습니다.");
