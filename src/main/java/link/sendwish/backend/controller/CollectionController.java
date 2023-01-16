@@ -3,12 +3,14 @@ package link.sendwish.backend.controller;
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.common.exception.ItemNotFoundException;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.chat.ChatRoomResponseDto;
 import link.sendwish.backend.dtos.collection.*;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.entity.Item;
 import link.sendwish.backend.entity.Member;
+import link.sendwish.backend.service.ChatService;
 import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class CollectionController {
 
     private final MemberService memberService;
     private final CollectionService collectionService;
+    private final ChatService chatService;
 
     @GetMapping("/collections/{nickname}")
     public ResponseEntity<?> getCollectionsByMember(@PathVariable("nickname") String nickname) {
@@ -115,6 +118,7 @@ public class CollectionController {
 
             ArrayList<String> members = new ArrayList<>();
             members.add(owner);
+            chatService.createRoom(dto.getMemberIdList(), savedCollection.getCollectionId());
 
             // 생성된 컬랙션에 친구 추가 => query X
             CollectionResponseDto find = collectionService.findCollection
@@ -191,6 +195,20 @@ public class CollectionController {
             }
             collectionService.deleteCollectionItem(dto.getCollectionId(), dto.getItemIdList());
             return ResponseEntity.ok().body("삭제 성공");
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+    @GetMapping("/collection/roomId/{collectionId}")
+    public ResponseEntity<?> getRoomId(@PathVariable("collectionId") Long collectionId) {
+        try {
+            Long roomId = chatService.getRoomId(collectionId);
+            return ResponseEntity.ok().body(roomId);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()

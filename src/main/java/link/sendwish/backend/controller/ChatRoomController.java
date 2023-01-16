@@ -46,21 +46,6 @@ public class ChatRoomController {
         }
     }
 
-    // 채팅방 생성
-    @PostMapping("/room")
-    public ResponseEntity<?> createRoom(@RequestBody ChatRoomRequestDto dto) {
-        try{
-            ChatRoomResponseDto savedRoom = chatService.createRoom(dto.getMemberIdList(), dto.getCollectionId());
-            return ResponseEntity.ok().body(savedRoom);
-        }catch (Exception e) {
-            e.printStackTrace();
-            ResponseErrorDto errorDto = ResponseErrorDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(errorDto);
-        }
-    }
-
     // 채팅방 입장
     @GetMapping("/room/enter/{roomId}")
     public ResponseEntity<?> roomDetail(@PathVariable("roomId") Long roomId) {

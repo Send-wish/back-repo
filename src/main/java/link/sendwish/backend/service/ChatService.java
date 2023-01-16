@@ -112,4 +112,9 @@ public class ChatService {
                 .createAt(save.getCreateAt())
                 .build();
     }
+
+    public Long getRoomId(Long collectionId){
+        ChatRoom chatRoom = chatRoomRepository.findByCollectionId(collectionId).orElseThrow(ChatRoomNotFoundException::new);
+        return chatRoom.getId();
+    }
 }
