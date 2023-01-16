@@ -1,5 +1,6 @@
 package link.sendwish.backend.controller;
 
+import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
 import link.sendwish.backend.entity.ChatMessage;
 import link.sendwish.backend.service.ChatService;
@@ -24,7 +25,7 @@ public class MessageController {
     }
 
     @MessageMapping("/chat") // 해당 url로 메세지 전송되면 메서드 호출
-    public void sendMessage(ChatMessage dto){
+    public void sendMessage(ChatMessageRequestDto dto){
         ChatMessageResponseDto responseDto = chatService.saveChatMessage(dto);
         this.template.convertAndSend("/sub/chat/" + responseDto.getChatRoomId(), responseDto);
     }
