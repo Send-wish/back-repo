@@ -17,6 +17,7 @@ import java.util.*;
 @Transactional(readOnly = true)
 @Slf4j
 public class ChatService {
+    private final ItemRepository itemRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final MemberRepository memberRepository;
@@ -87,18 +88,13 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId())
                 .orElseThrow(MemberChatRoomNotFoundException::new);
 
-        ChatMessage chatMessage = ChatMessage.builder()
-                .message(message.getMessage())
-                .roomId(message.getRoomId())
-                .sender(message.getSender())
-                .type(message.getType())
-                .build();
         ChatRoomMessage chatRoomMessage = ChatRoomMessage.builder()
                 .chatRoom(chatRoom)
-                .chatMessage(chatMessage)
+                .chatMessage(message)
                 .build();
 
-        ChatMessage save = chatMessageRepository.save(chatMessage);
+        ChatMessage save = chatMessageRepository.save(message);
+        Optional<Item> item = itemRepository.findById(save.getItem_id());
 
         chatRoom.addMessageChatRoom(chatRoomMessage);
 
@@ -110,6 +106,7 @@ public class ChatService {
                 .message(save.getMessage())
                 .sender(save.getSender())
                 .createAt(save.getCreateAt())
+                .item(item.orElse(null))
                 .build();
     }
 }

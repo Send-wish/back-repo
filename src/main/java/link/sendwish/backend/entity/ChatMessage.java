@@ -19,7 +19,7 @@ public class ChatMessage extends BaseTime{
     private Long roomId;
 
     public enum MessageType {
-        ENTER, TALK, QUIT
+        TALK, ITEM
     }
 
     @Enumerated(EnumType.STRING)
@@ -31,4 +31,6 @@ public class ChatMessage extends BaseTime{
 
     @Column(columnDefinition = "TEXT")
     private String message;
+
+    private Long item_id;
 }
