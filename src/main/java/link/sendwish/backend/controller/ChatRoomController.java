@@ -46,19 +46,5 @@ public class ChatRoomController {
         }
     }
 
-    // 채팅방 입장
-    @GetMapping("/room/enter/{roomId}")
-    public ResponseEntity<?> roomDetail(@PathVariable("roomId") Long roomId) {
-        try{
-            ChatRoomResponseDto room = chatService.findRoomById(roomId);
-            return ResponseEntity.ok().body(room);
-        }catch (Exception e) {
-            e.printStackTrace();
-            ResponseErrorDto errorDto = ResponseErrorDto.builder()
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(errorDto);
-        }
-    }
 
 }
