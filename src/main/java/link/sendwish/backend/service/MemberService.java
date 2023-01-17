@@ -129,6 +129,7 @@ public class MemberService {
             dtos.add(FriendResponseDto.builder()
                     .friend_id(friendMember.getId())
                     .friend_nickname(friendMember.getNickname())
+                    .friend_img(friendMember.getImg())
                     .build());
             log.info("친구 NickName : {}", friendMember.getNickname());
         }

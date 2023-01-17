@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FriendDeleteResponseDto {
     private String nickname; // 내 닉네임
-    private String friendNickname;
+    private String friendNickname; // 친구 닉네임
 }
