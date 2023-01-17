@@ -30,7 +30,7 @@ public class Collection extends BaseTime {
     @Builder.Default
     private int reference = 1;
 
-    private static String DEFAULT_URL = "https://sendwish-img-bucket.s3.ap-northeast-2.amazonaws.com/collection_default.png";
+    private static String DEFAULT_URL = "https://sendwish-profile-img.s3.ap-northeast-2.amazonaws.com/white.png";
 
     public void addMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.add(memberCollection);
