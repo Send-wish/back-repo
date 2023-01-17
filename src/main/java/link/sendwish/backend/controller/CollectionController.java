@@ -142,6 +142,7 @@ public class CollectionController {
                     .title(find.getTitle())
                     .collectionId(find.getCollectionId())
                     .memberList(members)
+                    .defaultImage(find.getDefaultImage())
                     .build();
 
             for (var i = 1; i < dto.getMemberIdList().size(); i += 1) {
@@ -162,6 +163,7 @@ public class CollectionController {
             } else {
                 responseDto.setDtos(Collections.emptyList());
             }
+
             return ResponseEntity.ok().body(responseDto);
             }catch (Exception e) {
             e.printStackTrace();

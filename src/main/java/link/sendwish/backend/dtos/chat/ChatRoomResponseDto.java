@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,6 +18,6 @@ public class ChatRoomResponseDto {
     private String sender;
     private LocalDateTime createAt;
     private String title;
-    private String defaultImage;
+    private List<String> defaultImage;
 
 }

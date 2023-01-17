@@ -14,12 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Slf4j
-public class Collection extends BaseTime{
+public class Collection extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "collection",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL)
     private List<MemberCollection> memberCollections = new ArrayList<>();
 
     @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL)
@@ -66,15 +66,22 @@ public class Collection extends BaseTime{
         return reverseCollectionItems;
     }
 
-    public String getDefaultImgURL() {
-       int collectionItemsLength = this.collectionItems.size();
+    public List<String> getDefaultImgURL() {
 
-        if (this.collectionItems.isEmpty()) {
-//            log.info("collectionItems is empty: {}", this.DEFAULT_URL);
-            return this.DEFAULT_URL;
-        } else {
-//            log.info("collectionItems is not empty: {}", this.collectionItems.get(collectionItemsLength-1).getItem().getImgUrl());
-            return this.collectionItems.get(collectionItemsLength-1).getItem().getImgUrl();
+        List<String> imgList = new ArrayList<>(4);
+        int collectionItemsSize = this.collectionItems.size();
+        int collectionItemsImgSize = collectionItemsSize > 4 ? 4 : collectionItemsSize;
+
+        int defaultImgSize = 4 - collectionItemsImgSize;
+
+        // 아이템의 개수에 따라 아이템과 디폴트 이미지를 합친 리스트 반환
+        for (int i = 0; i < collectionItemsImgSize; i++) {
+            imgList.add(collectionItems.get(collectionItemsSize-i-1).getItem().getImgUrl());
         }
+        for (int i = 0; i < defaultImgSize; i++) {
+            imgList.add(DEFAULT_URL);
+        }
+
+        return imgList;
     }
 }

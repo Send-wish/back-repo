@@ -87,6 +87,7 @@ public class CollectionService {
                 .collectionId(find.getId())
                 .nickname(nickname)
                 .title(find.getTitle())
+                .defaultImage(find.getDefaultImgURL())
                 .build();
     }
 
@@ -290,6 +291,7 @@ public class CollectionService {
                 .title(title)
                 .collectionId(collectionId)
                 .memberList(MemberList)
+                .defaultImage(collection.getDefaultImgURL())
                 .dtos(items.stream().map(
                         target -> ItemResponseDto.builder()
                                 .itemId(target.getId())
