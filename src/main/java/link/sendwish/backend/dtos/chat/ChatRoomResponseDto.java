@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @Data
 @Builder
@@ -15,6 +16,6 @@ public class ChatRoomResponseDto {
     private Long chatRoomId;
     private ChatMessage lastMessage;
     private String title;
-    private String defaultImage;
+    private List<String> defaultImage;
 
 }

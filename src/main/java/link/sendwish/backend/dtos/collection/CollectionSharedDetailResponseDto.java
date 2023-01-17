@@ -17,4 +17,5 @@ public class CollectionSharedDetailResponseDto {
     Long collectionId;
     String title;
     List<String> memberList;
+    List<String> defaultImage;
 }
