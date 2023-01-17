@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,7 +15,7 @@ public class CollectionResponseDto {
     private Long collectionId;
     private String title;
     private String nickname;
-    private String defaultImage;
+    private List<String> defaultImage;
     //추후 item 관련 field 추가
 
 }
