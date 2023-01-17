@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class FriendResponseDto {
     private Long friend_id;
     private String friend_nickname;
+    private String friend_img; // 친구의 프로필 사진
 }

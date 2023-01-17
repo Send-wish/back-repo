@@ -9,6 +9,7 @@
 *.p12
 
 application-dev.yml
+application-aws.yml
 
 ### Java ###
 # Compiled class file
