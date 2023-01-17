@@ -7,4 +7,3 @@ public class ChatMessageNotFoundException extends BusinessException {
         super(Messages.NOT_SAVED_CHAT_MESSAGE);
     }
 }
-

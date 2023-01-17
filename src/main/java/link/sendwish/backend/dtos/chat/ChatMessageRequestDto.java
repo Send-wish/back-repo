@@ -1,6 +1,5 @@
 package link.sendwish.backend.dtos.chat;
 
-import link.sendwish.backend.entity.ChatMessage;
 import link.sendwish.backend.entity.ChatMessage.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
