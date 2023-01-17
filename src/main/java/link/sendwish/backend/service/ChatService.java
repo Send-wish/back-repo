@@ -110,7 +110,7 @@ public class ChatService {
         /* TALK인 경우 */
         if (save.getItemId() == null) {
             log.info("TALK 메세지 저장 [내용] : {}", save.getMessage());
-            responseDto.setItem(null);
+            responseDto.setItemDto(null);
             return responseDto;
         }
 
@@ -123,7 +123,7 @@ public class ChatService {
                 .originUrl(item.getOriginUrl())
                 .build();
 
-        responseDto.setItem(itemResponseDto);
+        responseDto.setItemDto(itemResponseDto);
         log.info("ITEM 메세지 저장 [내용] : {}", save.getMessage());
 
         return responseDto;
@@ -146,7 +146,7 @@ public class ChatService {
                         .chatRoomId(target.getChatRoom().getId())
                         .createAt(target.getCreateAt().toString())
                         .type(target.getType())
-                        .item(target.getItemId() == null ? null :
+                        .itemDto(target.getItemId() == null ? null :
                                 setItemResponseDtoByItemId(target.getItemId()))
                         .build()).collect(Collectors.toList());
         log.info("채팅방 [ID] : {}, 채팅 메시지 일괄 조회 [메시지 갯수] : {}", chatRoom.getId(), chats.size());

@@ -19,5 +19,5 @@ public class ChatMessageResponseDto {
     private String message;
     private LocalDateTime createAt;
     private ChatMessage.MessageType type;
-    private ItemResponseDto item;
+    private ItemResponseDto itemDto;
 }
