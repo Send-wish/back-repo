@@ -79,9 +79,9 @@ public class ChatService {
 
     @Transactional
     public ChatMessageResponseDto saveChatMessage(ChatMessageRequestDto message) {
-        log.warn("채팅 메시지 저장 [내용] : {}", message.getMessage());
-        log.warn("메세지 [사용자] : {}", message.getSender());
-        log.warn("메세지 [TYPE] : {}", message.getType());
+        log.info("채팅 메시지 저장 [내용] : {}", message.getMessage());
+        log.info("메세지 [사용자] : {}", message.getSender());
+        log.info("메세지 [TYPE] : {}", message.getType());
         ChatRoom chatRoom = chatRoomRepository.findById(message.getRoomId())
                 .orElseThrow(MemberChatRoomNotFoundException::new);
 
@@ -147,13 +147,7 @@ public class ChatService {
                         .createAt(target.getCreateAt().toString())
                         .type(target.getType())
                         .itemDto(target.getItemId() == null ? null :
-                                ItemResponseDto.builder()
-                                .itemId(itemRepository.findById(target.getItemId()).orElseThrow(ItemNotFoundException::new).getId())
-                                .name(itemRepository.findById(target.getItemId()).get().getName())
-                                .price(itemRepository.findById(target.getItemId()).get().getPrice())
-                                .imgUrl(itemRepository.findById(target.getItemId()).get().getImgUrl())
-                                .originUrl(itemRepository.findById(target.getItemId()).get().getOriginUrl())
-                                .build())
+                                setItemResponseDtoByItemId(target.getItemId()))
                         .build()).collect(Collectors.toList());
         log.info("채팅방 [ID] : {}, 채팅 메시지 일괄 조회 [메시지 갯수] : {}", chatRoom.getId(), chats.size());
         return chats;
@@ -163,4 +157,15 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findByCollectionId(collectionId).orElseThrow(ChatRoomNotFoundException::new);
         return chatRoom.getId();
     }
+
+    public ItemResponseDto setItemResponseDtoByItemId(Long ItemId){
+        return ItemResponseDto.builder()
+                .itemId(itemRepository.findById(ItemId).orElseThrow(ItemNotFoundException::new).getId())
+                .name(itemRepository.findById(ItemId).get().getName())
+                .price(itemRepository.findById(ItemId).get().getPrice())
+                .imgUrl(itemRepository.findById(ItemId).get().getImgUrl())
+                .originUrl(itemRepository.findById(ItemId).get().getOriginUrl())
+                .build();
+    }
+
 }
