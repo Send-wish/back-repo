@@ -4,6 +4,7 @@ package link.sendwish.backend.controller;
 import link.sendwish.backend.auth.TokenInfo;
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.member.MemberProfileResponseDto;
 import link.sendwish.backend.dtos.member.MemberRequestDto;
 import link.sendwish.backend.dtos.member.MemberResponseDto;
 import link.sendwish.backend.dtos.member.SignInResponseDto;
@@ -73,5 +74,15 @@ public class MemberController {
                     .build();
             return ResponseEntity.internalServerError().body(errorDto);
         }
+    }
+
+    // 회원 프로필사진 전송
+    @GetMapping("/profile/{nickname}")
+    public MemberProfileResponseDto getProfile(@PathVariable String nickname) {
+        Member member = memberService.findMember(nickname);
+        return MemberProfileResponseDto.builder()
+                .nickname(member.getNickname())
+                .img(member.getImg())
+                .build();
     }
 }
