@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class MemberResponseDto {
     private Long id;//mypage
     private String nickname;
+    private String img;
 }

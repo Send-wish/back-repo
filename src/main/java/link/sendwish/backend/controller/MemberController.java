@@ -34,10 +34,13 @@ public class MemberController {
             }
             log.info("id = {}", dto.getNickname());
             log.info("pw = {}", dto.getPassword());
+            log.info("img = {}", dto.getImg());
             Member member = memberService.createMember(dto);
             MemberResponseDto returnDto = MemberResponseDto.builder()
                     .id(member.getId())
-                    .nickname(member.getNickname()).build();
+                    .nickname(member.getNickname())
+                    .img(member.getImg())
+                    .build();
             return ResponseEntity.ok().body(returnDto);
         } catch (Exception e) {
             e.printStackTrace();
