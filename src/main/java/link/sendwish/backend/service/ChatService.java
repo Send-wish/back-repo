@@ -110,7 +110,7 @@ public class ChatService {
         /* TALK인 경우 */
         if (save.getItemId() == null) {
             log.info("TALK 메세지 저장 [내용] : {}", save.getMessage());
-            responseDto.setItem(null);
+            responseDto.setItemDto(null);
             return responseDto;
         }
 
@@ -123,7 +123,7 @@ public class ChatService {
                 .originUrl(item.getOriginUrl())
                 .build();
 
-        responseDto.setItem(itemResponseDto);
+        responseDto.setItemDto(itemResponseDto);
         log.info("ITEM 메세지 저장 [내용] : {}", save.getMessage());
 
         return responseDto;
@@ -146,7 +146,7 @@ public class ChatService {
                         .chatRoomId(target.getChatRoom().getId())
                         .createAt(target.getCreateAt().toString())
                         .type(target.getType())
-                        .item(target.getItemId() == null ? null :
+                        .itemDto(target.getItemId() == null ? null :
                                 ItemResponseDto.builder()
                                 .itemId(itemRepository.findById(target.getItemId()).orElseThrow(ItemNotFoundException::new).getId())
                                 .name(itemRepository.findById(target.getItemId()).get().getName())

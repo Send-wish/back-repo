@@ -20,5 +20,5 @@ public class ChatAllMessageResponseDto {
     private String message;
     private String createAt;
     private ChatMessage.MessageType type;
-    private ItemResponseDto item;
+    private ItemResponseDto itemDto;
 }
