@@ -36,9 +36,7 @@ public class ChatService {
                 .map(target -> ChatRoomResponseDto
                         .builder()
                         .chatRoomId(target.getChatRoom().getId())
-                        .lastMessage(chatMessageRepository.findOneByChatRoomOrderByIdDesc(target.getChatRoom()).get().getMessage())
-                        .sender(chatMessageRepository.findOneByChatRoomOrderByIdDesc(target.getChatRoom()).get().getSender())
-                        .createAt(chatMessageRepository.findOneByChatRoomOrderByIdDesc(target.getChatRoom()).get().getCreateAt())
+                        .lastMessage(chatMessageRepository.findTopByChatRoomOrderByIdDesc(target.getChatRoom()).get())
                         .title(collectionRepository
                                 .findById(target.getChatRoom().getCollectionId()).orElseThrow(CollectionNotFoundException::new).getTitle())
                         .defaultImage(collectionRepository
