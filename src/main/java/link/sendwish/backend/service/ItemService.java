@@ -94,7 +94,7 @@ public class ItemService {
                                 .message(nickname + "님이 " + collection.getTitle() + "에 아이템을 추가했습니다.")
                                 .roomId(chatRoom.getId())
                                 .type(ChatMessage.MessageType.ITEM)
-                                .item_id(itemId)
+                                .itemId(itemId)
                                 .build();
                         messageController.sendMessage(chatMessage);
             });
@@ -188,5 +188,6 @@ public class ItemService {
         log.info("이미 존재하는 아이템 [ID] : {}, [참조하는 맴버 수] : {}", item.getId(), item.getReference());
         return item.getId();
     }
+
 
 }
