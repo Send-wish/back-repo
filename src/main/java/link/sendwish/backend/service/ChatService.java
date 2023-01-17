@@ -145,6 +145,7 @@ public class ChatService {
                         .sender(target.getSender())
                         .chatRoomId(target.getChatRoom().getId())
                         .createAt(target.getCreateAt().toString())
+                        .type(target.getType())
                         .item(target.getItemId() == null ? null :
                                 ItemResponseDto.builder()
                                 .itemId(itemRepository.findById(target.getItemId()).orElseThrow(ItemNotFoundException::new).getId())
