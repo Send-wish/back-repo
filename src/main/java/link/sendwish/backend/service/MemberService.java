@@ -45,6 +45,7 @@ public class MemberService {
         Member member = Member.builder()
                 .nickname(dto.getNickname())
                 .password(encode)
+                .img(dto.getImg())
                 .roles(List.of("USER"))
                 .memberCollections(new ArrayList<>())
                 .memberItems(new ArrayList<>())
@@ -52,7 +53,7 @@ public class MemberService {
                 .chatRoomMembers(new ArrayList<>())
                 .build();
         Member savedMember = memberRepository.save(member);
-        log.info("새로운 회원가입 [ID] : {}, [PW] : {}", savedMember.getNickname(), savedMember.getPassword());
+        log.info("새로운 회원가입 [ID] : {}, [PW] : {}, [IMG] : {}", savedMember.getNickname(), savedMember.getPassword(), savedMember.getImg());
         return savedMember;
     }
 

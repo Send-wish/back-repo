@@ -30,6 +30,9 @@ public class Member implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    private String img;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
