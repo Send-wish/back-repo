@@ -7,7 +7,6 @@ import link.sendwish.backend.common.exception.CollectionNotFoundException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.controller.MessageController;
 import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
-import link.sendwish.backend.dtos.collection.CollectionResponseDto;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.dtos.ItemListResponseDto;
@@ -23,10 +22,6 @@ import link.sendwish.backend.common.exception.ItemNotFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.reverse;
-
 
 @Service
 @Transactional(readOnly = true)
@@ -86,9 +81,7 @@ public class ItemService {
         if (collection.getReference() >= 2) {
             ChatRoom chatRoom = chatRoomRepository.findByCollectionId(collection.getId())
                     .orElseThrow(ChatRoomNotFoundException::new);
-            itemList.stream()
-                    .map(Item::getId)
-                    .forEach(itemId -> {
+            itemIdList.forEach(itemId -> {
                         ChatMessageRequestDto chatMessage = ChatMessageRequestDto.builder()
                                 .sender(nickname)
                                 .message(nickname + "님이 " + collection.getTitle() + "에 아이템을 추가했습니다.")
