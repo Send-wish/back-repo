@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Slf4j
 public class ChatService {
+    private final CollectionRepository collectionRepository;
     private final ItemRepository itemRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
@@ -35,6 +36,13 @@ public class ChatService {
                 .map(target -> ChatRoomResponseDto
                         .builder()
                         .chatRoomId(target.getChatRoom().getId())
+                        .lastMessage(chatMessageRepository.findOneByChatRoomOrderByIdDesc(target.getChatRoom()).get().getMessage())
+                        .sender(chatMessageRepository.findOneByChatRoomOrderByIdDesc(target.getChatRoom()).get().getSender())
+                        .createAt(chatMessageRepository.findOneByChatRoomOrderByIdDesc(target.getChatRoom()).get().getCreateAt())
+                        .title(collectionRepository
+                                .findById(target.getChatRoom().getCollectionId()).orElseThrow(CollectionNotFoundException::new).getTitle())
+                        .defaultImage(collectionRepository
+                                .findById(target.getChatRoom().getCollectionId()).get().getDefaultImgURL())
                         .build()
                 ).toList();
         log.info("해당 맴버의 [닉네임] : {}, 채팅방 일괄 조회 [채팅방 갯수] : {}", member.getNickname(), dtos.size());
