@@ -1,5 +1,6 @@
 package link.sendwish.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -19,5 +20,6 @@ public class BaseTime {
     private LocalDateTime createAt;
 
     @LastModifiedBy
+    @JsonIgnore
     private LocalDateTime lastModifiedAt;
 }

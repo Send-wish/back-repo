@@ -1,12 +1,10 @@
 package link.sendwish.backend.service;
 
 import link.sendwish.backend.common.exception.*;
-import link.sendwish.backend.dtos.chat.ChatAllMessageResponseDto;
-import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
-import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
-import link.sendwish.backend.dtos.chat.ChatRoomResponseDto;
+import link.sendwish.backend.dtos.chat.*;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.*;
+import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +34,7 @@ public class ChatService {
                 .map(target -> ChatRoomResponseDto
                         .builder()
                         .chatRoomId(target.getChatRoom().getId())
-                        .lastMessage(chatMessageRepository.findTopByChatRoomOrderByIdDesc(target.getChatRoom()).get())
+                        .lastMessage(setLastChatMessageResponseDto(target.getChatRoom()))
                         .title(collectionRepository
                                 .findById(target.getChatRoom().getCollectionId()).orElseThrow(CollectionNotFoundException::new).getTitle())
                         .defaultImage(collectionRepository
@@ -110,7 +108,7 @@ public class ChatService {
                 .chatRoomId(save.getChatRoom().getId())
                 .message(save.getMessage())
                 .sender(save.getSender())
-                .createAt(save.getCreateAt())
+                .createAt(save.getCreateAt().toString())
                 .build();
 
         /* TALK인 경우 */
@@ -173,5 +171,15 @@ public class ChatService {
                 .originUrl(itemRepository.findById(ItemId).get().getOriginUrl())
                 .build();
     }
+
+    public ChatMessageLastResponseDto setLastChatMessageResponseDto(ChatRoom chatRoom){
+        ChatMessage message = chatMessageRepository.findTopByChatRoomOrderByIdDesc(chatRoom).get();
+        return  ChatMessageLastResponseDto.builder()
+                .message(message.getMessage())
+                .sender(message.getSender())
+                .createAt(message.getCreateAt().toString())
+                .build();
+    }
+
 
 }

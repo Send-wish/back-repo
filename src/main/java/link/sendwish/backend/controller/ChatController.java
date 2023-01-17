@@ -2,9 +2,7 @@ package link.sendwish.backend.controller;
 
 import link.sendwish.backend.dtos.ResponseErrorDto;
 import link.sendwish.backend.dtos.chat.ChatAllMessageResponseDto;
-import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
 import link.sendwish.backend.service.ChatService;
-import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

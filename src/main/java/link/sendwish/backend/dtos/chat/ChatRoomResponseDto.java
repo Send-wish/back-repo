@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ChatRoomResponseDto {
     private Long chatRoomId;
-    private ChatMessage lastMessage;
+    private ChatMessageLastResponseDto lastMessage;
     private String title;
     private List<String> defaultImage;
 
