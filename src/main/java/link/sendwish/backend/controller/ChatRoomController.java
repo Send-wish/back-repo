@@ -1,19 +1,18 @@
 package link.sendwish.backend.controller;
 
-import io.swagger.models.Model;
 import link.sendwish.backend.dtos.*;
-import link.sendwish.backend.dtos.chat.ChatRoomRequestDto;
 import link.sendwish.backend.dtos.chat.ChatRoomResponseDto;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.ChatService;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chat")
@@ -29,7 +28,7 @@ public class ChatRoomController {
             Member member = memberService.findMember(nickname);
 
             List<ChatRoomResponseDto> chatRooms = chatService.findRoomByMember(member);
-
+            
             return ResponseEntity.ok().body(chatRooms);
         }catch (Exception e) {
             e.printStackTrace();
