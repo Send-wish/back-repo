@@ -1,6 +1,7 @@
 package link.sendwish.backend.controller;
 
 import link.sendwish.backend.dtos.ResponseErrorDto;
+import link.sendwish.backend.dtos.chat.ChatAllMessageResponseDto;
 import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
 import link.sendwish.backend.service.ChatService;
 import link.sendwish.backend.service.MemberService;
@@ -20,7 +21,7 @@ public class ChatController {
     @GetMapping("/chats/{chatRoomId}")
     public ResponseEntity<?> getChatsByChatRoomId(@PathVariable("chatRoomId") Long chatRoomId) {
         try{
-            List<ChatMessageResponseDto> chatsByRoom = chatService.getChatsByRoom(chatRoomId);
+            List<ChatAllMessageResponseDto> chatsByRoom = chatService.getChatsByRoom(chatRoomId);
             return ResponseEntity.ok().body(chatsByRoom);
         }catch (Exception e) {
             e.printStackTrace();

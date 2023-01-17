@@ -15,5 +15,5 @@ public class ChatMessageRequestDto {
     private String sender;
     private String message;
     private MessageType type;
-    private Long item_id;
+    private Long itemId;
 }

@@ -3,10 +3,11 @@ package link.sendwish.backend.controller;
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.common.exception.ScrapingException;
 import link.sendwish.backend.dtos.*;
+import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.item.*;
+import link.sendwish.backend.entity.*;
 import link.sendwish.backend.entity.Collection;
-import link.sendwish.backend.entity.Item;
-import link.sendwish.backend.entity.Member;
+import link.sendwish.backend.service.ChatService;
 import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.ItemService;
 import link.sendwish.backend.service.MemberService;
@@ -33,6 +34,8 @@ public class ItemController {
     private final ItemService itemService;
     private final MemberService memberService;
     private final CollectionService collectionService;
+    private final MessageController messageController;
+    private final ChatService chatService;
     Queue<HttpEntity<MultiValueMap<String, String>>> queue = new LinkedList<>();
 
     // scrapping-server 연결
@@ -119,14 +122,23 @@ public class ItemController {
             if (dto.getCollectionId() == null || dto.getItemIdList() == null || dto.getNickname() == null){
                 throw new DtoNullException();
             }
+            ItemListResponseDto itemListResponseDto =
+                    itemService.enrollItemToCollection(dto.getNickname(), dto.getCollectionId(), dto.getItemIdList());
 
-            /*
-            * find Collection 후 , Item 찾아서 (JPA 1차 캐시) 해당 Item을 Collection에 저장
-            * 하고 나서 해당 item 상세 정보를 return
-            * */
-
-            ItemListResponseDto itemListResponseDto = itemService.enrollItemToCollection(dto.getNickname(), dto.getCollectionId(), dto.getItemIdList());
-
+            /* 공유 컬랙션에 아이템 추가시 채팅방 메세지 알림 */
+            if (collectionService.isSharedCollection(dto.getCollectionId())) {
+                Long chatRoomId = chatService.getChatRoomIdByCollectionId(dto.getCollectionId());
+                for (Long itemId : dto.getItemIdList()) {
+                    ChatMessageRequestDto chat = ChatMessageRequestDto.builder()
+                            .sender(dto.getNickname())
+                            .message(dto.getNickname() + "님이 아이템을 추가했습니다.")
+                            .roomId(chatRoomId)
+                            .type(ChatMessage.MessageType.ITEM)
+                            .itemId(itemId)
+                            .build();
+                    messageController.sendMessage(chat);
+                }
+            }
             return ResponseEntity.ok().body(itemListResponseDto);
         }catch (Exception e) {
             e.printStackTrace();
