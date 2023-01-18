@@ -11,6 +11,8 @@
 application-dev.yml
 application-aws.yml
 
+AwsS3Config.java
+
 ### Java ###
 # Compiled class file
 *.class
