@@ -72,6 +72,7 @@ public class ItemService {
         }
 
         Collections.reverse(itemIdListToSave);
+        log.info("컬랙션 아이템 추가 [ID] : {}, [추가 아이템 수] : {}", collection.getId(), itemIdListToSave.size());
 
         return ItemListResponseDto.builder()
                 .nickname(nickname)

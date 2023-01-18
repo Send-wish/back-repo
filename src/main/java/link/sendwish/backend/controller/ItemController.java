@@ -138,6 +138,7 @@ public class ItemController {
                     messageController.sendMessage(chat);
                 }
             }
+            log.info("컬랙션에 아이템 추가 메세지 전송 완료 [ID] : {}, [추가 아이템 수] : {}", dto.getNickname(), dto.getItemIdList().size());
             return ResponseEntity.ok().body(itemListResponseDto);
         }catch (Exception e) {
             e.printStackTrace();
