@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -17,6 +16,7 @@ import java.time.LocalDateTime;
 public class ChatAllMessageResponseDto {
     private Long chatRoomId;
     private String sender;
+    private String senderImg;
     private String message;
     private String createAt;
     private ChatMessage.MessageType type;

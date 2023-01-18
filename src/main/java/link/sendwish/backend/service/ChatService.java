@@ -103,11 +103,14 @@ public class ChatService {
         log.info("메세지 저장 [내용] : {}", save.getMessage());
         log.info("메세지 저장 [일시] : {}", save.getCreateAt());
 
+        String memberImg = memberRepository.findByNickname(message.getSender()).get().getImg();
+
         ChatMessageResponseDto responseDto = ChatMessageResponseDto.builder()
                 .chatRoomId(save.getChatRoom().getId())
                 .message(save.getMessage())
                 .sender(save.getSender())
                 .createAt(save.getCreateAt().toString())
+                .senderImg(memberImg)
                 .build();
 
         /* TALK인 경우 */
@@ -146,6 +149,7 @@ public class ChatService {
                 .map(target -> ChatAllMessageResponseDto.builder()
                         .message(target.getMessage())
                         .sender(target.getSender())
+                        .senderImg(memberRepository.findByNickname(target.getSender()).get().getImg())
                         .chatRoomId(target.getChatRoom().getId())
                         .createAt(target.getCreateAt().toString())
                         .type(target.getType())
