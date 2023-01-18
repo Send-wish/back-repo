@@ -172,14 +172,13 @@ public class ChatService {
                 .build();
     }
 
-    public ChatMessageLastResponseDto setLastChatMessageResponseDto(ChatRoom chatRoom){
-        ChatMessage message = chatMessageRepository.findTopByChatRoomOrderByIdDesc(chatRoom).get();
-        return  ChatMessageLastResponseDto.builder()
-                .message(message.getMessage())
-                .sender(message.getSender())
-                .createAt(message.getCreateAt().toString())
+    public ChatMessageLastResponseDto setLastChatMessageResponseDto(ChatRoom chatRoom) {
+        ChatMessage message = chatMessageRepository.findTopByChatRoomOrderByIdDesc(chatRoom).isPresent() ?
+                chatMessageRepository.findTopByChatRoomOrderByIdDesc(chatRoom).get() : null;
+        return ChatMessageLastResponseDto.builder()
+                .message(message == null ? null : message.getMessage())
+                .sender(message == null ? null : message.getSender())
+                .createAt(message == null ? null : message.getCreateAt().toString())
                 .build();
     }
-
-
 }
