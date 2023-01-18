@@ -6,7 +6,6 @@ import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.item.*;
 import link.sendwish.backend.entity.*;
-import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.service.ChatService;
 import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.ItemService;

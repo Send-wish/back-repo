@@ -4,7 +4,6 @@ import link.sendwish.backend.common.exception.*;
 import link.sendwish.backend.dtos.chat.*;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.*;
-import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ public class ChatService {
                         .chatRoomId(target.getChatRoom().getId())
                         .lastMessage(setLastChatMessageResponseDto(target.getChatRoom()))
                         .title(collectionRepository
-                                .findById(target.getChatRoom().getCollectionId()).orElseThrow(CollectionNotFoundException::new).getTitle())
+                                .findById(target.getChatRoom().getCollectionId()).get().getTitle())
                         .defaultImage(collectionRepository
                                 .findById(target.getChatRoom().getCollectionId()).get().getDefaultImgURL())
                         .build()
@@ -172,13 +171,17 @@ public class ChatService {
                 .build();
     }
 
-    public ChatMessageLastResponseDto setLastChatMessageResponseDto(ChatRoom chatRoom) {
+    public ChatMessageLastResponseDto setLastChatMessageResponseDto(ChatRoom chatRoom){
         ChatMessage message = chatMessageRepository.findTopByChatRoomOrderByIdDesc(chatRoom).isPresent() ?
                 chatMessageRepository.findTopByChatRoomOrderByIdDesc(chatRoom).get() : null;
-        return ChatMessageLastResponseDto.builder()
-                .message(message == null ? null : message.getMessage())
-                .sender(message == null ? null : message.getSender())
-                .createAt(message == null ? null : message.getCreateAt().toString())
+        if (message == null) {
+            return null;
+        }
+        return  ChatMessageLastResponseDto.builder()
+                .message(message.getMessage())
+                .sender(message.getSender())
+                .createAt(message.getCreateAt().toString())
                 .build();
     }
+
 }
