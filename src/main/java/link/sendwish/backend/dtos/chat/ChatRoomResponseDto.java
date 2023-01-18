@@ -1,6 +1,7 @@
 package link.sendwish.backend.dtos.chat;
 
-import link.sendwish.backend.entity.ChatMessage;
+import link.sendwish.backend.dtos.collection.CollectionResponseDto;
+import link.sendwish.backend.dtos.friend.FriendResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.util.List;
 public class ChatRoomResponseDto {
     private Long chatRoomId;
     private ChatMessageLastResponseDto lastMessage;
-    private String title;
-    private List<String> defaultImage;
+    private CollectionResponseDto collection;
+    private List<FriendResponseDto> friends;
 
 }
