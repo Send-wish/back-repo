@@ -1,14 +1,9 @@
 package link.sendwish.backend.controller;
 
 import link.sendwish.backend.common.exception.DtoNullException;
-import link.sendwish.backend.common.exception.ItemNotFoundException;
 import link.sendwish.backend.dtos.*;
-import link.sendwish.backend.dtos.chat.ChatRoomResponseDto;
 import link.sendwish.backend.dtos.collection.*;
-import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
-import link.sendwish.backend.entity.Collection;
-import link.sendwish.backend.entity.Item;
 import link.sendwish.backend.entity.Member;
 import link.sendwish.backend.service.ChatService;
 import link.sendwish.backend.service.CollectionService;
@@ -22,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
