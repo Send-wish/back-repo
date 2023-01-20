@@ -5,6 +5,7 @@ package link.sendwish.backend.service;
 import link.sendwish.backend.common.exception.CollectionNotFoundException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.controller.MessageController;
+import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.dtos.ItemListResponseDto;
@@ -33,6 +34,9 @@ public class ItemService {
     private final MemberItemRepository memberItemRepository;
     private final MemberRepository memberRepository;
     private final CollectionRepository collectionRepository;
+    private final CollectionService collectionService;
+    private final ChatService chatService;
+    private final MessageController messageController;
 
     @Transactional
     public Long saveItem(Item item, String nickname) {
@@ -58,6 +62,7 @@ public class ItemService {
         List<Long> itemIdListToSave = new ArrayList<>();
         for (Long itemId : itemIdList){
             if (itemIdCheckList.contains(itemId)){
+                log.info("이미 등록된 아이템입니다.");
                 continue;
             }
             Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
@@ -69,9 +74,23 @@ public class ItemService {
             item.addCollectionItem(collectionItem);
             collection.addCollectionItem(collectionItem); //Cascade Option으로 insert문 자동 호출
             itemIdListToSave.add(itemId);
+
+            /* 공유 컬랙션에 아이템 추가시 채팅방 메세지 알림 */
+            if (collectionService.isSharedCollection(colletionId)) {
+                Long chatRoomId = chatService.getChatRoomIdByCollectionId(colletionId);
+                ChatMessageRequestDto chat = ChatMessageRequestDto.builder()
+                        .sender(nickname)
+                        .message(nickname + "님이 아이템을 추가했습니다.")
+                        .roomId(chatRoomId)
+                        .type(ChatMessage.MessageType.ITEM)
+                        .itemId(itemId)
+                        .build();
+                messageController.sendMessage(chat);
+            }
         }
 
         Collections.reverse(itemIdListToSave);
+        log.info("컬랙션 아이템 추가 및 메세지 전송 완료 [ID] : {}, [추가 아이템 수] : {}", collection.getId(), itemIdListToSave.size());
 
         return ItemListResponseDto.builder()
                 .nickname(nickname)

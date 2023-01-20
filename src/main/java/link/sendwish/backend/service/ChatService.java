@@ -2,8 +2,11 @@ package link.sendwish.backend.service;
 
 import link.sendwish.backend.common.exception.*;
 import link.sendwish.backend.dtos.chat.*;
+import link.sendwish.backend.dtos.collection.CollectionResponseDto;
+import link.sendwish.backend.dtos.friend.FriendResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.entity.*;
+import link.sendwish.backend.entity.Collection;
 import link.sendwish.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +37,8 @@ public class ChatService {
                         .builder()
                         .chatRoomId(target.getChatRoom().getId())
                         .lastMessage(setLastChatMessageResponseDto(target.getChatRoom()))
-                        .title(collectionRepository
-                                .findById(target.getChatRoom().getCollectionId()).get().getTitle())
-                        .defaultImage(collectionRepository
-                                .findById(target.getChatRoom().getCollectionId()).get().getDefaultImgURL())
+                        .collection(setCollectionResponseDtoById(target.getChatRoom().getCollectionId(), member.getNickname()))
+                        .friends(findFriendsByChat(target.getChatRoom()))
                         .build()
                 ).toList();
         log.info("해당 맴버의 [닉네임] : {}, 채팅방 일괄 조회 [채팅방 갯수] : {}", member.getNickname(), dtos.size());
@@ -103,11 +104,14 @@ public class ChatService {
         log.info("메세지 저장 [내용] : {}", save.getMessage());
         log.info("메세지 저장 [일시] : {}", save.getCreateAt());
 
+        String memberImg = memberRepository.findByNickname(message.getSender()).get().getImg();
+
         ChatMessageResponseDto responseDto = ChatMessageResponseDto.builder()
                 .chatRoomId(save.getChatRoom().getId())
                 .message(save.getMessage())
                 .sender(save.getSender())
                 .createAt(save.getCreateAt().toString())
+                .senderImg(memberImg)
                 .build();
 
         /* TALK인 경우 */
@@ -146,6 +150,7 @@ public class ChatService {
                 .map(target -> ChatAllMessageResponseDto.builder()
                         .message(target.getMessage())
                         .sender(target.getSender())
+                        .senderImg(memberRepository.findByNickname(target.getSender()).get().getImg())
                         .chatRoomId(target.getChatRoom().getId())
                         .createAt(target.getCreateAt().toString())
                         .type(target.getType())
@@ -182,6 +187,33 @@ public class ChatService {
                 .sender(message.getSender())
                 .createAt(message.getCreateAt().toString())
                 .build();
+    }
+
+    public CollectionResponseDto setCollectionResponseDtoById(Long collectionId, String nickname){
+        Collection find = collectionRepository.findById(collectionId).get();
+        return CollectionResponseDto.builder()
+                .collectionId(find.getId())
+                .title(find.getTitle())
+                .nickname(nickname)
+                .defaultImage(find.getDefaultImgURL())
+                .build();
+    }
+
+    public List<FriendResponseDto> findFriendsByChat(ChatRoom chatRoom){
+        List<ChatRoomMember> chatRoomMembers = chatRoomMemberRepository.findMemberByChatRoom(chatRoom).get();
+
+        List<FriendResponseDto> dtos = new ArrayList<>();
+        chatRoomMembers.forEach(target -> {
+            Member friendMember = memberRepository.findById(target.getMember().getId()).orElseThrow(MemberNotFoundException::new);
+            dtos.add(FriendResponseDto.builder()
+                    .friend_id(friendMember.getId())
+                    .friend_nickname(friendMember.getNickname())
+                    .friend_img(friendMember.getImg())
+                    .build());
+        });
+
+        log.info("채팅방 맴버 조회 [ID] : {}, 채팅방 멤버 조회 [멤버 수] : {}", chatRoom.getId(), dtos.size());
+        return dtos;
     }
 
 }

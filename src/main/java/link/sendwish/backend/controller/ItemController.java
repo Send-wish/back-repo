@@ -3,7 +3,6 @@ package link.sendwish.backend.controller;
 import link.sendwish.backend.common.exception.DtoNullException;
 import link.sendwish.backend.common.exception.ScrapingException;
 import link.sendwish.backend.dtos.*;
-import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
 import link.sendwish.backend.dtos.item.*;
 import link.sendwish.backend.entity.*;
 import link.sendwish.backend.service.ChatService;
@@ -12,6 +11,7 @@ import link.sendwish.backend.service.ItemService;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.MDC;
 import org.springframework.http.HttpEntity;
@@ -85,8 +85,8 @@ public class ItemController {
 
 
             /*
-            * Python Server 호출, DB에 Item 등록
-            * */
+             * Python Server 호출, DB에 Item 등록
+             * */
             String traceId = UUID.randomUUID().toString();
             MDC.put("traceId", traceId);
             log.info("====START CREATING:" + MDC.get("traceId") + "====");
@@ -94,10 +94,10 @@ public class ItemController {
             JSONObject jsonObject = createHttpRequestAndSend(dto.getUrl());
 
             Item item = Item.builder()
-                    .name((String)jsonObject.get("title"))
-                    .price((Integer)jsonObject.get("price"))
-                    .imgUrl((String)jsonObject.get("img"))
-                    .originUrl((String)jsonObject.get("url"))
+                    .name(jsonObject.getString("title"))
+                    .price(jsonObject.getInt("price"))
+                    .imgUrl(jsonObject.getString("img"))
+                    .originUrl(jsonObject.getString("url"))
                     .memberItems(new ArrayList<>())
                     .collectionItems(new ArrayList<>())
                     .build();
@@ -106,7 +106,9 @@ public class ItemController {
             log.info("====FINISH CREATING:" + MDC.get("traceId") + "====");
             MDC.clear();
             return ResponseEntity.ok().body(saveItem);
-        }catch (Exception e) {
+        } catch (JSONException jsonException) {
+            throw new ScrapingException();
+        } catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
                     .error(e.getMessage())
@@ -124,20 +126,6 @@ public class ItemController {
             ItemListResponseDto itemListResponseDto =
                     itemService.enrollItemToCollection(dto.getNickname(), dto.getCollectionId(), dto.getItemIdList());
 
-            /* 공유 컬랙션에 아이템 추가시 채팅방 메세지 알림 */
-            if (collectionService.isSharedCollection(dto.getCollectionId())) {
-                Long chatRoomId = chatService.getChatRoomIdByCollectionId(dto.getCollectionId());
-                for (Long itemId : dto.getItemIdList()) {
-                    ChatMessageRequestDto chat = ChatMessageRequestDto.builder()
-                            .sender(dto.getNickname())
-                            .message(dto.getNickname() + "님이 아이템을 추가했습니다.")
-                            .roomId(chatRoomId)
-                            .type(ChatMessage.MessageType.ITEM)
-                            .itemId(itemId)
-                            .build();
-                    messageController.sendMessage(chat);
-                }
-            }
             return ResponseEntity.ok().body(itemListResponseDto);
         }catch (Exception e) {
             e.printStackTrace();
