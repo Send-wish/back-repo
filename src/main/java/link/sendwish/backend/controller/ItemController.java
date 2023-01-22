@@ -53,7 +53,7 @@ public class ItemController {
         // Post 요청, JSONobject로 응답
         try{
             jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://3.36.61.248:5000/webscrap", queue.poll(), String.class));
+                    restTemplate.postForObject("http://13.209.229.237:5000/webscrap", queue.poll(), String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }
