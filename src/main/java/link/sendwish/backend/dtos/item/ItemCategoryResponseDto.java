@@ -5,15 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemResponseDto {
-    private Long itemId;
-    private int price;
-    private String name;
-    private String imgUrl;
-    private String originUrl;
+public class ItemCategoryResponseDto {
     private String category;
+    private Integer percentage;
+    private List<ItemResponseDto> itemDtos;
 }

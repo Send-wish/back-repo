@@ -6,6 +6,7 @@ import link.sendwish.backend.common.exception.CollectionNotFoundException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.controller.MessageController;
 import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
+import link.sendwish.backend.dtos.item.ItemCategoryResponseDto;
 import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
 import link.sendwish.backend.dtos.item.ItemResponseDto;
 import link.sendwish.backend.dtos.ItemListResponseDto;
@@ -41,7 +42,7 @@ public class ItemService {
     @Transactional
     public Long saveItem(Item item, String nickname) {
         Item save = itemRepository.save(item);
-        
+
         Member member = memberService.findMember(nickname);
         MemberItem memberItem = MemberItem.builder().member(member).item(save).build();
 
@@ -117,8 +118,8 @@ public class ItemService {
                 item.subtractReference();
                 log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
                 /*
-                * Cascade Option 적용 X
-                * */
+                 * Cascade Option 적용 X
+                 * */
                 MemberItem memberItem = memberItemRepository.findByMemberAndItem(member, item)
                         .orElseThrow(RuntimeException::new);
                 memberItemRepository.delete(memberItem);
@@ -181,5 +182,59 @@ public class ItemService {
         return item.getId();
     }
 
+    public List<ItemCategoryResponseDto> findCategoryByMemberItem(Member member) {
+        List<ItemCategoryResponseDto> dtos = new ArrayList<>();
+        Optional<List<MemberItem>> dto = memberItemRepository.findAllByMemberOrderByIdDesc(member);
+        if (dto.isEmpty()) {
+            log.info("맴버 아이템 일괄 조회 [ID] : {}, 해당 멤버는 가진 아이템이 없습니다.", member.getNickname());
+            return dtos;
+        }
+
+        Map<String, Long> categoryCount = dto
+                .get()
+                .stream()
+                .collect(Collectors.groupingBy(target -> target.getItem().getCategory(), Collectors.counting()));
+
+        if(categoryCount.containsKey("ETC")){
+            categoryCount.remove("ETC");
+            if(categoryCount.size() == 0){
+                log.info("맴버 [ID] : {}, 해당 멤버는 ETC 에 해당하는 아이템밖에 없습니다.", member.getNickname());
+                return dtos;
+            }
+        }
+
+        Integer total = categoryCount.values().stream().mapToInt(Long::intValue).sum();
+        List<String> keySet = new ArrayList<>(categoryCount.keySet());
+        keySet.sort((o1, o2) -> categoryCount.get(o2).compareTo(categoryCount.get(o1)));
+
+        for (int i=1; i<= 5; i++){
+            if(keySet.size() < i){ break;}
+            int finalI = i;
+            dtos.add(ItemCategoryResponseDto.builder()
+                    .category(keySet.get(i-1))
+                    .percentage((int) ((categoryCount.get(keySet.get(i-1)) / (double) total) * 100))
+                    .itemDtos(
+                            dto
+                                    .get()
+                                    .stream()
+                                    .filter(target -> target.getItem().getCategory().equals(keySet.get(finalI -1)))
+                                    .map(target -> ItemResponseDto.builder()
+                                            .originUrl(target.getItem().getOriginUrl())
+                                            .name(target.getItem().getName())
+                                            .price(target.getItem().getPrice())
+                                            .imgUrl(target.getItem().getImgUrl())
+                                            .itemId(target.getItem().getId())
+                                            .category(target.getItem().getCategory())
+                                            .build()
+                                    ).collect(Collectors.toList())
+                    )
+                    .build());
+        }
+
+        log.info("맴버 아이템 선호도 순위 조회 [ID] : {}", member.getNickname());
+        return dtos;
+    }
+
 
 }
+
