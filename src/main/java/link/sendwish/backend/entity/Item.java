@@ -31,6 +31,9 @@ public class Item {
     @Builder.Default
     private int reference = 1;
 
+    @Column(nullable = false)
+    private String category;
+
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<CollectionItem> collectionItems = new ArrayList<>();
 

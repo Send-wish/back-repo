@@ -5,8 +5,6 @@ import link.sendwish.backend.common.exception.ScrapingException;
 import link.sendwish.backend.dtos.*;
 import link.sendwish.backend.dtos.item.*;
 import link.sendwish.backend.entity.*;
-import link.sendwish.backend.service.ChatService;
-import link.sendwish.backend.service.CollectionService;
 import link.sendwish.backend.service.ItemService;
 import link.sendwish.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +30,6 @@ public class ItemController {
 
     private final ItemService itemService;
     private final MemberService memberService;
-    private final CollectionService collectionService;
-    private final MessageController messageController;
-    private final ChatService chatService;
     Queue<HttpEntity<MultiValueMap<String, String>>> queue = new LinkedList<>();
 
     // scrapping-server 연결
@@ -58,7 +53,7 @@ public class ItemController {
         // Post 요청, JSONobject로 응답
         try{
             jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://13.209.229.237:5001/webscrap", queue.poll(), String.class));
+                    restTemplate.postForObject("http://3.36.61.248:5000/webscrap", queue.poll(), String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }
@@ -98,6 +93,7 @@ public class ItemController {
                     .price(jsonObject.getInt("price"))
                     .imgUrl(jsonObject.getString("img"))
                     .originUrl(jsonObject.getString("url"))
+                    .category(jsonObject.getString("category").strip())
                     .memberItems(new ArrayList<>())
                     .collectionItems(new ArrayList<>())
                     .build();
@@ -167,6 +163,21 @@ public class ItemController {
             Member member = memberService.findMember(nickname);
             List<ItemResponseDto> memberItem = itemService.findItemByMember(member);
             return ResponseEntity.ok().body(memberItem);
+        }catch (Exception e) {
+            e.printStackTrace();
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.internalServerError().body(errorDto);
+        }
+    }
+
+    @GetMapping("/items/category/rank/{nickname}")
+    public ResponseEntity<?> getCategoryByMemberItem(@PathVariable("nickname") String nickname) {
+        try {
+            Member member = memberService.findMember(nickname);
+            List<ItemCategoryResponseDto> dto = itemService.findCategoryByMemberItem(member);
+            return ResponseEntity.ok().body(dto);
         }catch (Exception e) {
             e.printStackTrace();
             ResponseErrorDto errorDto = ResponseErrorDto.builder()
