@@ -32,7 +32,10 @@ public class MessageController {
     public void sendLiveMessage(ChatLiveMessageRequestDto dto){
         log.info("live message request dto : {}", dto.getNickname());
         ChatLiveMessageResponseDto responseDto =
-                ChatLiveMessageResponseDto.builder().nickname(dto.getNickname()).build();
+                ChatLiveMessageResponseDto.builder()
+                        .nickname(dto.getNickname())
+                        .signal(dto.getSignal())
+                        .build();
         this.template.convertAndSend("/sub/live/" + dto.getRoomId(), responseDto);
     }
 }
