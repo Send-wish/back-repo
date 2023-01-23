@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChatLiveMessageRequestDto {
     private Long roomId;
-    private String peerId;
+    private String nickname;
+    private Object signal;
 }
