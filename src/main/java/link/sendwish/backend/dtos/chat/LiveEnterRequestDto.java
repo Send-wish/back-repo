@@ -5,12 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatLiveMessageResponseDto {
+public class LiveEnterRequestDto {
+    private Long roomId;
     private String nickname;
-    private Object signal;
 }

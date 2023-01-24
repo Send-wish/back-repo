@@ -53,7 +53,7 @@ public class ItemController {
         // Post 요청, JSONobject로 응답
         try{
             jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://3.36.61.248:5000/webscrap", queue.poll(), String.class));
+                    restTemplate.postForObject("http://172.31.7.201:5000/webscrap", queue.poll(), String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }
@@ -87,6 +87,12 @@ public class ItemController {
             log.info("====START CREATING:" + MDC.get("traceId") + "====");
 
             JSONObject jsonObject = createHttpRequestAndSend(dto.getUrl());
+
+            log.info("=== title : {}", jsonObject.getString("title"));
+            log.info("=== price : {}", jsonObject.getInt("price"));
+            log.info("=== img : {}", jsonObject.getString("img"));
+            log.info("=== url : {}", jsonObject.getString("url"));
+            log.info("=== category : {}", jsonObject.getString("category"));
 
             Item item = Item.builder()
                     .name(jsonObject.getString("title"))
