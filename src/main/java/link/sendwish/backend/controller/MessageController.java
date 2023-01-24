@@ -47,4 +47,15 @@ public class MessageController {
         }
         this.template.convertAndSend("/sub/live/enter" + dto.getRoomId(), webRtcSessions.get(dto.getRoomId()));
     }
+    
+    @MessageMapping("/like")
+    public void sendLike(ChatLikeRequestDto dto){
+        Long like = 1L;
+        log.info("{} 님이 투표에 참여합니다.", dto.getNickname());
+        ChatLikeResponseDto responseDto = ChatLikeResponseDto.builder()
+                .itemId(dto.getItemId())
+                .like(like)
+                .build();
+        this.template.convertAndSend("/sub/like/" + dto.getRoomId(), responseDto);
+    }
 }
