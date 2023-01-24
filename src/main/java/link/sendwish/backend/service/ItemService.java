@@ -207,7 +207,7 @@ public class ItemService {
         List<String> keySet = new ArrayList<>(categoryCount.keySet());
         keySet.sort((o1, o2) -> categoryCount.get(o2).compareTo(categoryCount.get(o1)));
 
-        for (int i=1; i<= 5; i++){
+        for (int i=1; i<= 3; i++){
             if(keySet.size() < i){ break;}
             int finalI = i;
             dtos.add(ItemCategoryResponseDto.builder()
@@ -231,10 +231,9 @@ public class ItemService {
                     .build());
         }
 
-        log.info("맴버 아이템 선호도 순위 조회 [ID] : {}", member.getNickname());
+        log.info("맴버 아이템 선호도 순위 조회 [ID] : {}, [아이템 갯수] : {}", member.getNickname(), total);
         return dtos;
     }
-
 
 }
 
