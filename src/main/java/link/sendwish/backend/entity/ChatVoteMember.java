@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ChatRoomMember {
+public class ChatVoteMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,5 +24,4 @@ public class ChatRoomMember {
     @JoinColumn(name = "member_id")
     @JsonIgnore
     private Member member;
-
 }
