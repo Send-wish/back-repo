@@ -50,6 +50,9 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<ChatVoteMember> chatVoteMembers = new ArrayList<>();
+
     public void addMemberCollection(MemberCollection memberCollection) {
         this.memberCollections.add(memberCollection);
     }
@@ -81,6 +84,12 @@ public class Member implements UserDetails {
     public void deleteMemberChatRoom(ChatRoomMember chatRoomMember) {
         this.chatRoomMembers.remove(chatRoomMember);
     }
+
+    public void addChatVoteMember(ChatVoteMember chatVoteMember) {
+        this.chatVoteMembers.add(chatVoteMember);
+    }
+
+    public void deleteChatVoteMember(ChatVoteMember chatVoteMember) { this.chatVoteMembers.remove(chatVoteMember); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

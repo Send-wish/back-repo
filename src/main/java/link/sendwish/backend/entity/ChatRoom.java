@@ -25,6 +25,9 @@ public class ChatRoom extends BaseTime{
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    private List<ChatVoteMember> chatVoteMembers = new ArrayList<>();
+
     public void addMemberChatRoom(ChatRoomMember chatRoomMember) {
         this.chatRoomMembers.add(chatRoomMember);
     }
@@ -39,5 +42,12 @@ public class ChatRoom extends BaseTime{
 
     public void deleteChatMessage(ChatMessage chatMessage) {
         this.chatMessages.remove(chatMessage);
+    }
+
+    public void addChatVoteMember(ChatVoteMember chatVoteMember) {
+        this.chatVoteMembers.add(chatVoteMember);
+    }
+
+    public void deleteChatVoteMember(ChatVoteMember chatVoteMember) { this.chatVoteMembers.remove(chatVoteMember);
     }
 }

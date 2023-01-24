@@ -58,6 +58,7 @@ public class ChatService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .collectionId(CollectionId)
                 .chatRoomMembers(new ArrayList<>())
+                .chatVoteMembers(new ArrayList<>())
                 .build();
 
         ChatRoom save = chatRoomRepository.save(chatRoom);
