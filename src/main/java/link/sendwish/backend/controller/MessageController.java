@@ -45,4 +45,14 @@ public class MessageController {
                         .build();
         this.template.convertAndSend("/sub/live/enter" + dto.getRoomId(), responseDto);
     }
+    
+    @MessageMapping("/like")
+    public void sendLike(ChatLikeRequestDto dto){
+        Long like = 1L;
+        ChatLikeResponseDto responseDto = ChatLikeResponseDto.builder()
+                .itemId(dto.getItemId())
+                .like(like)
+                .build();
+        this.template.convertAndSend("/sub/like/" + dto.getRoomId(), responseDto);
+    }
 }

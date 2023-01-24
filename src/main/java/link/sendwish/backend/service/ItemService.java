@@ -231,10 +231,9 @@ public class ItemService {
                     .build());
         }
 
-        log.info("맴버 아이템 선호도 순위 조회 [ID] : {}", member.getNickname());
+        log.info("맴버 아이템 선호도 순위 조회 [ID] : {}, [아이템 갯수] : {}", member.getNickname(), total);
         return dtos;
     }
-
 
 }
 
