@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageController {
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
-    private final ConcurrentHashMap<Long,String> webRtcSessions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, List<String>> webRtcSessions = new ConcurrentHashMap<>();
 
     @MessageMapping("/chat")
     public void sendMessage(ChatMessageRequestDto dto){
@@ -39,10 +40,11 @@ public class MessageController {
     @MessageMapping("/live/enter")
     public void sendLiveMessage(LiveEnterRequestDto dto){
         log.info("{} 님이 통화에 참여합니다.", dto.getNickname());
-        ChatLiveMessageResponseDto responseDto =
-                ChatLiveMessageResponseDto.builder()
-                        .nickname(dto.getNickname())
-                        .build();
-        this.template.convertAndSend("/sub/live/enter" + dto.getRoomId(), responseDto);
+        if (webRtcSessions.containsKey(dto.getRoomId())) {
+            webRtcSessions.get(dto.getRoomId()).add(dto.getNickname());
+        } else {
+            webRtcSessions.put(dto.getRoomId(), List.of(dto.getNickname()));
+        }
+        this.template.convertAndSend("/sub/live/enter" + dto.getRoomId(), webRtcSessions.get(dto.getRoomId()));
     }
 }
