@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChatVoteResponseDto {
     private Long itemId;
-    private Long like;
+    private Integer like;
 }
