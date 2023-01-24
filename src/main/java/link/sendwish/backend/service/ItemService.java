@@ -207,7 +207,7 @@ public class ItemService {
         List<String> keySet = new ArrayList<>(categoryCount.keySet());
         keySet.sort((o1, o2) -> categoryCount.get(o2).compareTo(categoryCount.get(o1)));
 
-        for (int i=1; i<= 5; i++){
+        for (int i=1; i<= 3; i++){
             if(keySet.size() < i){ break;}
             int finalI = i;
             dtos.add(ItemCategoryResponseDto.builder()

@@ -1,9 +1,6 @@
 package link.sendwish.backend.controller;
 
-import link.sendwish.backend.dtos.chat.ChatLiveMessageRequestDto;
-import link.sendwish.backend.dtos.chat.ChatLiveMessageResponseDto;
-import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
-import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
+import link.sendwish.backend.dtos.chat.*;
 import link.sendwish.backend.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +27,22 @@ public class MessageController {
 
     @MessageMapping("/live")
     public void sendLiveMessage(ChatLiveMessageRequestDto dto){
-        log.info("live message request dto : {}", dto.getNickname());
+        log.info("{}님이 Data Signal을 전송합니다.", dto.getNickname());
         ChatLiveMessageResponseDto responseDto =
-                ChatLiveMessageResponseDto.builder().nickname(dto.getNickname()).build();
+                ChatLiveMessageResponseDto.builder()
+                        .nickname(dto.getNickname())
+                        .signal(dto.getSignal())
+                        .build();
         this.template.convertAndSend("/sub/live/" + dto.getRoomId(), responseDto);
+    }
+
+    @MessageMapping("/live/enter")
+    public void sendLiveMessage(LiveEnterRequestDto dto){
+        log.info("{} 님이 통화에 참여합니다.", dto.getNickname());
+        ChatLiveMessageResponseDto responseDto =
+                ChatLiveMessageResponseDto.builder()
+                        .nickname(dto.getNickname())
+                        .build();
+        this.template.convertAndSend("/sub/live/enter" + dto.getRoomId(), responseDto);
     }
 }
