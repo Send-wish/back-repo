@@ -1,9 +1,6 @@
 package link.sendwish.backend.controller;
 
-import link.sendwish.backend.dtos.chat.ChatLiveMessageRequestDto;
-import link.sendwish.backend.dtos.chat.ChatLiveMessageResponseDto;
-import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
-import link.sendwish.backend.dtos.chat.ChatMessageResponseDto;
+import link.sendwish.backend.dtos.chat.*;
 import link.sendwish.backend.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,5 +26,15 @@ public class MessageController {
     public void sendLiveMessage(ChatLiveMessageRequestDto dto){
         ChatLiveMessageResponseDto responseDto = ChatLiveMessageResponseDto.builder().peerId(dto.getPeerId()).build();
         this.template.convertAndSend("/sub/live/" + dto.getRoomId(), responseDto);
+    }
+
+    @MessageMapping("/like")
+    public void sendLike(ChatLikeRequestDto dto){
+        Long like = 1L;
+        ChatLikeResponseDto responseDto = ChatLikeResponseDto.builder()
+                .itemId(dto.getItemId())
+                .like(like)
+                .build();
+        this.template.convertAndSend("/sub/like/" + dto.getRoomId(), responseDto);
     }
 }
