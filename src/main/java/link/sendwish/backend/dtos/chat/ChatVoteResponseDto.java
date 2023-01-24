@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatLikeRequestDto {
-    private Long roomId;
-    private Long nickname;
+public class ChatVoteResponseDto {
     private Long itemId;
+    private Long like;
 }

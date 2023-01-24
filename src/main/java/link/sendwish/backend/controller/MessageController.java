@@ -2,6 +2,7 @@ package link.sendwish.backend.controller;
 
 import link.sendwish.backend.dtos.chat.*;
 import link.sendwish.backend.service.ChatService;
+import link.sendwish.backend.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageController {
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
+    private final VoteService voteService;
     private final ConcurrentHashMap<Long,String> webRtcSessions = new ConcurrentHashMap<>();
 
     @MessageMapping("/chat")
@@ -45,15 +47,22 @@ public class MessageController {
                         .build();
         this.template.convertAndSend("/sub/live/enter" + dto.getRoomId(), responseDto);
     }
-    
-    @MessageMapping("/like")
-    public void sendLike(ChatLikeRequestDto dto){
-        Long like = 1L;
+
+    @MessageMapping("/vote/enter")
+    public void sendVoteEnter(ChatVoteEnterRequestDto dto){
         log.info("{} 님이 투표에 참여합니다.", dto.getNickname());
-        ChatLikeResponseDto responseDto = ChatLikeResponseDto.builder()
+        ChatVoteEnterResponseDto responseDto = voteService.enterVote(dto);
+        this.template.convertAndSend("/sub/vote/enter/" + dto.getRoomId(), responseDto);
+    }
+    
+    @MessageMapping("/vote")
+    public void sendVote(ChatVoteRequestDto dto){
+        Long like = 1L;
+        log.info("{} 님이 투표를 했습니다.", dto.getNickname());
+        ChatVoteResponseDto responseDto = ChatVoteResponseDto.builder()
                 .itemId(dto.getItemId())
                 .like(like)
                 .build();
-        this.template.convertAndSend("/sub/like/" + dto.getRoomId(), responseDto);
+        this.template.convertAndSend("/sub/vote/" + dto.getRoomId(), responseDto);
     }
 }
