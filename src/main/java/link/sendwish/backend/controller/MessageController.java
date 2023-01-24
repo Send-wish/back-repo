@@ -57,12 +57,8 @@ public class MessageController {
     
     @MessageMapping("/vote")
     public void sendVote(ChatVoteRequestDto dto){
-        Long like = 1L;
+        ChatVoteResponseDto like = voteService.like(dto);
         log.info("{} 님이 투표를 했습니다.", dto.getNickname());
-        ChatVoteResponseDto responseDto = ChatVoteResponseDto.builder()
-                .itemId(dto.getItemId())
-                .like(like)
-                .build();
-        this.template.convertAndSend("/sub/vote/" + dto.getRoomId(), responseDto);
+        this.template.convertAndSend("/sub/vote/" + dto.getRoomId(), like);
     }
 }

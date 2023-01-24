@@ -55,6 +55,10 @@ dependencies {
 	//swagger
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 tasks.named('test') {
