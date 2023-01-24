@@ -51,7 +51,6 @@ public class VoteService {
         assert chatRoom.getId().equals(chatVoteMember.getChatRoom().getId());
         log.info("투표 입장 [roomId] : {}, [입장 인원] : {}", chatRoom.getId(), voteMemberIdList.size());
         return ChatVoteEnterResponseDto.builder()
-                .roomId(chatRoom.getId())
                 .memberIdList(voteMemberIdList)
                 .build();
     }
@@ -63,12 +62,16 @@ public class VoteService {
         String value = dto.getNickname();
 
         String find = like.get(key);
-        if (find == null) {
-            like.set(key, value);
+        if (dto.getIsLike()) { // 좋아요 누른 경우
+            if (find == null) {
+                like.set(key, value);
+            } else {
+                if (!find.contains(value)) {
+                    like.set(key, find + "," + value);
+                }
+            }
         } else {
-            if(!find.contains(value)) {
-                like.set(key, find + "," + value);
-            }else {
+            if (find != null && find.contains(value)) {
                 like.set(key, find.replace("," + value, ""));
             }
         }
@@ -76,7 +79,7 @@ public class VoteService {
         String result = like.get(key);
         Integer count = result.length()
                 - result.replace(",", "").length() + 1;
-        log.info("투표 [roomId] : {}, [itemId] : {}, [count] : {}", dto.getRoomId(), dto.getItemId(), count);
+        log.info("투표 [roomId] : {}, [itemId] : {}, [like count] : {}", dto.getRoomId(), dto.getItemId(), count);
 
         return ChatVoteResponseDto.builder()
                 .itemId(dto.getItemId())
