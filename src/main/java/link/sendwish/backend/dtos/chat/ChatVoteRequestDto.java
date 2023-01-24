@@ -13,4 +13,5 @@ public class ChatVoteRequestDto {
     private Long roomId;
     private String nickname;
     private Long itemId;
+    private Boolean isLike;
 }

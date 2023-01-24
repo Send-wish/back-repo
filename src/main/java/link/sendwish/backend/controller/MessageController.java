@@ -52,8 +52,8 @@ public class MessageController {
 
     @MessageMapping("/vote/enter")
     public void sendVoteEnter(ChatVoteEnterRequestDto dto){
-        log.info("{} 님이 투표에 참여합니다.", dto.getNickname());
         ChatVoteEnterResponseDto responseDto = voteService.enterVote(dto);
+        log.info("{} 님이 투표에 참여합니다.", dto.getNickname());
         this.template.convertAndSend("/sub/vote/enter/" + dto.getRoomId(), responseDto);
     }
     

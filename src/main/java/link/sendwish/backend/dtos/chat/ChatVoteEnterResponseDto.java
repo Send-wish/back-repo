@@ -12,6 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatVoteEnterResponseDto {
-    private Long roomId;
     private List<String> memberIdList;
 }
