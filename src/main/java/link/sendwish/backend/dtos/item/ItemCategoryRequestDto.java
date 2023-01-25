@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemCategoryResponseDto {
+public class ItemCategoryRequestDto {
     private String imgUrl;
-    private String category;
 }
