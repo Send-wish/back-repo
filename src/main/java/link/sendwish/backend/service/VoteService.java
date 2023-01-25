@@ -77,8 +77,6 @@ public class VoteService {
             }
         }
 
-        log.info("[좋아요 or 싫어요] {}", dto.getIsLike());
-        log.info("=================key ====== " + key);
         String result = like.get(key);
         Integer count = 0;
         if (result != null) {
