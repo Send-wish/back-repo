@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -68,18 +69,26 @@ public class VoteService {
                 like.set(key, value);
             } else {
                 if (!find.contains(value)) {
-                    like.set(key, find + "," + value);
+                    if (find.equals("")) {
+                        like.set(key, value);
+                    } else {
+                        like.set(key, find + "," + value);
+                    }
                 }
             }
         } else {
             if (find != null && find.contains(value)) {
-                like.set(key, find.replace("," + value, ""));
+                if(find.contains(",")) {
+                    like.set(key, find.replace("," + value, ""));
+                }else{
+                    like.set(key, "");
+                }
             }
         }
 
         String result = like.get(key);
         Integer count = 0;
-        if (result != null) {
+        if (!Objects.equals(result, "")) {
             count = result.length()
                     - result.replace(",", "").length() + 1;
         }
