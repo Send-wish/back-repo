@@ -217,4 +217,13 @@ public class ChatService {
         return dtos;
     }
 
+    public void deleteChatMessageByItemId(Long itemId, String nickname){
+
+        List<ChatMessage> messages = chatMessageRepository.findByItemIdAndSender(itemId, nickname).orElse(null);
+        if (messages != null) {
+            chatMessageRepository.deleteAll(messages);
+            log.info("채팅방 아이템 메세지 삭제 [ID] : {}, 삭제하는 맴버 [ID] : {}", itemId, nickname);
+        }
+    }
+
 }

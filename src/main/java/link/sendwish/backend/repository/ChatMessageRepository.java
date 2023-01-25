@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     Optional<List<ChatMessage>> findAllByChatRoom(ChatRoom room);
     Optional<ChatMessage> findTopByChatRoomOrderByIdDesc(ChatRoom room);
+    Optional<List<ChatMessage>> findByItemIdAndSender(Long itemId, String nickname);
 }
