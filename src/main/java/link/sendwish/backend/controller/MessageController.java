@@ -42,12 +42,7 @@ public class MessageController {
     @MessageMapping("/live/enter")
     public void sendLiveMessage(LiveEnterRequestDto dto){
         log.info("{} 님이 통화에 참여합니다.", dto.getNickname());
-        if (webRtcSessions.containsKey(dto.getRoomId())) {
-            webRtcSessions.get(dto.getRoomId()).add(dto.getNickname());
-        } else {
-            webRtcSessions.put(dto.getRoomId(), List.of(dto.getNickname()));
-        }
-        this.template.convertAndSend("/sub/live/enter/" + dto.getRoomId(), webRtcSessions.get(dto.getRoomId()));      
+        this.template.convertAndSend("/sub/live/enter/" + dto.getRoomId(), dto.getNickname());
     }
 
     @MessageMapping("/vote/enter")
@@ -62,5 +57,12 @@ public class MessageController {
         ChatVoteResponseDto like = voteService.like(dto);
         log.info("{} 님이 투표를 했습니다.", dto.getNickname());
         this.template.convertAndSend("/sub/vote/" + dto.getRoomId(), like);
+    }
+
+    @MessageMapping("/vote/exit")
+    public void sendVoteExit(ChatVoteEnterRequestDto dto){
+        ChatVoteEnterResponseDto exit = voteService.exitVote(dto);
+        log.info("{} 님이 투표방에 나갔습니다.", dto.getNickname());
+        this.template.convertAndSend("/sub/vote/exit/" + dto.getRoomId(), exit);
     }
 }

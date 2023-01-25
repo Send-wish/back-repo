@@ -117,9 +117,7 @@ public class ItemService {
             }else{
                 item.subtractReference();
                 log.info("아이템 삭제 [ID] : {}, [참조 맴버 수] : {}", itemId, item.getReference());
-                /*
-                 * Cascade Option 적용 X
-                 * */
+
                 MemberItem memberItem = memberItemRepository.findByMemberAndItem(member, item)
                         .orElseThrow(RuntimeException::new);
                 memberItemRepository.delete(memberItem);
@@ -129,6 +127,7 @@ public class ItemService {
                     log.info("컬렉션 아이템 삭제 [ID] : {}", collectionItem.getId());
                 });
             }
+            chatService.deleteChatMessageByItemId(itemId, nickname);
         }
 
         return ItemDeleteResponseDto.builder()
@@ -141,7 +140,7 @@ public class ItemService {
         List<ItemResponseDto> dtos;
         if (memberItemRepository.findAllByMemberOrderByIdDesc(member).isEmpty()) {
             dtos = new ArrayList<>();
-            log.info("맴버 아이템 일괄 조회 [ID] : {},해당 멤버는 가진 아이템이 없습니다.", member.getNickname());
+            log.info("맴버 아이템 일괄 조회 [ID] : {}, 해당 멤버는 가진 아이템이 없습니다.", member.getNickname());
             return dtos;
         }
         dtos = memberItemRepository.findAllByMemberOrderByIdDesc(member)
@@ -240,7 +239,7 @@ public class ItemService {
                 .imgUrl(imgUrl)
                 .build();
 
-        String uri = "http://3.36.131.201:5000/category";
+        String uri = "http://3.354.17.29:5001/category";
         Flux<ItemCategoryResponseDto> stringFlux = WebClient.create()
                 .post()
                 .uri(uri)
