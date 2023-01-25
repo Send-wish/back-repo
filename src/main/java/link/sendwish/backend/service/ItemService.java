@@ -6,9 +6,7 @@ import link.sendwish.backend.common.exception.CollectionNotFoundException;
 import link.sendwish.backend.common.exception.MemberNotFoundException;
 import link.sendwish.backend.controller.MessageController;
 import link.sendwish.backend.dtos.chat.ChatMessageRequestDto;
-import link.sendwish.backend.dtos.item.ItemCategoryResponseDto;
-import link.sendwish.backend.dtos.item.ItemDeleteResponseDto;
-import link.sendwish.backend.dtos.item.ItemResponseDto;
+import link.sendwish.backend.dtos.item.*;
 import link.sendwish.backend.dtos.ItemListResponseDto;
 
 import link.sendwish.backend.entity.*;
@@ -19,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import link.sendwish.backend.common.exception.ItemNotFoundException;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -182,8 +182,8 @@ public class ItemService {
         return item.getId();
     }
 
-    public List<ItemCategoryResponseDto> findCategoryByMemberItem(Member member) {
-        List<ItemCategoryResponseDto> dtos = new ArrayList<>();
+    public List<ItemPreferenceResponseDto> findCategoryByMemberItem(Member member) {
+        List<ItemPreferenceResponseDto> dtos = new ArrayList<>();
         Optional<List<MemberItem>> dto = memberItemRepository.findAllByMemberOrderByIdDesc(member);
         if (dto.isEmpty()) {
             log.info("맴버 아이템 일괄 조회 [ID] : {}, 해당 멤버는 가진 아이템이 없습니다.", member.getNickname());
@@ -210,7 +210,7 @@ public class ItemService {
         for (int i=1; i<= 3; i++){
             if(keySet.size() < i){ break;}
             int finalI = i;
-            dtos.add(ItemCategoryResponseDto.builder()
+            dtos.add(ItemPreferenceResponseDto.builder()
                     .category(keySet.get(i-1))
                     .percentage((int) ((categoryCount.get(keySet.get(i-1)) / (double) total) * 100))
                     .itemDtos(
@@ -235,5 +235,24 @@ public class ItemService {
         return dtos;
     }
 
+    public Flux<ItemCategoryResponseDto> categorization(String imgUrl, Item item) {
+        ItemCategoryRequestDto img = ItemCategoryRequestDto.builder()
+                .imgUrl(imgUrl)
+                .build();
+
+        String uri = "http://3.36.131.201:5000/category";
+        Flux<ItemCategoryResponseDto> stringFlux = WebClient.create()
+                .post()
+                .uri(uri)
+                .bodyValue(img)
+                .retrieve()
+                .bodyToFlux(ItemCategoryResponseDto.class);
+        stringFlux.subscribe(responseDto -> {
+            log.info("비동기 완료 [카테고리] : {}", responseDto.getCategory());
+            item.updateCategory(responseDto.getCategory());
+            itemRepository.save(item);
+        });
+        return stringFlux;
+    }
 }
 

@@ -31,7 +31,6 @@ public class Item {
     @Builder.Default
     private int reference = 1;
 
-    @Column(nullable = false)
     private String category;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
@@ -62,5 +61,9 @@ public class Item {
 
     public void subtractReference() {
         this.reference -= 1;
+    }
+
+    public void updateCategory(String category) {
+        this.category = category;
     }
 }

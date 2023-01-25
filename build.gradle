@@ -59,6 +59,10 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	//WebClient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux:2.5.6'
+	implementation 'org.projectreactor:reactor-spring:1.0.1.RELEASE'
+
 }
 
 tasks.named('test') {

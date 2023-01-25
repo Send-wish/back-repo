@@ -20,6 +20,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Flux;
 
 import java.util.*;
 
@@ -53,12 +54,11 @@ public class ItemController {
         // Post 요청, JSONobject로 응답
         try{
             jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://172.31.7.201:5000/webscrap", queue.poll(), String.class));
+                    restTemplate.postForObject("http://13.209.229.237:5000/webscrap", queue.poll(), String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }
         log.info("====FINISH PARSING :" + MDC.get("traceId") + "===="); // 파싱 종료
-
 
         return jsonObject;
     }
@@ -78,7 +78,6 @@ public class ItemController {
                 return ResponseEntity.ok().body(find.getId());
             }
 
-
             /*
              * Python Server 호출, DB에 Item 등록
              * */
@@ -92,18 +91,20 @@ public class ItemController {
             log.info("=== price : {}", jsonObject.getInt("price"));
             log.info("=== img : {}", jsonObject.getString("img"));
             log.info("=== url : {}", jsonObject.getString("url"));
-            log.info("=== category : {}", jsonObject.getString("category"));
 
+            String imgUrl = jsonObject.getString("img");
             Item item = Item.builder()
                     .name(jsonObject.getString("title"))
                     .price(jsonObject.getInt("price"))
                     .imgUrl(jsonObject.getString("img"))
                     .originUrl(jsonObject.getString("url"))
-                    .category(jsonObject.getString("category").strip())
+//                    .category(jsonObject.getString("category"))
                     .memberItems(new ArrayList<>())
                     .collectionItems(new ArrayList<>())
                     .build();
             Long saveItem = itemService.saveItem(item, dto.getNickname());
+
+            Flux<ItemCategoryResponseDto> response = itemService.categorization(imgUrl, item);
 
             log.info("====FINISH CREATING:" + MDC.get("traceId") + "====");
             MDC.clear();
@@ -182,7 +183,7 @@ public class ItemController {
     public ResponseEntity<?> getCategoryByMemberItem(@PathVariable("nickname") String nickname) {
         try {
             Member member = memberService.findMember(nickname);
-            List<ItemCategoryResponseDto> dto = itemService.findCategoryByMemberItem(member);
+            List<ItemPreferenceResponseDto> dto = itemService.findCategoryByMemberItem(member);
             return ResponseEntity.ok().body(dto);
         }catch (Exception e) {
             e.printStackTrace();
