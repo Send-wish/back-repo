@@ -91,4 +91,32 @@ public class VoteService {
                 .build();
     }
 
+    @Transactional
+    public ChatVoteEnterResponseDto exitVote(ChatVoteEnterRequestDto dto){
+        Member member = memberRepository.findByNickname(dto.getNickname()).orElseThrow(MemberNotFoundException::new);
+        ChatRoom chatRoom = chatRoomRepository.findById(dto.getRoomId()).orElseThrow(ChatRoomNotFoundException::new);
+
+        ChatVoteMember find = chatVoteMemberRepository.findByMemberAndChatRoom(member, chatRoom).orElse(null);
+        if(find != null){
+            chatVoteMemberRepository.delete(find);
+            chatRoom.deleteChatVoteMember(find);
+            member.deleteChatVoteMember(find);
+        }
+
+        List<ChatVoteMember> voteMembers = chatVoteMemberRepository.findMemberByChatRoom(chatRoom).orElse(null);
+        if(voteMembers == null){
+            log.info("투표 퇴장 [roomId] : {}, [남은 인원] : {}", chatRoom.getId(), 0);
+            return ChatVoteEnterResponseDto.builder()
+                    .memberIdList(null)
+                    .build();
+        }
+        List<String> voteMemberIdList = voteMembers.stream().map(target -> target.getMember().getNickname()).toList();
+
+        assert chatRoom.getId().equals(find.getChatRoom().getId());
+        log.info("투표 퇴장 [roomId] : {}, [남은 인원] : {}", chatRoom.getId(), voteMemberIdList.size());
+        return ChatVoteEnterResponseDto.builder()
+                .memberIdList(voteMemberIdList)
+                .build();
+    }
+
 }
