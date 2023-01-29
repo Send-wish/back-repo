@@ -234,12 +234,11 @@ public class ItemService {
         return dtos;
     }
 
-    public Flux<ItemCategoryResponseDto> categorization(String imgUrl, Item item) {
+    public Flux<ItemCategoryResponseDto> categorization(String imgUrl, Item item, String uri) {
         ItemCategoryRequestDto img = ItemCategoryRequestDto.builder()
                 .imgUrl(imgUrl)
                 .build();
 
-        String uri = "http://3.354.17.29:5001/category";
         Flux<ItemCategoryResponseDto> stringFlux = WebClient.create()
                 .post()
                 .uri(uri)
@@ -251,6 +250,7 @@ public class ItemService {
             item.updateCategory(responseDto.getCategory());
             itemRepository.save(item);
         });
+        log.debug("Flux async");
         return stringFlux;
     }
 }

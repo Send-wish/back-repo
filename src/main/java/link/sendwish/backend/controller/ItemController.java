@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,10 +31,9 @@ public class ItemController {
 
     private final ItemService itemService;
     private final MemberService memberService;
-    Queue<HttpEntity<MultiValueMap<String, String>>> queue = new LinkedList<>();
 
     // scrapping-server 연결
-    public JSONObject createHttpRequestAndSend(String url) {
+    public JSONObject createHttpRequestAndSend(String url, String uri) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Request_body 생성
@@ -47,18 +46,17 @@ public class ItemController {
 
         // Request_header, Request_body 합친 entity
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-        queue.offer(entity);
         JSONObject jsonObject = null;
 
-        log.info("====START PARSING :" + MDC.get("traceId") + "===="); // 파싱 시작
+        log.info("====START PARSING===="); // 파싱 시작
         // Post 요청, JSONobject로 응답
         try{
             jsonObject = new JSONObject(
-                    restTemplate.postForObject("http://13.209.229.237:5000/webscrap", queue.poll(), String.class));
+                    restTemplate.postForObject(uri, entity, String.class));
         }catch (Exception e){
             throw new ScrapingException();
         }
-        log.info("====FINISH PARSING :" + MDC.get("traceId") + "===="); // 파싱 종료
+        log.info("====FINISH PARSING===="); // 파싱 종료
 
         return jsonObject;
     }
@@ -66,7 +64,7 @@ public class ItemController {
 
     //등록된 item id 값 리턴
     @PostMapping("/item/parsing")
-    public ResponseEntity<?> createItem(@RequestBody ItemCreateRequestDto dto) {
+    public ResponseEntity<?> createItem(@RequestBody ItemCreateRequestDto dto, @Value("${server.url.scrap}") String scrapUri, @Value("${server.url.category}") String categoryUri) {
         try {
             if(dto.getUrl() == null){
                 throw new DtoNullException();
@@ -81,33 +79,26 @@ public class ItemController {
             /*
              * Python Server 호출, DB에 Item 등록
              * */
-            String traceId = UUID.randomUUID().toString();
-            MDC.put("traceId", traceId);
-            log.info("====START CREATING:" + MDC.get("traceId") + "====");
-
-            JSONObject jsonObject = createHttpRequestAndSend(dto.getUrl());
+            JSONObject jsonObject = createHttpRequestAndSend(dto.getUrl(), scrapUri);
 
             log.info("=== title : {}", jsonObject.getString("title"));
             log.info("=== price : {}", jsonObject.getInt("price"));
             log.info("=== img : {}", jsonObject.getString("img"));
-            log.info("=== url : {}", jsonObject.getString("url"));
 
             String imgUrl = jsonObject.getString("img");
             Item item = Item.builder()
                     .name(jsonObject.getString("title"))
                     .price(jsonObject.getInt("price"))
                     .imgUrl(jsonObject.getString("img"))
-                    .originUrl(jsonObject.getString("url"))
-//                    .category(jsonObject.getString("category"))
+                    .originUrl(dto.getUrl())
                     .memberItems(new ArrayList<>())
                     .collectionItems(new ArrayList<>())
                     .build();
             Long saveItem = itemService.saveItem(item, dto.getNickname());
 
-            Flux<ItemCategoryResponseDto> response = itemService.categorization(imgUrl, item);
+            Flux<ItemCategoryResponseDto> response = itemService.categorization(imgUrl, item, categoryUri);
 
-            log.info("====FINISH CREATING:" + MDC.get("traceId") + "====");
-            MDC.clear();
+            log.debug("====FINISH CREATING=====");
             return ResponseEntity.ok().body(saveItem);
         } catch (JSONException jsonException) {
             throw new ScrapingException();

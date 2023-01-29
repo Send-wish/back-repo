@@ -8,6 +8,7 @@
 # https
 *.p12
 
+application-auth.yml
 application-dev.yml
 application-aws.yml
 
