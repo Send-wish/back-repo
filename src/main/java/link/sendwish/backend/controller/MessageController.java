@@ -42,7 +42,7 @@ public class MessageController {
     @MessageMapping("/live/enter")
     public void sendLiveMessage(LiveEnterRequestDto dto){
         log.info("{} 님이 통화에 참여합니다.", dto.getNickname());
-        this.template.convertAndSend("/sub/live/enter/" + dto.getRoomId(), dto.getNickname());
+        this.template.convertAndSend("/sub/live/enter/" + dto.getRoomId(), dto);
     }
 
     @MessageMapping("/vote/enter")
