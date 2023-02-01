@@ -22,7 +22,6 @@
 ## 1. api 명세서
 https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 
-## 2. erd
-<img width="527" alt="image" src="https://user-images.githubusercontent.com/77164776/215988922-0504c5c1-40e3-427c-811f-4117f9a3d9a7.png">
+## 2. erd 설계
 <img width="812" alt="image" src="https://user-images.githubusercontent.com/77164776/215989696-1e9705af-ad32-4a1e-9e68-f961a9280c27.png">
 
