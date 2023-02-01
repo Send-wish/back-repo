@@ -29,19 +29,8 @@
 <img width="1016" alt="스크린샷 2023-02-01 오후 4 52 19" src="https://user-images.githubusercontent.com/77164776/215983377-7f8a2385-665c-48d6-9cd7-149de6c8f2c2.png">
 <img width="1263" alt="스크린샷 2023-02-01 오후 4 52 37" src="https://user-images.githubusercontent.com/77164776/215983364-66eabac1-b95f-45ef-8c9b-1a31530bd041.png">
 
-## 3. 서비스 주요 기능 설명
-
-### 주요 기능
-
-- 개인 장바구니 페이지
-
-  - 
-
-- 공유 장바구니 페이지
-
-  - 
-
-- 친구 및 채팅 목록 페이지
+## 3. erd
+<img width="527" alt="image" src="https://user-images.githubusercontent.com/77164776/215988922-0504c5c1-40e3-427c-811f-4117f9a3d9a7.png">
 
 
 ## 4. 프로젝트 팀원 역할 분담
