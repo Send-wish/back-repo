@@ -1,6 +1,6 @@
+## 간편하고 똑똑한 장바구니 서비스 Send-Wish 
 
 ![A1포스터](https://user-images.githubusercontent.com/64846408/215984066-6358dc5e-29f2-4542-a9b4-e89cdb0d1b51.png)
-
 
 ## 1. 시연 영상
 [![시연 영상]](https://user-images.githubusercontent.com/96214306/215988388-8cd30df1-07b9-41d4-8fba-0d9aa4584e4c.mp4)
