@@ -68,6 +68,13 @@ https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 
 - **stomp**
 
+|  | 기능 설명 | 우선순위 | 요청 | 요청 body |
+| --- | --- | --- | --- | --- |
+| 1) message pub | - 메세지 전송- publish로 해당 채팅방에 메세지 전송 | 上 | WebSocket publish | memberIdList, collectionId |
+| 2) message sub | - 메세지 받기- 구독(subscribe) 되어있으면 websocket 내에서 메세지 받음 |上 | WebSocket subscribe |  |
+| 3) enter vote | - 투표 참여 | 上 | WebSocket subscribe |  |
+| 4) leave vote | - 투표 퇴장 | 上 | WebSocket subscribe |  |
+
 ## 2. erd 설계
 <img width="812" alt="image" src="https://user-images.githubusercontent.com/77164776/215989696-1e9705af-ad32-4a1e-9e68-f961a9280c27.png">
 
