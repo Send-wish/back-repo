@@ -11,7 +11,7 @@
 <div>
 <img alt="Java" src ="https://img.shields.io/badge/Javascript-F7DF1E.svg?&style=for-the-badge&logo=Javascript&logoColor=black"/>
 <img alt="Spring Boot" src ="https://img.shields.io/badge/Spring Boot-6DB33F.svg?&style=for-the-badge&logo=Spring Boot&logoColor=white"/>
-<img alt="Spring Security" src ="https://img.shields.io/badge/styled--components-DB7093.svg?&style=for-the-badge&logo=styled-components&logoColor=black"/>
+<img alt="Spring Security" src ="https://img.shields.io/badge/Spring Security-DB7093.svg?&style=for-the-badge&logo=Spring Security&logoColor=black"/>
 <img alt="MUI" src ="https://img.shields.io/badge/MUI-007FFF.svg?&style=for-the-badge&logo=MUI&logoColor=white"/>
 <img alt="Axios" src ="https://img.shields.io/badge/Axios-671DDF.svg?&style=for-the-badge&logo=Axios&logoColor=white"/>
 <img alt="React-Router" src ="https://img.shields.io/badge/React-Router-CA4245.svg?&style=for-the-badge&logo=React-Router&logoColor=white"/>
