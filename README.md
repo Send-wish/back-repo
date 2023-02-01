@@ -22,8 +22,6 @@
 ## 1. api 명세서
 https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 
-# SendWish API 명세서 및 진행 상황
-
 - **Member**
 
 |  | 기능 설명 | 현재 구현 여부 | 우선순위 | 요청 | 주소값 | 요청 body |
