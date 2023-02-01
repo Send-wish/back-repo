@@ -9,7 +9,8 @@
 
 [발표영상으로 보기](https://youtu.be/iwOKAPlsYRA)
 
-![A1포스터](https://user-images.githubusercontent.com/64846408/215984066-6358dc5e-29f2-4542-a9b4-e89cdb0d1b51.png)
+![A1포스터](https://user-images.githubusercontent.com/96214306/216087497-3fd6ed03-6035-40da-8b8b-92d1627ae888.png)
+
 
 ## 2. api 명세서
 [바로가기](https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137)
