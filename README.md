@@ -37,8 +37,7 @@ https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 
 |  | 기능 설명 | 현재 구현 여부 | 우선순위 | 요청 | 주소값 | 요청 body |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1) getCollectionsByMember | - Member별 가지고 있는 콜렉션을 보여줌 | O | 上 | GET | /collections/
-{nickname} |  |
+| 1) getCollectionsByMember | - Member별 가지고 있는 콜렉션을 보여줌 | O | 上 | GET | /collections/{nickname} |  |
 | 2) createCollection | - 콜렉션 만들기 | O | 下 | POST | /collection | nickname , title |
 | 3) updateCollectionTitle | - 콜렉션 제목 업데이트 | O | 下 | PATCH | /collection | nickname , title |
 | 4) getDetailColleciton | - 콜렉션 상세내용 확인 | O | 下 | GET | /collections/{nickname}/{collectionId} |  |
@@ -46,33 +45,27 @@ https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 | 6) sharedCollections | - 멤버가 공유하고 있는 모든 컬렉션 조회 | O | 上 | GET | /collection/shared/{memberId}  |  |
 | 7) sharedCollection | - 공유 컬렉션 생성 | O | 上 | POST | /collection/shared | memberIdList, title, targetCollectionId |
 
- 
 
 - **Item**
 
-|  | 기능 설명 | 현재 구현 여부 | 남은 업무 | due - date | 우선순위 | 요청 | 주소값 | 요청 body |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1) createItem | - 아이템을 DB에 추가
-- 파이썬 통한 파싱과 연결
-(1-1과 연결됨) | O |  | - | 下 | POST | /parsing | url, nickname |
-| 1-1) create
-HttpRequest
-AndSend | - 스크래핑서버와 연결 | O |  | - | 下 |  |  |  |
-| 2) enrollItem | - 아이템을 컬렉션에 추가 | O | 아이템 여러개 추가 가능하도록 | - | 下 | POST | itme/enrollment | collectionId, itemId, nickname |
-| 3) returnItem | - 유저가 담은 모든 item을 리턴 | O |  | 1/8(일) | 上 | GET | /items/
-{memberId} |  |
-| 4) deleteItem | - 유저의 아이템을 삭제 
-- 아이템 삭제시 유저의 모든 컬랙션 내부 해당 아이템이 삭제됨 | O |  | - | 上 | DELETE | /item/{nickname}/{itemId} |  |
-| 5) delete CollectionItem | - 컬렉션 내부 아이템을 삭제 | O |  |  |  | DELETE | /collection/item/{collectionId}/{itemId} |  |
-| 6) return Item category rank | - 해당 유저의 아이템들의 카테고리 순위 및 카테고리별 아이템 반환 | O |  |  |  | GET | /items/category/rank/{nickname} |  |
+|  | 기능 설명 | 현재 구현 여부 | 우선순위 | 요청 | 주소값 | 요청 body |
+| --- | --- | --- | --- |--- | --- | --- |
+| 1) createItem | - 아이템을 DB에 추가- 파이썬 통한 파싱과 연결(1-1과 연결됨) | - | 下 | POST | /parsing | url, nickname |
+| 1-1) createHttpRequestAndSend | - 스크래핑서버와 연결 | - | 下 |  |  |  |
+| 2) enrollItem | - 아이템을 컬렉션에 추가 | O | 下 | POST | itme/enrollment | collectionId, itemId, nickname |
+| 3) returnItem | - 유저가 담은 모든 item을 리턴 | O | 上 | GET | /items/{memberId} |  |
+| 4) deleteItem | - 유저의 아이템을 삭제 - 아이템 삭제시 유저의 모든 컬랙션 내부 해당 아이템이 삭제됨 | O |  | - | 上 | DELETE | /item/{nickname}/{itemId} |  |
+| 5) delete CollectionItem | - 컬렉션 내부 아이템을 삭제 | O | | DELETE | /collection/item/{collectionId}/{itemId} |  |
+| 6) return Item category rank | - 해당 유저의 아이템들의 카테고리 순위 및 카테고리별 아이템 반환 | O |   | GET | /items/category/rank/{nickname} |  |
+
 - **chat**
 
-|  | 기능 설명 | 현재 구현 여부 | 남은 업무 | 우선순위 | 요청 | 주소값 | 요청 body |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1) createRoom | - 채팅방 생성 | O |  | 上 | POST | /chat/room | memberIdList, collectionId |
-| 2) getRoomByMember | - 해당 유저의 모든 채팅방 조회 | O |  | 上 | GET | /chat/rooms/{nickname} |  |
-| 3) getChatsByChatRoomId | - 채팅 내역 전부 조회
-- 최신 생성순  | O | sse로 실시간 추가 | 上 | GET | /chats/{chatRoomId} |  |
+|  | 기능 설명 | 현재 구현 여부 | 우선순위 | 요청 | 주소값 | 요청 body |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1) createRoom | - 채팅방 생성 | O | 上 | POST | /chat/room | memberIdList, collectionId |
+| 2) getRoomByMember | - 해당 유저의 모든 채팅방 조회 | O | 上 | GET | /chat/rooms/{nickname} |  |
+| 3) getChatsByChatRoomId | - 채팅 내역 전부 조회- 최신 생성순  | O | 上 | GET | /chats/{chatRoomId} |  |
+
 - **stomp**
 
 ## 2. erd 설계
