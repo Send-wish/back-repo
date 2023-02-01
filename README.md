@@ -9,7 +9,6 @@
 ### 기술 스택
 
 <div>
-<img alt="Java" src ="https://img.shields.io/badge/Java-F7DF1E.svg?&style=for-the-badge&logo=Java&logoColor=black"/>
 <img alt="Spring Boot" src ="https://img.shields.io/badge/Spring Boot-6DB33F.svg?&style=for-the-badge&logo=Spring Boot&logoColor=white"/>
 <img alt="Spring Security" src ="https://img.shields.io/badge/Spring Security-DB7093.svg?&style=for-the-badge&logo=Spring Security&logoColor=white"/>
 <img alt="MySQL" src ="https://img.shields.io/badge/MySQL-4479A1.svg?&style=for-the-badge&logo=MySQL&logoColor=white"/>
