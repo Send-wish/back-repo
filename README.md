@@ -1,7 +1,5 @@
-# SendWish 
 
 ![A1포스터](https://user-images.githubusercontent.com/64846408/215984066-6358dc5e-29f2-4542-a9b4-e89cdb0d1b51.png)
-
 
 
 ## 1. 시연동영상
