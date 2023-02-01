@@ -5,3 +5,8 @@ app:
   auth:
     accessTokenExpiry: 1800000
     refreshTokenExpiry: 1209600000
+
+server:
+  url:
+    scrap: http://13.209.229.237:5000/webscrap
+    category: http://3.35.174.29:5001/category

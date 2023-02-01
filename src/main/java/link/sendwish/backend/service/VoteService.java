@@ -63,6 +63,7 @@ public class VoteService {
         String key = dto.getRoomId() + ":" + dto.getItemId();
         String value = dto.getNickname();
 
+        log.info("맴버 [ID] : {} 가, [좋아요] : {} 를 눌렀습니다.", dto.getNickname(), dto.getIsLike());
         String find = like.get(key);
         if (dto.getIsLike()) { // 좋아요 누른 경우
             if (find == null) {
