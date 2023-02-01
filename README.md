@@ -25,6 +25,8 @@
 
 ## 2. erd
 <img width="527" alt="image" src="https://user-images.githubusercontent.com/77164776/215988922-0504c5c1-40e3-427c-811f-4117f9a3d9a7.png">
+<img width="812" alt="image" src="https://user-images.githubusercontent.com/77164776/215989696-1e9705af-ad32-4a1e-9e68-f961a9280c27.png">
+
 
 
 ## 4. 프로젝트 팀원 역할 분담
