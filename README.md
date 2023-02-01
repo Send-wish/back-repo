@@ -1,10 +1,4 @@
-# SendWish
-
-- [SendWish 데모 영상]()
-
-## 1. 프로젝트 소개
-
-- 여러 쇼핑몰의 장바구니 상품들을 한곳에서 볼 수 있고 공유 소통 할 수 있는 어플리케이션
+# SendWish Backend
 
 ### 기술 스택
 
@@ -25,11 +19,11 @@
 <img alt="Amazon S3" src ="https://img.shields.io/badge/Amazon S3-569A31.svg?&style=for-the-badge&logo=Amazon S3&logoColor=white"/>
 </div>
 
-## 2. api 명세서
+## 1. api 명세서
 <img width="1016" alt="스크린샷 2023-02-01 오후 4 52 19" src="https://user-images.githubusercontent.com/77164776/215983377-7f8a2385-665c-48d6-9cd7-149de6c8f2c2.png">
 <img width="1263" alt="스크린샷 2023-02-01 오후 4 52 37" src="https://user-images.githubusercontent.com/77164776/215983364-66eabac1-b95f-45ef-8c9b-1a31530bd041.png">
 
-## 3. erd
+## 2. erd
 <img width="527" alt="image" src="https://user-images.githubusercontent.com/77164776/215988922-0504c5c1-40e3-427c-811f-4117f9a3d9a7.png">
 
 
