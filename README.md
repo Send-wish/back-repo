@@ -20,8 +20,7 @@
 </div>
 
 ## 1. api 명세서
-<img width="1016" alt="스크린샷 2023-02-01 오후 4 52 19" src="https://user-images.githubusercontent.com/77164776/215983377-7f8a2385-665c-48d6-9cd7-149de6c8f2c2.png">
-<img width="1263" alt="스크린샷 2023-02-01 오후 4 52 37" src="https://user-images.githubusercontent.com/77164776/215983364-66eabac1-b95f-45ef-8c9b-1a31530bd041.png">
+https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 
 ## 2. erd
 <img width="527" alt="image" src="https://user-images.githubusercontent.com/77164776/215988922-0504c5c1-40e3-427c-811f-4117f9a3d9a7.png">
