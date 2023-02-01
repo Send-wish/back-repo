@@ -24,12 +24,12 @@ https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 
 - **Member**
 
-|  | 기능 설명 | 현재 구현 여부 | 우선순위 | 요청 | 주소값 | 요청 body |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1) home | - 서비스 메인 | O | 下 | GET | / |  |
-| 2) signup | - 회원가입 | O |  下 | POST | /signup | nickname , password |
-| 3) signin | - 로그인 | O | 下 | POST | /signin | nickname , password |
-| 4) add friend | - 친구추가 | O | 下 | POST | /add/friend | addMemberId , memberId |
+|  | 기능 설명 | 우선순위 | 요청 | 주소값 | 요청 body |
+| --- | --- | --- | --- | --- | --- |
+| 1) home | - 서비스 메인 | 下 | GET | / |  |
+| 2) signup | - 회원가입 |  下 | POST | /signup | nickname , password |
+| 3) signin | - 로그인 | 下 | POST | /signin | nickname , password |
+| 4) add friend | - 친구추가 | 下 | POST | /add/friend | addMemberId , memberId |
 
  ****
 
