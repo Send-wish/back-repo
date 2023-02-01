@@ -8,14 +8,9 @@
 [발표영상으로 보기](https://youtu.be/iwOKAPlsYRA)
 
 
-
-## 2. 서비스 아키텍쳐
-![Frame 1 (4)](https://user-images.githubusercontent.com/64846408/215982951-a6c62f86-82ef-4bdf-8560-0e22f108d1ae.png)
-
-
-## 3. api 명세서
+## 2. api 명세서
 [바로가기](https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137)
 
-## 4. erd 설계
+## 3. erd 설계
 <img width="812" alt="image" src="https://user-images.githubusercontent.com/77164776/215989696-1e9705af-ad32-4a1e-9e68-f961a9280c27.png">
 
