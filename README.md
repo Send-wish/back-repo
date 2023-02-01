@@ -9,9 +9,9 @@
 ### 기술 스택
 
 <div>
-<img alt="Javascript" src ="https://img.shields.io/badge/Javascript-F7DF1E.svg?&style=for-the-badge&logo=Javascript&logoColor=black"/>
-<img alt="React" src ="https://img.shields.io/badge/React-61DAFB.svg?&style=for-the-badge&logo=React&logoColor=black"/>
-<img alt="styled-components" src ="https://img.shields.io/badge/styled--components-DB7093.svg?&style=for-the-badge&logo=styled-components&logoColor=black"/>
+<img alt="Java" src ="https://img.shields.io/badge/Javascript-F7DF1E.svg?&style=for-the-badge&logo=Javascript&logoColor=black"/>
+<img alt="Spring Boot" src ="#6DB33F"/>
+<img alt="Spring Security" src ="https://img.shields.io/badge/styled--components-DB7093.svg?&style=for-the-badge&logo=styled-components&logoColor=black"/>
 <img alt="MUI" src ="https://img.shields.io/badge/MUI-007FFF.svg?&style=for-the-badge&logo=MUI&logoColor=white"/>
 <img alt="Axios" src ="https://img.shields.io/badge/Axios-671DDF.svg?&style=for-the-badge&logo=Axios&logoColor=white"/>
 <img alt="React-Router" src ="https://img.shields.io/badge/React-Router-CA4245.svg?&style=for-the-badge&logo=React-Router&logoColor=white"/>
