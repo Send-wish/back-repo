@@ -26,15 +26,3 @@ https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 <img width="527" alt="image" src="https://user-images.githubusercontent.com/77164776/215988922-0504c5c1-40e3-427c-811f-4117f9a3d9a7.png">
 <img width="812" alt="image" src="https://user-images.githubusercontent.com/77164776/215989696-1e9705af-ad32-4a1e-9e68-f961a9280c27.png">
 
-
-
-## 4. 프로젝트 팀원 역할 분담
-
-| 이름   | 담당 업무                          |
-| ------ | ---------------------------------- |
-| 홍창섭 | 팀장/백엔드                   |
-| 김진섭 | 프론트엔드                      |
-| 오기윤 | 프론트엔드 |
-| 정성훈 | 백엔드                             |
-| 홍리경 | 백엔드                          |
-
