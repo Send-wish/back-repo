@@ -37,28 +37,14 @@ https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 
 |  | 기능 설명 | 현재 구현 여부 | 우선순위 | 요청 | 주소값 | 요청 body |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1) get
-CollectionsByMember | - Member별 가지고 있는 콜렉션을 보여줌 | O | 上 | GET | /collections/
+| 1) getCollectionsByMember | - Member별 가지고 있는 콜렉션을 보여줌 | O | 上 | GET | /collections/
 {nickname} |  |
-| 2) create
-Collection | - 콜렉션 만들기 | O | 下 | POST | /collection | nickname , title |
-| 3) update
-Collection
-Title | - 콜렉션 제목 업데이트 | O | 下 | PATCH | /collection | nickname , title |
-| 4) getDetail
-Colleciton | - 콜렉션 상세내용 확인 | O | 下 | GET | /collections/
-{nickname}/
-{collectionId} |  |
-| 5) delete
-Collection | - 콜렉션 삭제 | O | 上 | Delete | /collection/
-{collectionId} |  |
-| 6) shared
-Collections | - 멤버가 공유하고 있는
-모든 컬렉션 조회 | O | 上 | GET | /collection/shared/
-{memberId}  |  |
-| 7) shared
-Collection | - 공유 컬렉션 생성 | O | 上 | POST | /collection/shared | memberIdList, title
-, targetCollectionId |
+| 2) createCollection | - 콜렉션 만들기 | O | 下 | POST | /collection | nickname , title |
+| 3) updateCollectionTitle | - 콜렉션 제목 업데이트 | O | 下 | PATCH | /collection | nickname , title |
+| 4) getDetailColleciton | - 콜렉션 상세내용 확인 | O | 下 | GET | /collections/{nickname}/{collectionId} |  |
+| 5) deleteCollection | - 콜렉션 삭제 | O | 上 | Delete | /collection/{collectionId} |  |
+| 6) sharedCollections | - 멤버가 공유하고 있는 모든 컬렉션 조회 | O | 上 | GET | /collection/shared/{memberId}  |  |
+| 7) sharedCollection | - 공유 컬렉션 생성 | O | 上 | POST | /collection/shared | memberIdList, title, targetCollectionId |
 
  
 
