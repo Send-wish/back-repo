@@ -50,13 +50,13 @@ https://www.notion.so/SendWish-API-1598e455c5d4434f824f3c9c71d78137
 
 |  | 기능 설명 | 우선순위 | 요청 | 주소값 | 요청 body |
 | --- | --- | --- |--- | --- | --- |
-| 1) createItem | - 아이템을 DB에 추가- 파이썬 통한 파싱과 연결(1-1과 연결됨) | 下 | POST | /parsing | url, nickname |
-| 1-1) createHttpRequestAndSend | - 스크래핑서버와 연결 | 下 |  |  |  |
-| 2) enrollItem | - 아이템을 컬렉션에 추가 | 下 | POST | itme/enrollment | collectionId, itemId, nickname |
-| 3) returnItem | - 유저가 담은 모든 item을 리턴 | 上 | GET | /items/{memberId} |  |
-| 4) deleteItem | - 유저의 아이템을 삭제 - 아이템 삭제시 유저의 모든 컬랙션 내부 해당 아이템이 삭제됨 |  | 上 | DELETE | /item/{nickname}/{itemId} |  |
-| 5) delete CollectionItem | - 컬렉션 내부 아이템을 삭제 | | DELETE | /collection/item/{collectionId}/{itemId} |  |
-| 6) return Item category rank | - 해당 유저의 아이템들의 카테고리 순위 및 카테고리별 아이템 반환 |  | GET | /items/category/rank/{nickname} |  |
+| 1) createItem | 아이템을 DB에 추가 파이썬 통한 파싱과 연결(1-1과 연결됨) | 下 | POST | /parsing | url, nickname |
+| 1-1) createHttpRequestAndSend |  스크래핑서버와 연결 | 下 |  |  |  |
+| 2) enrollItem |  아이템을 컬렉션에 추가 | 下 | POST | itme/enrollment | collectionId, itemId, nickname |
+| 3) returnItem |  유저가 담은 모든 item을 리턴 | 上 | GET | /items/{memberId} |  |
+| 4) deleteItem |  유저의 아이템을 삭제  아이템 삭제시 유저의 모든 컬랙션 내부 해당 아이템이 삭제됨 |  | 上 | DELETE | /item/{nickname}/{itemId} |  |
+| 5) delete CollectionItem |  컬렉션 내부 아이템을 삭제 | | DELETE | /collection/item/{collectionId}/{itemId} |  |
+| 6) return Item category rank | 해당 유저의 아이템들의 카테고리 순위 및 카테고리별 아이템 반환 |  | GET | /items/category/rank/{nickname} |  |
 
 - **chat**
 
