@@ -66,4 +66,8 @@ public class Item {
     public void updateCategory(String category) {
         this.category = category;
     }
+
+    public void updatePrice(Integer price) {
+        this.price = price;
+    }
 }
