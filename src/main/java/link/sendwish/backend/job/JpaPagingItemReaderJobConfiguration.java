@@ -35,14 +35,10 @@ public class JpaPagingItemReaderJobConfiguration {
     private final EntityManagerFactory entityManagerFactory;
 
     private int chunkSize = 10;
-    private int num = 50;
 
     @Bean
     public Job jpaPagingItemReaderJob() {
-        num = num ++;
-        log.info(">>>>> {}", num);
-        String name = "jpaPagingItemReaderJob" + num;
-        return jobBuilderFactory.get(name)
+        return jobBuilderFactory.get("itemBatchUpdate")
                 .start(jpaPagingItemReaderStep())
                 .build();
     }
@@ -70,7 +66,6 @@ public class JpaPagingItemReaderJobConfiguration {
     @Bean
     public ItemProcessor<Item, Item> jpaItemProcessor() {
         return item -> {
-            // item의 originUrl로 파싱 후 price변경사항 있으면 넘기기
             Integer price = item.getPrice();
             RestTemplate restTemplate = new RestTemplate();
 
@@ -93,17 +88,13 @@ public class JpaPagingItemReaderJobConfiguration {
             }
             log.info("====FINISH PARSING====");
 
-            log.info("=== title : {}", jsonObject.getString("title"));
-            log.info("=== price : {}", jsonObject.getInt("price"));
-            log.info("=== img : {}", jsonObject.getString("img"));
             Integer newPrice = jsonObject.getInt("price");
-            boolean isIgnoreTarget = price == newPrice;
+            boolean isIgnoreTarget = price.equals(newPrice);
 
             if(isIgnoreTarget){
-                log.info(">>>>>>>>> item name={}, isIgnoreTarget={}", item.getName(), isIgnoreTarget);
                 return null;
             }
-            log.info("[update target]");
+            log.info(">>>>>>>>> update target item name={}, price={}", item.getName(), newPrice);
             item.updatePrice(newPrice);
             return item;
         };
