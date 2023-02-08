@@ -102,7 +102,7 @@ public class JpaPagingItemReaderJobConfiguration {
 
     @Bean
     public ItemWriter<Item> jpaPagingItemWriter() {
-        JpaItemWriter<Item> jpaItemWriter = new JpaItemWriter<Item>();
+        JpaItemWriter<Item> jpaItemWriter = new JpaItemWriter<>();
         jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
         try {
             jpaItemWriter.afterPropertiesSet();
